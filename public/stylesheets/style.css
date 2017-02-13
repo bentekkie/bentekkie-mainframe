@@ -1,0 +1,49 @@
+html {
+    color: #008106;
+    font-size: 1em;
+    line-height: 1.4;
+    font-family: "Lucida Console";
+    background-color: #000;
+}
+
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#container {
+	position:fixed; 
+	bottom:0; 
+	right:0;
+	left:0
+}
+
+#content {
+	width = 100%; 
+	word-wrap: break-word; 
+	overflow: auto; 
+	max-height: 100vh;
+}
+
+#submitbutton {
+	position: absolute; 
+	left: -9999px; 
+	width: 1px; 
+	height: 1px;
+}
+
+#command {
+	outline-style: none;
+	outline: none;
+	resize: none;
+	width: 100%;
+	border-width: 0;
+	background-color: #000000;
+	color: #008106;
+	font-size: 25px;
+}

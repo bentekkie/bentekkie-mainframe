@@ -1,0 +1,13 @@
+branch-defaults:
+  master:
+    environment: node-express-env
+    group_suffix: null
+global:
+  application_name: bentekkie-mainframe
+  branch: null
+  default_ec2_keyname: null
+  default_platform: node.js
+  default_region: us-west-2
+  profile: eb-cli
+  repository: null
+  sc: git

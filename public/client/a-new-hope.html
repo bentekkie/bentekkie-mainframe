@@ -1,0 +1,14 @@
+<div id="fTelnetContainer"></div>
+<script src="//embed.ftelnet.ca/js/ftelnet-loader.js"></script>
+<script>
+    fTelnet.Hostname = "towel.blinkenlights.nl";
+    fTelnet.Port = 23;
+    fTelnet.ProxyHostname = "proxy-us-ca.ftelnet.ca";
+    fTelnet.ProxyPort = 80;
+    fTelnet.ProxyPortSecure = 443;
+    fTelnet.ConnectionType = "telnet";
+    fTelnet.Emulation = "ansi-bbs";
+    fTelnet.VirtualKeyboardVisible = false;
+    fTelnet.Init();
+    fTelnet.Connect();
+</script>

@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  script(src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js")
+  script(src="/javascripts/main.js")
+  div#container
+    p#content Type "help" navigate my e-portfolio<br> and landing-page to go back to the landing page<br>
+    form#submitform
+      input(type="text",name="command",rows="1",placeholder="Enter command",id="command",autofocus,autocorrect="off",autocomplete="off",autocapitalize="none")
+      input#submitbutton(type="submit",tabindex=-1)
+
