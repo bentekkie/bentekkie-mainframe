@@ -11,6 +11,10 @@ a {
   color: #00B7FF;
 }
 
+#mobile {
+	font-size: 2em;
+}
+
 #container {
 	position:fixed; 
 	bottom:0; 
