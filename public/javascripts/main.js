@@ -32,7 +32,7 @@ $(document).ready( function(){
     }, false);
     if( window.outerWidth < 598){
         $("#content").empty();
-        $.get('/api/cat',{p:JSON.stringify(["tooSmall"]),cdir:'files'}, function(data){
+        $.get('/api/cat',{p:JSON.stringify(["help/tooSmall"]),cdir:'files'}, function(data){
     		$("#content").append(data);
     		gotoBottom("content");
     	});
