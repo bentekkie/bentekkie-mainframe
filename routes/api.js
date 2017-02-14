@@ -68,13 +68,13 @@ var commands = {
 	'landing-page': function (args,cdir) {
 		return "@lp";
 		
-	},
+	},/*
 	'guest-book': function (args,cdir) {
 		if(args != null && args.length >1){
 			gbwrite(args[0],args[1]);
 		}
 		return "@gb";
-	}
+	}*/
 };
 
 function gbwrite(wname,wmsg){

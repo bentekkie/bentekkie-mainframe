@@ -34,12 +34,12 @@ var commands = {
 	{
 		usage:'landing-page',
 		purpose:'Navigate back to the landing page of bentekkie.com'
-	},
+	},/*
 	'guest-book':
 	{
 		usage:'guest-book or guest-book [name] [message]',
 		purpose:'Displays the guestbook, if name and message are provided then they are added to the guestbook'
-	}
+	}*/
 };
 
 exports.cmd = function(req, res){
