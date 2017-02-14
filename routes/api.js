@@ -65,12 +65,27 @@ var commands = {
 			return '<br/>No directory given, usage for cd is: cd [directory] <br/>';
 		}
 	},
-	'landing-page': function (args,cdir) 
-	{
+	'landing-page': function (args,cdir) {
 		return "@lp";
 		
+	},
+	'guest-book': function (args,cdir) {
+		if(args != null && args.length >1){
+			gbwrite(args[0],args[1]);
+		}
+		return "@gb";
 	}
 };
+
+function gbwrite(wname,wmsg){
+	var entry = {
+			name: wname,
+			msg: wmsg
+			};
+	var file = JSON.parse(fs.readFileSync('./raw/guestbook.json'));
+	file.push(entry);
+	fs.writeFileSync('./raw/guestbook.json', JSON.stringify(file));
+}
 
 exports.api = function(req, res){
 	var cmd = req.params.cmd;
@@ -83,4 +98,8 @@ exports.api = function(req, res){
 		res.send("<br/> Invalid command. <br/>");
 	}
   
+};
+
+exports.cmdlst = function(req, res){
+	res.send(JSON.stringify(Object.keys(commands)));
 };

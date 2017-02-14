@@ -1,6 +1,13 @@
 var currentDir = "files";
 var command_arr = [];
 var current_command = 0;
+var autocomp = {
+		frag: "",
+		comps: [],
+		cindex: 0
+};
+var cmdnames = []
+
 
 var handler = function(e)
 {
@@ -19,11 +26,29 @@ var handler = function(e)
         	current_command += 1;
         	document.getElementById("command").value = "";
         }
+    }else if(e.keyCode == 9){
+    	var c = document.getElementById("command").value;
+    	if(autocomp.frag == "" || !c.startsWith(autocomp.frag)){
+    		autocomp.frag = c;
+    		autocomp.cindex = 0;
+    		autocomp.comps = cmdnames.filter(function(s){
+				    			return s.startsWith(c);
+				    		}) 
+    	}
+    	if(autocomp.comps.length > 0){
+    		document.getElementById("command").value = autocomp.comps[autocomp.cindex];
+    		autocomp.cindex = (autocomp.cindex+1) % autocomp.comps.length;
+    	}
+    	
+    	e.preventDefault();
     }
 };
 
 
 $(document).ready( function(){
+	$.get('/cmdlst',{}, function(data){
+		cmdnames = JSON.parse(data);
+	});
     document.getElementById("command").addEventListener("keydown",function(e) {
 	    // space and arrow keys
 	    if([38, 40].indexOf(e.keyCode) > -1) {
@@ -91,9 +116,16 @@ localcmds = {
 		"@cdhidden": function(){
 			$("#content").append('Changed directory from "B:/'+currentDir+'" to "B:/hidden"');
 			currentDir = "hidden";
+		},
+		"@gb": function(){
+			$.get('/gb/read',{}, function(data){
+	    		$("#content").append(data);
+	    		gotoBottom("content");
+	    	});
 		}
 		
 }
+
 
 function run(){
 	var c = document.getElementById("command").value;
@@ -102,7 +134,10 @@ function run(){
 		current_command = command_arr.length;
 	}
 	$("#content").append("<br \> B:/"+currentDir+">"+c+"<br />	");
-	var split = c.split(" ");
+	var split = c.match(/(?:[^\s"]+|"[^"]*")+/g);
+	for(var i = 0; i < split.length; i++) {
+		split[i] = split[i].replace(/"/g,"");
+	}
 	var cmd = split[0];
 	var args = null;
 	if(split.length > 0) var args = split.slice(1);

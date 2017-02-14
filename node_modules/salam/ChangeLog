@@ -1,0 +1,6 @@
+2016.11.23, v1.0.1
+
+feature:
+- (package) currify v2.0.0
+- (travis) node_js: rm 4
+

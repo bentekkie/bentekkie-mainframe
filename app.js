@@ -10,7 +10,8 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , favicon = require('serve-favicon');
+  , favicon = require('serve-favicon')
+  , gb = require('./routes/gb');
 var app = express();
 
 // all environments
@@ -33,7 +34,9 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/api/:cmd', api.api);
+app.get('/cmdlst', api.cmdlst);
 app.get('/file/:fname',file.download);
+app.get('/gb/read',gb.read);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
