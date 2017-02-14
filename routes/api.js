@@ -47,7 +47,7 @@ var commands = {
 		if(args != null && args.length < 1){
 			return commands['cat'](["help"],cdir);
 		}else{
-			return commands.cat(["help/"+args[0]],cdir);
+			return '@help';
 		}
 	},
 	'download-resume': function (args,cdir)
@@ -103,3 +103,5 @@ exports.api = function(req, res){
 exports.cmdlst = function(req, res){
 	res.send(JSON.stringify(Object.keys(commands)));
 };
+
+exports.commands = commands;

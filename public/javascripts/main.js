@@ -142,23 +142,22 @@ function run(){
 	var args = null;
 	if(split.length > 0) var args = split.slice(1);
 	params = {p: JSON.stringify(args),cdir:currentDir};
-	$.get('/api/' + cmd,params, function(data){
-		if(data[0] == "@"){
-			localcmds[data]();
-		}else{
+	if(cmd == "help" && args.length > 0){
+		$.get('/help/' + args[0],{}, function(data){
 			$("#content").append(data);
-		}
-		
-		gotoBottom("content");
-	});
-	/*
-	if ( cmd in commands){
-		commands[cmd](args);
+			
+			gotoBottom("content");
+		});
 	}else{
-		$("#content").append("<br \> Invalid command. <br />	");
-		var element = document.getElementById("content");
-    	element.scrollTop = element.scrollHeight;
+		$.get('/api/' + cmd,params, function(data){
+			if(data[0] == "@"){
+				localcmds[data]();
+			}else{
+				$("#content").append(data);
+			}
+			
+			gotoBottom("content");
+		});
 	}
-	*/
 	
 }

@@ -11,7 +11,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , favicon = require('serve-favicon')
-  , gb = require('./routes/gb');
+  , gb = require('./routes/gb')
+  , help = require('./routes/help');
 var app = express();
 
 // all environments
@@ -37,6 +38,7 @@ app.get('/api/:cmd', api.api);
 app.get('/cmdlst', api.cmdlst);
 app.get('/file/:fname',file.download);
 app.get('/gb/read',gb.read);
+app.get('/help/:cmd',help.cmd);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
