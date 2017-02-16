@@ -32,9 +32,8 @@ var commands = {
 				resp = "<br/>File not found <br/>";
 			}
 		}else{
-			resp = "No page name was specified. Usage of cat is: cat [page-name].";
-			var element = document.getElementById("content");
-    		element.scrollTop = element.scrollHeight;
+			resp = "<br/>No page name was specified. Usage of cat is: cat [page-name].<br/>";
+			return resp
 		}
 		return resp
 	},

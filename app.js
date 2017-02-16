@@ -12,7 +12,8 @@ var express = require('express')
   , path = require('path')
   , favicon = require('serve-favicon')
   , gb = require('./routes/gb')
-  , help = require('./routes/help');
+  , help = require('./routes/help')
+  , autocomp = require('./routes/autocomp');
 var app = express();
 
 // all environments
@@ -39,6 +40,7 @@ app.get('/cmdlst', api.cmdlst);
 app.get('/file/:fname',file.download);
 app.get('/gb/read',gb.read);
 app.get('/help/:cmd',help.cmd);
+app.get('/autocomp/:cmd',autocomp.getautos);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

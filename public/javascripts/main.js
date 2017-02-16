@@ -2,9 +2,9 @@ var currentDir = "files";
 var command_arr = [];
 var current_command = 0;
 var autocomp = {
-		frag: "",
-		comps: [],
-		cindex: 0
+	frag: "",
+	comps: [],
+	cindex: 0
 };
 var cmdnames = []
 
@@ -29,11 +29,32 @@ var handler = function(e)
     }else if(e.keyCode == 9){
     	var c = document.getElementById("command").value;
     	if(autocomp.frag == "" || !c.startsWith(autocomp.frag)){
-    		autocomp.frag = c;
-    		autocomp.cindex = 0;
-    		autocomp.comps = cmdnames.filter(function(s){
-				    			return s.startsWith(c);
-				    		}) 
+    		var split = c.match(/(?:[^\s"]+|"[^"]*")+/g);
+			for(var i = 0; i < split.length; i++) {
+				split[i] = split[i].replace(/"/g,"");
+			}
+    		if(cmdnames.indexOf(split[0]) >= 0 && split[1] !== undefined){
+    			$.get('/autocomp/'+split[0],{p:JSON.stringify(split.slice(1)),cdir:currentDir}, function(data){
+		    		var pargs = JSON.parse(data);
+		    		autocomp.comps = pargs.filter(function(s){
+					    			return s.startsWith(c);
+					    		})
+					if(autocomp.comps.length > 0){ 
+			    		autocomp.frag = c;
+			    		autocomp.cindex = 0;
+			    		document.getElementById("command").value = autocomp.comps[autocomp.cindex];
+	    				autocomp.cindex = (autocomp.cindex+1) % autocomp.comps.length;
+    				}
+		    	});
+
+    		}else {
+    			autocomp.frag = c;
+	    		autocomp.cindex = 0;
+	    		autocomp.comps = cmdnames.filter(function(s){
+					    			return s.startsWith(c);
+					    		}) 
+    		}
+    		
     	}
     	if(autocomp.comps.length > 0){
     		document.getElementById("command").value = autocomp.comps[autocomp.cindex];
@@ -41,6 +62,12 @@ var handler = function(e)
     	}
     	
     	e.preventDefault();
+    }else{
+    	autocomp = {
+			frag: "",
+			comps: [],
+			cindex: 0
+		};
     }
 };
 
