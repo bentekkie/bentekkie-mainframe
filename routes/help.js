@@ -27,8 +27,8 @@ var commands = {
 	},
 	'cd':
 	{
-		usage:'',
-		purpose:''
+		usage:'cd [directory]',
+		purpose:'Change current directory'
 	},
 	'landing-page':
 	{
