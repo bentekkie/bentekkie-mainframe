@@ -61,9 +61,8 @@ exports.getautos = function(req, res){
 	var p = req.query.p;
 	var cdir = req.query.cdir;
 	var args = JSON.parse(p);
-	resp = {};
-	for ( cmd in cmdautos){
-		res[cmd] = cmdautos[cmd]();
+	if ( cmd in cmdautos){
+		res.send(JSON.stringify(cmdautos[cmd](args,cdir)));
 	}else{
 		res.send(empty);
 	}
