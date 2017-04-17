@@ -1,4 +1,4 @@
-var currentDir = "files";
+var currentDir = "/files";
 var command_arr = [];
 var current_command = 0;
 var autocomp = {
@@ -76,6 +76,7 @@ $(document).ready( function(){
 	$.get('/cmdlst',{}, function(data){
 		cmdnames = JSON.parse(data);
 	});
+	update_cursortext()
     document.getElementById("command").addEventListener("keydown",function(e) {
 	    // space and arrow keys
 	    if([38, 40].indexOf(e.keyCode) > -1) {
@@ -84,14 +85,16 @@ $(document).ready( function(){
     }, false);
     if( window.outerWidth < 598){
         $("#content").empty();
-        $.get('/api/cat',{p:JSON.stringify(["help/tooSmall"]),cdir:'files'}, function(data){
+        $.get('/client/tooSmall.html', function(data){
     		$("#content").append(data);
     		gotoBottom("content");
     	});
+    	$("#content").append(data);
+    	gotoBottom("content");
         document.getElementById("command").disabled = true;
         document.getElementById("command").placeholder = "";
     }else{
-    	$.get('/api/cat',{p:JSON.stringify(["start"]),cdir:'files'}, function(data){
+    	$.get('/api/cat',{p:JSON.stringify(["start"]),cdir:'/files'}, function(data){
     		$("#content").append(data);
     		gotoBottom("content");
     	});
@@ -114,7 +117,7 @@ function gotoBottom(id){
 localcmds = {
 		"@clear": function(){
 			$("#content").empty();
-			$.get('/api/cat',{p:JSON.stringify(["start"]),cdir:'files'}, function(data){
+			$.get('/api/cat',{p:JSON.stringify(["start"]),cdir:'/files'}, function(data){
 	    		$("#content").append(data);
 	    		gotoBottom("content");
 	    	});
@@ -136,14 +139,6 @@ localcmds = {
 			var element = document.getElementById("content");
 	    	element.scrollTop = element.scrollHeight;
 		},
-		"@cdfiles": function(){
-			$("#content").append('Changed directory from "B:/'+currentDir+'" to "B:/files"');
-			currentDir = "files";
-		},
-		"@cdhidden": function(){
-			$("#content").append('Changed directory from "B:/'+currentDir+'" to "B:/hidden"');
-			currentDir = "hidden";
-		},
 		"@gb": function(){
 			$.get('/gb/read',{}, function(data){
 	    		$("#content").append(data);
@@ -160,7 +155,7 @@ function run(){
 		command_arr.push(c);
 		current_command = command_arr.length;
 	}
-	$("#content").append("<br \> B:/"+currentDir+">"+c+"<br />	");
+	$("#content").append("<br \> B:"+currentDir+">"+c+"<br />	");
 	var split = c.match(/(?:[^\s"]+|"[^"]*")+/g);
 	for(var i = 0; i < split.length; i++) {
 		split[i] = split[i].replace(/"/g,"");
@@ -179,6 +174,16 @@ function run(){
 		$.get('/api/' + cmd,params, function(data){
 			if(data[0] == "@"){
 				localcmds[data]();
+			}else if(cmd == "cd"){
+				if(data !== 'invalid' && data !== 'error'){
+					currentDir = data
+					update_cursortext()
+				}else if(data == "invalid"){
+					$("#content").append("<br/>Invalid directory<br/>");
+				}else{
+					$("#content").append('<br/>No directory given, usage for cd is: cd [directory] <br/>');
+				}
+				
 			}else{
 				$("#content").append(data);
 			}
@@ -187,4 +192,16 @@ function run(){
 		});
 	}
 	
+}
+
+
+function update_cursortext() {
+	tl = currentDir.split("/")
+	tmp = currentDir
+	if(tl.length > 2){
+		tmp = "/../" + tl[tl.length-1]
+	}
+	$("#submittext").html("B:" + tmp + ">");
+	$("#command").css("width","calc(100% - " + (tmp.length+6) + "ch)")
+
 }

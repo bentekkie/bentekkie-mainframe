@@ -22,8 +22,12 @@ a {
 	left:0
 }
 
+#submittext {
+	display: inline-flex;
+}
+
 #content {
-	width = 100%; 
+	width: 100%; 
 	word-wrap: break-word; 
 	overflow: auto; 
 	max-height: 100vh;
@@ -36,11 +40,18 @@ a {
 	height: 1px;
 }
 
+#submitform {
+	width: 100%;
+	color: #008106;
+	font-size: 25px;
+}
+
 #command {
+	display: inline-flex;
+	width: calc(100% - 5ch);
 	outline-style: none;
 	outline: none;
 	resize: none;
-	width: 100%;
 	border-width: 0;
 	background-color: #000000;
 	color: #008106;

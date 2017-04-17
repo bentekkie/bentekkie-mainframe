@@ -1,5 +1,6 @@
 var fs = require('fs');
 var commands = require('./api').commands
+var disk = require('./disk.js')
 
 var cmdautos = {
 	''	: function (args,cdir) 
@@ -12,16 +13,25 @@ var cmdautos = {
 	},
 	'cat': function (args,cdir)
 	{
-		testFolder = './'+cdir+'/';
-		
-		files = fs.readdirSync(testFolder);
-		resp = []
-		for(file in files){
-			  name = files[file];
-			  name = name.split(".")[0];
-			  resp.push('cat ' +name);
+		testFolder = disk.dir_struct;
+		if(cdir != "/"){
+			cdir = cdir.split("/")
+			cdir.shift();
+			for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
+				testFolder = testFolder.content[cdir[i]];
+			}
 		}
-		return resp
+		resp = []
+		if(testFolder && testFolder.type == 'folder'){
+			files = testFolder.content
+
+			for(file in files){
+				if(files[file].type === 'file'){
+					resp.push('cat ' + file);
+				}	
+			}
+		}
+		return resp;
 	},
 	'clear': function (args,cdir) 
 	{
@@ -40,7 +50,25 @@ var cmdautos = {
 		return [];
 	},
 	'cd': function (args,cdir) {
-		return ["cd files","cd hidden"];
+		testFolder = disk.dir_struct;
+		if(cdir != "/"){
+			cdir = cdir.split("/")
+			cdir.shift();
+			for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
+				testFolder = testFolder.content[cdir[i]];
+			}
+		}
+		resp = []
+		if(testFolder && testFolder.type == 'folder'){
+			files = testFolder.content
+
+			for(file in files){
+				if(files[file].type === 'folder'){
+					resp.push('cd ' + file);
+				}	
+			}
+		}
+		return resp;
 	},
 	'landing-page': function (args,cdir) {
 		return [];

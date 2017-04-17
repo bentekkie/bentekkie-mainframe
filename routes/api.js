@@ -2,6 +2,7 @@
  * New node file
  */
 var fs = require('fs');
+var disk = require('./disk.js')
 
 var commands = {
 	''	: function (args,cdir) 
@@ -10,14 +11,24 @@ var commands = {
     },
 	'ls': function (args,cdir) 
 	{
-		testFolder = './'+cdir+'/';
-		
-		files = fs.readdirSync(testFolder);
+		testFolder = disk.dir_struct;
+		if(cdir != "/"){
+			cdir = cdir.split("/")
+			cdir.shift();
+			for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
+				testFolder = testFolder.content[cdir[i]];
+			}
+		}
 		resp = ""
-		for(file in files){
-			  name = files[file];
-			  name = name.split(".")[0];
-			  if(name != "help") resp += "<br/>" + name ;
+		if(testFolder && testFolder.type == 'folder'){
+			files = testFolder.content
+			resp = "</br><table><tr><th>Name</th><th>Type</th></tr>"
+			for(file in files){
+				resp += "<tr><td>" + file + "</td><td>" + files[file].type + "</td></tr>"
+			}
+			resp += "</table><br/>"
+		}else{
+			resp = "<br/>Folder not found <br/>";
 		}
 		return resp;
 	},
@@ -25,14 +36,25 @@ var commands = {
 	{
 		var resp = "<br/>"
 		if(args != null && args.length > 0){
-			try {
-				resp += fs.readFileSync("./"+cdir+"/"+args[0]+".html", 'utf8');
-			} catch (err) {
-				console.log(err);
+			testFolder = disk.dir_struct;
+			if(cdir != "/"){
+				cdir = cdir.split("/")
+				console.log(cdir);
+				cdir.shift();
+				for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
+					if(testFolder.type = 'folder'){
+						testFolder = testFolder.content[cdir[i]];
+					}
+				}
+			}
+			file = testFolder.content[args[0]];
+			if(testFolder && testFolder.type == 'folder' && testFolder.content[args[0]] && testFolder.content[args[0]].type == 'file'){
+				resp += testFolder.content[args[0]].content;
+			} else{
 				resp = "<br/>File not found <br/>";
 			}
 		}else{
-			resp = "<br/>No page name was specified. Usage of cat is: cat [page-name].<br/>";
+			resp = "<br/>No file name was specified. Usage of cat is: cat [file-name].<br/>";
 			return resp
 		}
 		return resp
@@ -55,13 +77,47 @@ var commands = {
 	},
 	'cd': function (args,cdir) {
 		if(args !== null && args.length >0){
-			if(args[0] == "files" || args[0] == "hidden"){
-				return "@cd"+args[0];
+			testFolder = disk.dir_struct;
+			ndir = cdir+"/" + args[0];
+			if(args[0][0] === "/"){
+				ndir = args[0]
+			}else if(cdir === "/"){
+				ndir = "/" + args[0];
+			}
+			if(ndir.includes("..")){
+				ndir_l = ndir.split("/")
+				console.log(ndir_l);
+				while(ndir_l.indexOf("..") > -1){
+					i = ndir_l.indexOf("..")
+					ndir_l.splice(i-1,2)
+				}
+				ndir = ndir_l.join("/")
+				if(ndir.length <1){
+					ndir = "/"
+				}
+				console.log(ndir);
+			}
+			valid = true
+			if(ndir !== "/"){
+				ndir_l = ndir.split("/")
+				ndir_l.shift();
+				while(valid && ndir_l.length > 0){
+					curr = ndir_l.shift()
+					if(testFolder && testFolder.type === 'folder'){
+						testFolder = testFolder.content[curr]
+					}else{
+						valid = false;
+					}
+				}
+			}
+			
+			if(valid && testFolder && testFolder.type == 'folder'){
+				return ndir;
 			}else{
-				return "<br/>Invalid directory<br/>";
+				return 'invalid';
 			}
 		}else {
-			return '<br/>No directory given, usage for cd is: cd [directory] <br/>';
+			return 'error';
 		}
 	},
 	'landing-page': function (args,cdir) {
