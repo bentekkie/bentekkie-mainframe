@@ -33,15 +33,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-function ensureSecure(req, res, next){
-  if((!req.secure) && (req.get('X-Forwarded-Proto') !== 'https')){
-    // OK, continue
-    return next();
-  };
-  res.redirect('https://'+req.host+req.url); // handle port numbers if non 443
-};
 
-app.all('*', ensureSecure);
 
 app.get('/', routes.index);
 app.get('/users', user.list);
