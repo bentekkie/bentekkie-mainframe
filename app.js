@@ -34,7 +34,7 @@ if ('development' == app.get('env')) {
 }
 
 function ensureSecure(req, res, next){
-  if(req.secure){
+  if((!req.secure) && (req.get('X-Forwarded-Proto') !== 'https')){
     // OK, continue
     return next();
   };
