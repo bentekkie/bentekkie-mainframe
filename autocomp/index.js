@@ -1,8 +1,8 @@
 var fs = require('fs');
-var commands = require('./api').commands
-var disk = require('./disk.js')
+var commands = require('../commands')
+var disk = require('../disk')
 
-var cmdautos = {
+module.exports = {
 	''	: function (args,cdir) 
 	{
 		return [];
@@ -40,7 +40,7 @@ var cmdautos = {
 	'help': function (args,cdir)
 	{	
 		resp = [];
-		for(key in cmdautos){
+		for(key in commands){
 			resp.push('help '+key);
 		}
 		return resp;
@@ -80,19 +80,4 @@ var cmdautos = {
 		}
 		return "@gb";
 	}*/
-};
-
-var empty = JSON.stringify([]);
-
-exports.getautos = function(req, res){
-	var cmd = req.params.cmd;
-	var p = req.query.p;
-	var cdir = req.query.cdir;
-	var args = JSON.parse(p);
-	if ( cmd in cmdautos){
-		res.send(JSON.stringify(cmdautos[cmd](args,cdir)));
-	}else{
-		res.send(empty);
-	}
-  
 };

@@ -1,5 +1,5 @@
 
-var commands = {
+module.exports = {
 	'ls':
 	{
 		usage:'ls',
@@ -34,20 +34,5 @@ var commands = {
 	{
 		usage:'landing-page',
 		purpose:'Navigate back to the landing page of bentekkie.com'
-	},/*
-	'guest-book':
-	{
-		usage:'guest-book or guest-book [name] [message]',
-		purpose:'Displays the guestbook, if name and message are provided then they are added to the guestbook'
-	}*/
-};
-
-exports.cmd = function(req, res){
-	cmd = req.params.cmd;
-	if(cmd in commands){
-		res.render('help',{data:commands[req.params.cmd]});
-	}else{
-		res.send('<br/>Help file not found.<br/>')
 	}
-	
 };

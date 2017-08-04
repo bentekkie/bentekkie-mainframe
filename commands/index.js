@@ -1,16 +1,15 @@
-/**
- * New node file
- */
+var disk = require('../disk')
 var fs = require('fs');
-var disk = require('./disk.js')
-
-var commands = {
-	''	: function (args,cdir) 
+var help = require('../help')
+var jade = require('jade');
+module.exports = {
+	''	: function (args,socket) 
 	{
-		return "@empty";
+		socket.emit('send empty');
     },
-	'ls': function (args,cdir) 
+	'ls': function (args,socket) 
 	{
+		cdir = socket.cdir
 		testFolder = disk.dir_struct;
 		if(cdir != "/"){
 			cdir = cdir.split("/")
@@ -30,16 +29,18 @@ var commands = {
 		}else{
 			resp = "<br/>Folder not found <br/>";
 		}
-		return resp;
+		socket.emit('send api', resp)
 	},
-	'cat': function (args,cdir)
+	'cat': function (args,socket)
 	{
+		cdir = socket.cdir
+		console.log(args)
 		var resp = "<br/>"
 		if(args != null && args.length > 0){
 			testFolder = disk.dir_struct;
 			if(cdir != "/"){
 				cdir = cdir.split("/")
-				console.log(cdir);
+				console.log(cdir)
 				cdir.shift();
 				for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
 					if(testFolder.type = 'folder'){
@@ -55,27 +56,31 @@ var commands = {
 			}
 		}else{
 			resp = "<br/>No file name was specified. Usage of cat is: cat [file-name].<br/>";
-			return resp
 		}
-		return resp
+		socket.emit('send api',resp)
 	},
-	'clear': function (args,cdir) 
+	'clear': function (args,socket) 
 	{
-		return "@clear";
+		socket.emit('send clear');
 	},
-	'help': function (args,cdir)
+	'help': function (args,socket)
 	{
 		if(args != null && args.length < 1){
-			return commands['cat'](["help"],cdir);
+			socket.emit('send api',jade.renderFile('./views/help-info.jade',{cmds:Object.keys(help)}))
 		}else{
-			return '@help';
+			if(args[0] in module.exports){
+		  		socket.emit('send api',jade.renderFile('./views/help.jade',{cmd:args[0],data:help[args[0]]}))
+			}else{
+				socket.emit('send api','<br/>Help file not found.<br/>')
+			}
 		}
 	},
-	'download-resume': function (args,cdir)
+	'download-resume': function (args,socket)
 	{
-		return "@dr";
+		socket.emit('send download resume');
 	},
-	'cd': function (args,cdir) {
+	'cd': function (args,socket) {
+		cdir = socket.cdir
 		if(args !== null && args.length >0){
 			testFolder = disk.dir_struct;
 			ndir = cdir+"/" + args[0];
@@ -112,51 +117,16 @@ var commands = {
 			}
 			
 			if(valid && testFolder && testFolder.type == 'folder'){
-				return ndir;
+				socket.cdir = ndir
+				socket.emit('update cdir',ndir);
 			}else{
-				return 'invalid';
+				socket.emit('send api',"<br/>Invalid directory<br/>");
 			}
 		}else {
-			return 'error';
+			socket.emit('send api','<br/>No directory given, usage for cd is: cd [directory] <br/>');
 		}
 	},
-	'landing-page': function (args,cdir) {
-		return "@lp";
-		
-	},/*
-	'guest-book': function (args,cdir) {
-		if(args != null && args.length >1){
-			gbwrite(args[0],args[1]);
-		}
-		return "@gb";
-	}*/
-};
-
-function gbwrite(wname,wmsg){
-	var entry = {
-			name: wname,
-			msg: wmsg
-			};
-	var file = JSON.parse(fs.readFileSync('./raw/guestbook.json'));
-	file.push(entry);
-	fs.writeFileSync('./raw/guestbook.json', JSON.stringify(file));
-}
-
-exports.api = function(req, res){
-	var cmd = req.params.cmd;
-	var p = req.query.p;
-	var cdir = req.query.cdir;
-	var args = JSON.parse(p);
-	if ( cmd in commands){
-		res.send(commands[cmd](args,cdir));
-	}else{
-		res.send("<br/> Invalid command. <br/>");
+	'landing-page': function (args,socket) {
+		socket.emit('send landing page');
 	}
-  
 };
-
-exports.cmdlst = function(req, res){
-	res.send(JSON.stringify(Object.keys(commands)));
-};
-
-exports.commands = commands;

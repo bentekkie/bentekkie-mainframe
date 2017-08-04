@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "3.2.6",
     "jade": "*",
-    "serve-favicon":"*"
+    "serve-favicon": "*",
+    "socket.io": "^2.0.3"
   }
 }

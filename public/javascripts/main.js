@@ -7,8 +7,8 @@ var autocomp = {
 	cindex: 0
 };
 var cmdnames = []
-
-
+var socket = io();
+var c = ""
 var handler = function(e)
 {
     if (e.keyCode == 38){
@@ -27,26 +27,14 @@ var handler = function(e)
         	document.getElementById("command").value = "";
         }
     }else if(e.keyCode == 9){
-    	var c = document.getElementById("command").value;
+    	c = document.getElementById("command").value;
     	if(autocomp.frag == "" || !c.startsWith(autocomp.frag)){
     		var split = c.match(/(?:[^\s"]+|"[^"]*")+/g);
 			for(var i = 0; i < split.length; i++) {
 				split[i] = split[i].replace(/"/g,"");
 			}
     		if(cmdnames.indexOf(split[0]) >= 0 && split[1] !== undefined){
-    			$.get('/autocomp/'+split[0],{p:JSON.stringify(split.slice(1)),cdir:currentDir}, function(data){
-		    		var pargs = JSON.parse(data);
-		    		autocomp.comps = pargs.filter(function(s){
-					    			return s.startsWith(c);
-					    		})
-					if(autocomp.comps.length > 0){ 
-			    		autocomp.frag = c;
-			    		autocomp.cindex = 0;
-			    		document.getElementById("command").value = autocomp.comps[autocomp.cindex];
-	    				autocomp.cindex = (autocomp.cindex+1) % autocomp.comps.length;
-    				}
-		    	});
-
+    			socket.emit('get autocomp',{cmd:split[0],params:split.slice(1)})
     		}else {
     			autocomp.frag = c;
 	    		autocomp.cindex = 0;
@@ -72,11 +60,10 @@ var handler = function(e)
 };
 
 
+
+
 $(document).ready( function(){
-	$.get('/cmdlst',{}, function(data){
-		cmdnames = JSON.parse(data);
-	});
-	update_cursortext()
+	socket.emit('get cmdlist')
     document.getElementById("command").addEventListener("keydown",function(e) {
 	    // space and arrow keys
 	    if([38, 40].indexOf(e.keyCode) > -1) {
@@ -94,17 +81,14 @@ $(document).ready( function(){
         document.getElementById("command").disabled = true;
         document.getElementById("command").placeholder = "";
     }else{
-    	$.get('/api/cat',{p:JSON.stringify(["start"]),cdir:'/files'}, function(data){
-    		$("#content").append(data);
-    		gotoBottom("content");
-    	});
+    	socket.emit('get api',{cmd:'cat',args:['start']});
         $('input').bind('keydown',handler);
         $('input').bind('keypress',handler);
     }
     $('#submitform').submit(function() { 
     	run();
-    document.getElementById("command").value = "";
-    return false; // cancel original event to prevent form submitting
+	    document.getElementById("command").value = "";
+	    return false; // cancel original event to prevent form submitting
     });
 });
 
@@ -113,41 +97,6 @@ function gotoBottom(id){
    var div = document.getElementById(id);
    div.scrollTop = div.scrollHeight - div.clientHeight;
 }
-
-localcmds = {
-		"@clear": function(){
-			$("#content").empty();
-			$.get('/api/cat',{p:JSON.stringify(["start"]),cdir:'/files'}, function(data){
-	    		$("#content").append(data);
-	    		gotoBottom("content");
-	    	});
-		},
-		"@lp": function(){
-			window.location.href = 'http://www.bentekkie.com';
-		},
-		"@dr": function(){
-			var link = document.createElement('a');
-			link.download = "Benjamin Segall's Resume.pdf";
-			link.href = '/file/benjaminSegallsResume.pdf';
-			
-			// Because firefox not executing the .click() well
-			// We need to create mouse event initialization.
-			var clickEvent = document.createEvent("MouseEvent");
-			clickEvent.initEvent("click", true, true);
-			
-			link.dispatchEvent(clickEvent);
-			var element = document.getElementById("content");
-	    	element.scrollTop = element.scrollHeight;
-		},
-		"@gb": function(){
-			$.get('/gb/read',{}, function(data){
-	    		$("#content").append(data);
-	    		gotoBottom("content");
-	    	});
-		}
-		
-}
-
 
 function run(){
 	var c = document.getElementById("command").value;
@@ -163,45 +112,58 @@ function run(){
 	var cmd = split[0];
 	var args = null;
 	if(split.length > 0) var args = split.slice(1);
-	params = {p: JSON.stringify(args),cdir:currentDir};
-	if(cmd == "help" && args.length > 0){
-		$.get('/help/' + args[0],{}, function(data){
-			$("#content").append(data);
-			
-			gotoBottom("content");
-		});
-	}else{
-		$.get('/api/' + cmd,params, function(data){
-			if(data[0] == "@"){
-				localcmds[data]();
-			}else if(cmd == "cd"){
-				if(data !== 'invalid' && data !== 'error'){
-					currentDir = data
-					update_cursortext()
-				}else if(data == "invalid"){
-					$("#content").append("<br/>Invalid directory<br/>");
-				}else{
-					$("#content").append('<br/>No directory given, usage for cd is: cd [directory] <br/>');
-				}
-				
-			}else{
-				$("#content").append(data);
-			}
-			
-			gotoBottom("content");
-		});
-	}
+	socket.emit('get api',{cmd:cmd,args:args})
 	
 }
+socket.on('connect', function () {
+	socket.on('send clear', function(){
+		$("#content").empty();
+		socket.emit('get api',{cmd:'cat',args:['start']});
+	})
+	socket.on('send landing page', function(){
+		window.location.href = 'http://www.bentekkie.com';
+	})
+	socket.on('send download resume', function(){
+		var link = document.createElement('a');
+		link.download = "Benjamin Segall's Resume.pdf";
+		link.href = '/file/benjaminSegallsResume.pdf';
+		
+		// Because firefox not executing the .click() well
+		// We need to create mouse event initialization.
+		var clickEvent = document.createEvent("MouseEvent");
+		clickEvent.initEvent("click", true, true);
+		
+		link.dispatchEvent(clickEvent);
+		var element = document.getElementById("content");
+    	element.scrollTop = element.scrollHeight;
+	})
+	socket.on('send api', function(data){
+		$("#content").append(data);
+		gotoBottom("content");
+	})
+	socket.on('update cdir', function (currentDir) {
+		tl = currentDir.split("/")
+		tmp = currentDir
+		if(tl.length > 2){
+			tmp = "/../" + tl[tl.length-1]
+		}
+		$("#submittext").html("B:" + tmp + ">");
+		$("#command").css("width","calc(100% - " + (tmp.length+6) + "ch)")
 
+	})
+	socket.on('send cmdlist',function(data){
+		cmdnames = data;
+	})
+	socket.on('send autocomp', function(pargs){
+		autocomp.comps = pargs.filter(function(s){
+		    			return s.startsWith(c);
+		    		})
+		if(autocomp.comps.length > 0){ 
+			autocomp.frag = c;
+			autocomp.cindex = 0;
+			document.getElementById("command").value = autocomp.comps[autocomp.cindex];
+			autocomp.cindex = (autocomp.cindex+1) % autocomp.comps.length;
+		}
+	})
+})
 
-function update_cursortext() {
-	tl = currentDir.split("/")
-	tmp = currentDir
-	if(tl.length > 2){
-		tmp = "/../" + tl[tl.length-1]
-	}
-	$("#submittext").html("B:" + tmp + ">");
-	$("#command").css("width","calc(100% - " + (tmp.length+6) + "ch)")
-
-}

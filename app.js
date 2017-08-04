@@ -5,17 +5,14 @@
 
 var express = require('express')
   , routes = require('./routes')
-  ,	api = require('./routes/api')
   , file = require('./routes/file')
-  , user = require('./routes/user')
-  , http = require('http')
   , path = require('path')
   , favicon = require('serve-favicon')
-  , gb = require('./routes/gb')
-  , help = require('./routes/help')
   , autocomp = require('./routes/autocomp');
 var app = express();
-
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var a = require('./sockets')(io);
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -36,14 +33,9 @@ if ('development' == app.get('env')) {
 
 
 app.get('/', routes.index);
-app.get('/users', user.list);
-app.get('/api/:cmd', api.api);
-app.get('/cmdlst', api.cmdlst);
 app.get('/file/:fname',file.download);
-app.get('/gb/read',gb.read);
-app.get('/help/:cmd',help.cmd);
-app.get('/autocomp/:cmd',autocomp.getautos);
 
-http.createServer(app).listen(app.get('port'), function(){
+http.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
