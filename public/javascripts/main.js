@@ -104,7 +104,7 @@ function run(){
 		command_arr.push(c);
 		current_command = command_arr.length;
 	}
-	$("#content").append("<br \> B:"+currentDir+">"+c+"<br />	");
+	$("#content").append("<br \> "+$("#submittext").html()+c+"<br />	");
 	var split = c.match(/(?:[^\s"]+|"[^"]*")+/g);
 	for(var i = 0; i < split.length; i++) {
 		split[i] = split[i].replace(/"/g,"");
@@ -113,6 +113,7 @@ function run(){
 	var args = null;
 	if(split.length > 0) var args = split.slice(1);
 	socket.emit('get api',{cmd:cmd,args:args})
+	gotoBottom("content");
 	
 }
 socket.on('connect', function () {
@@ -149,6 +150,7 @@ socket.on('connect', function () {
 		}
 		$("#submittext").html("B:" + tmp + ">");
 		$("#command").css("width","calc(100% - " + (tmp.length+6) + "ch)")
+		gotoBottom("content");
 
 	})
 	socket.on('send cmdlist',function(data){
