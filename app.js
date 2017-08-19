@@ -12,15 +12,15 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var a = require('./sockets')(io);
 // all environments
-function ensureSecure(req, res, next) {
-    if (req.secure) {
-        // OK, continue
-        return next();
-    };
-    res.redirect('https://' + req.host + req.url); // handle port numbers if non 443
-};
-
-app.all('*', ensureSecure);
+app.get('*', function(req, res, next) {
+    //http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/TerminologyandKeyConcepts.html#x-forwarded-proto
+    if (req.get('x-forwarded-proto') != "https") {
+        res.set('x-forwarded-proto', 'https');
+        res.redirect('https://' + req.get('host') + req.url);
+    } else {
+        next();
+    }
+});
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
