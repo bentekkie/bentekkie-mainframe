@@ -82,7 +82,7 @@ $(document).ready( function(){
         document.getElementById("command").disabled = true;
         document.getElementById("command").placeholder = "";
     }else{
-    	socket.emit('get api',{cmd:'cat',args:['start']});
+    	//socket.emit('get api',{cmd:'cat',args:['start']});
         $('input').bind('keydown',handler);
         $('input').bind('keypress',handler);
     }
