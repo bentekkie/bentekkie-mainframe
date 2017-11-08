@@ -4,6 +4,10 @@ var help = require('./help')
 var jade = require("jade");
 var dbutils = require('./dbutils')
 module.exports = function (io) {
+	io.on('get motd', function(socket){
+		console.log("motd")
+		commands['cat'](['start'],socket);
+	})
 	io.on('connection', function(socket){
 		socket.on('get cmdlist', function () {
 			console.log("get cmdlist")
@@ -32,7 +36,7 @@ module.exports = function (io) {
 				}
 			})
 			socket.emit('update cdir',socket.cdir);
-			commands['cat'](['start'],socket);
+			//commands['cat'](['start'],socket);
 		})
 	  
 	});

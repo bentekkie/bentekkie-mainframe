@@ -1,4 +1,5 @@
 var currentDir = {};
+var cdir = {}
 var command_arr = [];
 var current_command = 0;
 var autocomp = {
@@ -117,7 +118,7 @@ function run(){
 	gotoBottom("content");
 	
 }
-socket.on('connect', function () {
+socket.once('connect', function () {
 	console.log("connected")
 	socket.emit('get cmdlist')
 	socket.on('send clear', function(){
@@ -146,6 +147,11 @@ socket.on('connect', function () {
 		gotoBottom("content");
 	})
 	socket.on('update cdir', function (currentDir) {
+		if(cdir.path === undefined){
+			console.log("motd")
+			socket.emit('get api',{cmd:'cat',args:['start']});
+		}
+		cdir = currentDir
 		tmp = currentDir.path
 		if(tmp.length > 1) tmp = tmp.slice(0, -1);
 		tl = tmp.split("/")
@@ -171,5 +177,6 @@ socket.on('connect', function () {
 			autocomp.cindex = (autocomp.cindex+1) % autocomp.comps.length;
 		}
 	})
+	socket.emit('get motd');
 })
 
