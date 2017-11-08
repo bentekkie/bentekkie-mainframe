@@ -1,0 +1,85 @@
+extends layout2
+
+block content
+	script(src="https://code.jquery.com/jquery-2.2.4.min.js")
+	link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel='stylesheet')
+	link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', rel='stylesheet')
+	link(href='https://neilj.github.io/Squire/build/Squire-UI.css', rel='stylesheet')
+	script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
+	script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')
+	script(src='/javascripts/Squire-UI.js')
+	script(src='/javascripts/squire.js')
+	script(src="/javascripts/edit.js")
+	// Create the editor container
+	.menu(contenteditable='false')
+		.group
+			.item(data-action='bold')
+				i.fa.fa-bold
+			.item(data-action='italic')
+				i.fa.fa-italic
+			.item(data-action='underline')
+				i.fa.fa-underline
+			#selectFont.item(data-action='selectFont')
+				i.fa.fa-font
+		.group
+			#makeLink.item(data-action='makeLink')
+				i.fa.fa-link
+			.item(data-action='makeUnorderedList')
+				i.fa.fa-list
+			#insertImage.item(data-action='insertImage')
+				i.fa.fa-picture-o
+			.item(data-action='increaseQuoteLevel')
+				i.fa.fa-quote-right
+		.group
+			.item(data-action='makeHeading')
+				i.fa.fa-header
+			.item(data-action='alignLeft')
+				i.fa.fa-align-left
+			.item(data-action='alignCenter')
+				i.fa.fa-align-center
+			.item(data-action='alignRight')
+				i.fa.fa-align-right
+		.group
+			.item(data-action='undo')
+				i.fa.fa-undo
+			.item(data-action='redo')
+				i.fa.fa-undo.flip
+	.templates.hidden
+		#drop-font
+			strong Change Font
+			i.fa.fa-chevron-up.quit
+			br
+			|         Text Size: 
+			select#textSelector
+				option(data-size='12') Small
+				option(data-size='24') Medium
+				option(data-size='30') Large
+			br
+			|         Font: 
+			select#fontSelect
+				option(data-fonts='georgia') Georgia
+				option(data-fonts='arial') Arial
+				option(data-fonts='helvetica, arial') Helvetica
+				option(data-fonts='menlo, consolas, courier new, monospace') Monospace
+				option(data-fonts='"Times New Roman", times') Times New Roman
+				option(data-fonts='tahoma, sans-serif') Tahoma
+				option(data-fonts='"Trebuchet MS"') Trebuchet MS
+				option(data-fonts='verdana') Verdana
+			br
+			.btn.submitFont Apply
+		#drop-link
+			strong Insert Link
+			i.fa.fa-chevron-up.quit
+			input#url(placeholder='Link URL', type='text')
+			.btn.submitLink Insert
+		#drop-image
+			strong Insert Image
+			i.fa.fa-chevron-up.quit
+			input#imageUrl(placeholder='Image URL', type='text')
+			.btn.sumbitImageURL Insert
+
+	#editor
+		div#editor-inside!=file
+	#submit
+		button#submitBtn Submit
+	// Include the Quill library

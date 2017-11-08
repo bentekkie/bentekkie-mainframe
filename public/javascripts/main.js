@@ -1,4 +1,4 @@
-var currentDir = "/files";
+var currentDir = {};
 var command_arr = [];
 var current_command = 0;
 var autocomp = {
@@ -34,6 +34,7 @@ var handler = function(e)
 				split[i] = split[i].replace(/"/g,"");
 			}
     		if(cmdnames.indexOf(split[0]) >= 0 && split[1] !== undefined){
+    			console.log("autocomp")
     			socket.emit('get autocomp',{cmd:split[0],params:split.slice(1)})
     		}else {
     			autocomp.frag = c;
@@ -63,7 +64,7 @@ var handler = function(e)
 
 
 $(document).ready( function(){
-	socket.emit('get cmdlist')
+	
     document.getElementById("command").addEventListener("keydown",function(e) {
 	    // space and arrow keys
 	    if([38, 40].indexOf(e.keyCode) > -1) {
@@ -117,6 +118,8 @@ function run(){
 	
 }
 socket.on('connect', function () {
+	console.log("connected")
+	socket.emit('get cmdlist')
 	socket.on('send clear', function(){
 		$("#content").empty();
 		socket.emit('get api',{cmd:'cat',args:['start']});
@@ -143,8 +146,9 @@ socket.on('connect', function () {
 		gotoBottom("content");
 	})
 	socket.on('update cdir', function (currentDir) {
-		tl = currentDir.split("/")
-		tmp = currentDir
+		tmp = currentDir.path
+		if(tmp.length > 1) tmp = tmp.slice(0, -1);
+		tl = tmp.split("/")
 		if(tl.length > 2){
 			tmp = "/../" + tl[tl.length-1]
 		}

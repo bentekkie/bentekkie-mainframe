@@ -13,24 +13,12 @@ module.exports = {
 	},
 	'cat': function (args,cdir)
 	{
-		testFolder = disk.dir_struct;
-		if(cdir != "/"){
-			cdir = cdir.split("/")
-			cdir.shift();
-			for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
-				testFolder = testFolder.content[cdir[i]];
-			}
-		}
+		
 		resp = []
-		if(testFolder && testFolder.type == 'folder'){
-			files = testFolder.content
-
-			for(file in files){
-				if(files[file].type === 'file'){
-					resp.push('cat ' + file);
-				}	
-			}
+		for(i in cdir.files){
+			resp.push('cat ' + cdir.files[i].split("/")[0]);	
 		}
+		console.log(resp)
 		return resp;
 	},
 	'clear': function (args,cdir) 
@@ -50,23 +38,9 @@ module.exports = {
 		return [];
 	},
 	'cd': function (args,cdir) {
-		testFolder = disk.dir_struct;
-		if(cdir != "/"){
-			cdir = cdir.split("/")
-			cdir.shift();
-			for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
-				testFolder = testFolder.content[cdir[i]];
-			}
-		}
 		resp = []
-		if(testFolder && testFolder.type == 'folder'){
-			files = testFolder.content
-
-			for(file in files){
-				if(files[file].type === 'folder'){
-					resp.push('cd ' + file);
-				}	
-			}
+		for(i in cdir.folders){
+			resp.push('cd ' + cdir.folders[i].split("/")[0]);	
 		}
 		return resp;
 	},

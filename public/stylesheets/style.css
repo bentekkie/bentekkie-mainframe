@@ -11,6 +11,10 @@ a {
   color: #00B7FF;
 }
 
+p {
+	margin: 0 !important
+}
+
 #mobile {
 	font-size: 2em;
 }

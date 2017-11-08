@@ -6,8 +6,10 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "dynamodb": "^1.0.0",
     "express": "3.2.6",
     "jade": "*",
+    "joi": "^13.0.1",
     "serve-favicon": "*",
     "socket.io": "^2.0.3"
   }

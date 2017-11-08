@@ -2,6 +2,7 @@ var disk = require('../disk')
 var fs = require('fs');
 var help = require('../help')
 var jade = require('jade');
+var dbutils = require('../dbutils')
 module.exports = {
 	''	: function (args,socket) 
 	{
@@ -10,54 +11,41 @@ module.exports = {
 	'ls': function (args,socket) 
 	{
 		cdir = socket.cdir
-		testFolder = disk.dir_struct;
-		if(cdir != "/"){
-			cdir = cdir.split("/")
-			cdir.shift();
-			for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
-				testFolder = testFolder.content[cdir[i]];
-			}
-		}
 		resp = ""
-		if(testFolder && testFolder.type == 'folder'){
-			files = testFolder.content
-			resp = "</br><table><tr><th>Name</th><th>Type</th></tr>"
-			for(file in files){
-				resp += "<tr><td>" + file + "</td><td>" + files[file].type + "</td></tr>"
-			}
-			resp += "</table><br/>"
-		}else{
-			resp = "<br/>Folder not found <br/>";
+		resp = "</br><table><tr><th>Name</th><th>Type</th></tr>"
+		for(i in cdir.files){
+			resp += "<tr><td>" + cdir.files[i].split("/")[0] + "</td><td>File</td></tr>"
 		}
+		for(i in cdir.folders){
+			resp += "<tr><td>" + cdir.folders[i].split("/")[0] + "</td><td>Folder</td></tr>"
+		}
+		resp += "</table><br/>"
 		socket.emit('send api', resp)
 	},
 	'cat': function (args,socket)
 	{
 		cdir = socket.cdir
-		console.log(args)
-		var resp = "<br/>"
 		if(args != null && args.length > 0){
-			testFolder = disk.dir_struct;
-			if(cdir != "/"){
-				cdir = cdir.split("/")
-				console.log(cdir)
-				cdir.shift();
-				for (var i = 0; i < cdir.length && testFolder.type === 'folder'; i++) {
-					if(testFolder.type = 'folder'){
-						testFolder = testFolder.content[cdir[i]];
-					}
+			fuuid = "";
+			path = cdir.path+args[0]
+			for(i in cdir.files){
+				tmp = cdir.files[i].split("/")
+				if(tmp[0] == args[0]) {
+					fuuid = tmp.slice(1).join();
+					
 				}
 			}
-			file = testFolder.content[args[0]];
-			if(testFolder && testFolder.type == 'folder' && testFolder.content[args[0]] && testFolder.content[args[0]].type == 'file'){
-				resp += testFolder.content[args[0]].content;
-			} else{
-				resp = "<br/>File not found <br/>";
+			if(fuuid !== ""){
+				dbutils.getFile(fuuid,path, (file) => {
+					socket.emit('send api',"<br/>"+file.content)
+				})
+			}else{
+				socket.emit('send api',"<br/>File not found in current directory. Usage of cat is: cat [file-name].<br/>");
 			}
 		}else{
-			resp = "<br/>No file name was specified. Usage of cat is: cat [file-name].<br/>";
+			socket.emit('send api',"<br/>No file name was specified. Usage of cat is: cat [file-name].<br/>");
 		}
-		socket.emit('send api',resp)
+		
 	},
 	'clear': function (args,socket) 
 	{
@@ -80,48 +68,34 @@ module.exports = {
 		socket.emit('send download resume');
 	},
 	'cd': function (args,socket) {
-		cdir = socket.cdir
+		cdir = socket.cdir.path
 		if(args !== null && args.length >0){
-			testFolder = disk.dir_struct;
-			ndir = cdir+"/" + args[0];
+			ndir = cdir+ args[0];
 			if(args[0][0] === "/"){
 				ndir = args[0]
-			}else if(cdir === "/"){
-				ndir = "/" + args[0];
 			}
+			if(!ndir.endsWith("/")) ndir += "/"
 			if(ndir.includes("..")){
 				ndir_l = ndir.split("/")
-				console.log(ndir_l);
 				while(ndir_l.indexOf("..") > -1){
 					i = ndir_l.indexOf("..")
-					ndir_l.splice(i-1,2)
+					if(i > 1)ndir_l.splice(i-1,2)
+					else ndir_l.splice(i,1)
 				}
 				ndir = ndir_l.join("/")
 				if(ndir.length <1){
 					ndir = "/"
 				}
-				console.log(ndir);
+				
 			}
-			valid = true
-			if(ndir !== "/"){
-				ndir_l = ndir.split("/")
-				ndir_l.shift();
-				while(valid && ndir_l.length > 0){
-					curr = ndir_l.shift()
-					if(testFolder && testFolder.type === 'folder'){
-						testFolder = testFolder.content[curr]
-					}else{
-						valid = false;
-					}
+			dbutils.getFolderByPath(ndir,(err,folder) => {
+				if(!err){
+					socket.cdir = folder
+					socket.emit('update cdir',folder);
+				}else{
+					socket.emit('send api',"<br/>Invalid directory<br/>");
 				}
-			}
-			
-			if(valid && testFolder && testFolder.type == 'folder'){
-				socket.cdir = ndir
-				socket.emit('update cdir',ndir);
-			}else{
-				socket.emit('send api',"<br/>Invalid directory<br/>");
-			}
+			})
 		}else {
 			socket.emit('send api','<br/>No directory given, usage for cd is: cd [directory] <br/>');
 		}
