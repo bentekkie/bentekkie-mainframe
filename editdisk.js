@@ -25,8 +25,8 @@ if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
 
-app.get('/save',editor.download)
 app.get(/\/edit\/.*/, editor.index);
+app.get(/\/ls\/.*/, editor.lsdir);
 app.get(/\/mkdir\/.*/, editor.mkdir);
 app.get(/\/rmdir\/.*/, editor.rmdir);
 io.on('connection', function(socket){

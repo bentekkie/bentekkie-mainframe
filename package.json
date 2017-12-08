@@ -8,6 +8,7 @@
   "dependencies": {
     "dynamodb": "^1.0.0",
     "express": "3.2.6",
+    "http-auth": "^3.2.3",
     "jade": "*",
     "joi": "^13.0.1",
     "serve-favicon": "*",

@@ -1,0 +1,20 @@
+extends layout
+
+block content
+	link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel='stylesheet')
+	a(href="/ls"+parent, style="float:left;font-size:2em;")
+			i.fa.fa-level-up
+	table
+		tr
+			th Name
+			th Type
+		each file in files
+			tr
+				td 
+					a(href="/edit"+path+file[0]) #{file[0]}
+				td File
+		each file in folders
+			tr
+				td 
+					a(href="/ls"+path+file[0]) #{file[0]}
+				td Folder

@@ -27,5 +27,13 @@ module.exports = {
 			folders:dynamo.types.stringSet()
 		},
         tableName: 'bentekkie-mainframe-store'
+	}),
+	User: dynamo.define('Event', {
+		hashKey:"username",
+		schema:{
+			username:Joi.string(),
+			password:Joi.string(),
+		},
+        tableName: 'bentekkie-mainframe-users'
 	})
 }

@@ -2,7 +2,11 @@
  * Module dependencies.
  */
 
+var passport = require('passport');
+var Strategy = require('passport-http').BasicStrategy;
 var express = require('express'),
+    editor = require('./routes/editor'),
+    dbutils = require('./dbutils'),
     routes = require('./routes'),
     file = require('./routes/file'),
     path = require('path'),
@@ -24,6 +28,8 @@ if(process.env.PORT){
 });  
 }
 
+passport.use(new Strategy(dbutils.validateUser));
+
 app.set('port', process.env.PORT || 2000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -44,7 +50,10 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/file/:fname', file.download);
-
+app.get(/\/edit\/.*/,passport.authenticate('basic', { session: false }), editor.index);
+app.get(/\/ls\/.*/,passport.authenticate('basic', { session: false }), editor.lsdir);
+app.get(/\/mkdir\/.*/,passport.authenticate('basic', { session: false }), editor.mkdir);
+app.get(/\/rmdir\/.*/,passport.authenticate('basic', { session: false }), editor.rmdir);
 http.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });

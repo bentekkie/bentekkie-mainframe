@@ -1,9 +1,8 @@
-extends layout2
+extends layout
 
 block content
 	script(src="https://code.jquery.com/jquery-2.2.4.min.js")
 	link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel='stylesheet')
-	link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', rel='stylesheet')
 	link(href='https://neilj.github.io/Squire/build/Squire-UI.css', rel='stylesheet')
 	script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
 	script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')
@@ -11,7 +10,10 @@ block content
 	script(src='/javascripts/squire.js')
 	script(src="/javascripts/edit.js")
 	// Create the editor container
+
 	.menu(contenteditable='false')
+		a(href="/ls"+path, style="float:left;font-size:2em;")
+			i.fa.fa-level-up
 		.group
 			.item(data-action='bold')
 				i.fa.fa-bold
@@ -78,8 +80,9 @@ block content
 			input#imageUrl(placeholder='Image URL', type='text')
 			.btn.sumbitImageURL Insert
 
-	#editor
+	#editor(style="border: 1px solid white;border-radius: 5px;width: 598px;margin-left: auto;margin-right: auto;")
 		div#editor-inside!=file
-	#submit
-		button#submitBtn Submit
+	#submit(style="text-align: center;")
+		button#submitBtn Save
+
 	// Include the Quill library

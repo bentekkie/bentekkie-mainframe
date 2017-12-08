@@ -1,14 +1,17 @@
 var commands = require('./commands')
 var cmdautos = require('./autocomp')
+    ,editor = require('./routes/editor');
 var help = require('./help')
 var jade = require("jade");
 var dbutils = require('./dbutils')
 module.exports = function (io) {
+
 	io.on('get motd', function(socket){
 		console.log("motd")
 		commands['cat'](['start'],socket);
 	})
 	io.on('connection', function(socket){
+		socket.on('save',editor.save)
 		socket.on('get cmdlist', function () {
 			console.log("get cmdlist")
 			socket.emit('send cmdlist', Object.keys(commands))

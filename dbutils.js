@@ -140,6 +140,8 @@ exports.getFolder = function (uuid,path, cb) {
 exports.getFolderByPath = function (path, cb) {
 	db.Folder.scan().where("path").equals(path).exec((err, resp) => {
 		if(!err){
+			console.log(resp)
+			console.log(path)
 			if(resp.Items[0]){
 				cb(null,resp.Items[0].attrs)
 			} else {
@@ -159,6 +161,19 @@ exports.getFileByPath = function (path, cb) {
 		} else cb(err)
 	})
 }
-//exports.getFolderByPath("/files/",(resp) => console.log(resp))
-//exports.createFolder("/","files",() => {exports.createFile("/files/","hello-world","Hello World")})
-//exports.createFile("/files/","about-me","Hello World")
+exports.validateUser = function(username,password,cb){
+	db.User.get(username,(err,resp) => {
+		if(!err){
+			console.log(resp)
+			if(resp === null){
+				cb(null,false)
+			}else if(resp.get('password') === password){
+				cb(null,username)
+			}else{
+				cb(null,false)
+			}
+		}else{
+			cb(err)
+		}
+	})
+}
