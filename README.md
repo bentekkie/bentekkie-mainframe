@@ -8,8 +8,6 @@
 
 This is the code behind my resume website [bentekkie.com](http://bentekkie.com)
 
-Yes I know its a bit overkill but if you like it or want to chat more leave you name in the guestbook over there.
-
 
 ### Tools
 
