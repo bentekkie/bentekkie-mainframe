@@ -10,9 +10,12 @@ exports.index = function(req, res){
 		data = ""
 		if(!err){
 			data = rsp.content
+			console.log(data)
+			res.render('editor', { title: "B:"+path, file:data, path: parent});
+		}else{
+			console.log(err)
+			res.status(500).send('Something broke!')
 		}
-		console.log(data)
-		res.render('editor', { title: "B:"+path, file:data, path: parent});
 	})
 };
 
@@ -38,16 +41,20 @@ exports.lsdir = function (req, res) {
 	dbutils.getFolderByPath(path, (err,resp) => {
 		files = []
 		folders = []
-		console.log(err)
-		for (var i = 0;resp.files && i < resp.files.length; i++) {
-			files.push(resp.files[i].split("/"))
+		if(!err){
+				for (var i = 0;resp.files && i < resp.files.length; i++) {
+					files.push(resp.files[i].split("/"))
+				}
+				for (var i = 0;resp.folders && i < resp.folders.length; i++) {
+					folders.push(resp.folders[i].split("/"))
+				}
+				parent = "/"
+				if(path !== "/") parent = path.split("/").slice(0,-2).join("/")+"/"
+				res.render('folders',{folders:folders, files:files,path:path,title:"B:"+path,parent:parent})
+		}else{
+			console.log(err)
+			res.status(500).send('Something broke!')
 		}
-		for (var i = 0;resp.folders && i < resp.folders.length; i++) {
-			folders.push(resp.folders[i].split("/"))
-		}
-		parent = "/"
-		if(path !== "/") parent = path.split("/").slice(0,-2).join("/")+"/"
-		res.render('folders',{folders:folders, files:files,path:path,title:"B:"+path,parent:parent})
 	})
 }
 
