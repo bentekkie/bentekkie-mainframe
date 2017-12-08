@@ -10,7 +10,6 @@ $(document).ready(function() {
     }
   };
   SquireUI = function(container) {
-    // Create instance of iFrame
     var editor = new Squire( container )
 
     this.linkDrop = new Drop({
@@ -26,7 +25,6 @@ $(document).ready(function() {
       });
 
       $('.submitLink').click(function () {
-        var editor = iframe.contentWindow.editor;
         editor.makeLink($(this).parent().children('#url').first().val());
         $(this).parent().parent().removeClass('drop-open');
         $(this).parent().children('#url').attr('value', '');
@@ -47,7 +45,6 @@ $(document).ready(function() {
 
       $('.sumbitImageURL').unbind().click(function () {
         console.log("Passed through .sumbitImageURL");
-        var editor = iframe.contentWindow.editor;
         url = $(this).parent().children('#imageUrl').first()[0];
         editor.insertImage(url.value);
         $(this).parent().parent().removeClass('drop-open');
@@ -69,7 +66,6 @@ $(document).ready(function() {
       });
 
       $('.submitFont').unbind().click(function () {
-        var editor = iframe.contentWindow.editor;
         var selectedFonts = $('select#fontSelect option:selected').last().data('fonts');
         var fontSize =  $('select#textSelector option:selected').last().data('size') + 'px';
         editor.setFontSize(fontSize);
@@ -88,7 +84,6 @@ $(document).ready(function() {
     });
 
     $('.item').click(function() {
-      var iframe = $(this).parents('.Squire-UI').next('iframe').first()[0];
       var action = $(this).data('action');
 
       test = {
