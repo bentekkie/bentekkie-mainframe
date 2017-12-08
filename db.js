@@ -1,6 +1,6 @@
 var dynamo = require('dynamodb');
 var Joi = require('joi');
-dynamo.AWS.config.loadFromPath('aws-config.json');
+dynamo.AWS.config.update({region: "us-west-2"});
 
 module.exports = {
 	File: dynamo.define('Event', {
