@@ -87,6 +87,7 @@ exports.createFile = function (path,fName,content,cb) {
 			 .where("path")
 			 .equals(path).exec((err, resp) => {
 			 	if(!err){
+			 		console.log(resp)
 			 		fid = resp.Items[0].attrs.fileID;
 			 		fpath = resp.Items[0].attrs.path;
 			 		db.File.create({path:fpath+fName,content:content,parent:fid}, (err,resp) => {
