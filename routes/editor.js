@@ -1,4 +1,3 @@
-disk = require('../disk')
 dbutils = require('../dbutils')
 
 exports.index = function(req, res){
