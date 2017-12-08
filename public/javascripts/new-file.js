@@ -4,7 +4,7 @@ $(document).ready( function(){
 	$('#newForm').submit(function() { 
     	form = new FormData(document.getElementById("newForm"))
     	if(form.get("nameInput") !== ""){
-    		path = "/"+window.location.pathname.split("/").slice(2)+"/"
+    		path = "/"+window.location.pathname.split("/").slice(2).join("/")+"/"
     		if(path === "//") path = "/"
     		socket.emit('new item',{type:form.get('typeSelect'),name:form.get('nameInput'),path:path})
     	}
@@ -15,7 +15,7 @@ $(document).ready( function(){
 function deleteItem(type,name) {
 	sanityCheck = confirm("Do you actually want to delete the "+ type + ": "+name);
 	if(sanityCheck){
-		path = "/"+window.location.pathname.split("/").slice(2)+"/"
+		path = "/"+window.location.pathname.split("/").slice(2).join("/")+"/"
    		if(path === "//") path = "/"
 		socket.emit('delete item',{type:type,name:name,path:path})
 	}
