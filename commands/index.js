@@ -1,5 +1,3 @@
-var disk = require('../disk')
-var fs = require('fs');
 var help = require('../help')
 var jade = require('jade');
 var dbutils = require('../dbutils')

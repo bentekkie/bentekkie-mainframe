@@ -1,6 +1,4 @@
-var fs = require('fs');
 var commands = require('../commands')
-var disk = require('../disk')
 
 module.exports = {
 	''	: function (args,cdir) 
