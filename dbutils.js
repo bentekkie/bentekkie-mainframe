@@ -96,6 +96,8 @@ exports.createFile = function (path,fName,content,cb) {
 				 			}
 			 			})
 			 		})
+			 	}else{
+			 		console.log(err)
 			 	}
 			 })
 }
