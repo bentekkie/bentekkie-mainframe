@@ -1,6 +1,9 @@
 extends layout
 
 block content
+	script(src="https://code.jquery.com/jquery-2.2.4.min.js")
+	script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js')
+	script(src="/javascripts/new-file.js")
 	link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel='stylesheet')
 	a(href="/ls"+parent, style="float:left;font-size:2em;")
 			i.fa.fa-level-up
@@ -13,8 +16,27 @@ block content
 				td 
 					a(href="/edit"+path+file[0]) #{file[0]}
 				td File
+				td 
+					button(onclick="deleteItem('file','"+file[0]+"')") Delete
 		each file in folders
 			tr
 				td 
 					a(href="/ls"+path+file[0]) #{file[0]}
 				td Folder
+				td 
+					button(onclick="deleteItem('folder','"+file[0]+"')") Delete
+	form#newForm
+		p Create new:
+		table
+			tr
+				th Type
+				th Name
+			tr
+				td
+					select#typeSelect(name="typeSelect")
+						option(value="file") File
+						option(value="folder") Folder
+				td
+					input#nameInput(type='text', name='nameInput')
+				td
+					input#newButton(type="submit",tabindex=-1,value='Create')

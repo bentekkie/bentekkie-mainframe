@@ -62,16 +62,49 @@ exports.rmdir = function (req, res) {
 	})
 }
 
-exports.save = function(payload) {
+exports.save = function(socket,payload) {
 	var path = "/"+payload.path.split("/").slice(2).join("/");
 	dbutils.updateFile(path,payload.text,(err) => {
 		console.log(err)
+		socket.emit('editor reload')
 	}, () => {
 		parr = path.split("/")
 		fname = parr.pop()
 		tmppath = parr.join("/")+"/"
-		dbutils.createFile(tmppath,fname,payload.text,(err) => console.log(err))
+		dbutils.createFile(tmppath,fname,payload.text,(err) =>{
+			console.log(err)
+			socket.emit('editor reload')
+		})
+
 	})
 	payload.text
 	console.log(payload)
+}
+
+exports.newItem = function(socket,payload) {
+	if(payload.type === "file"){
+		dbutils.createFile(payload.path,payload.name,(err) => {
+			console.log(err)
+			socket.emit('editor reload')
+		})
+	}else{
+		dbutils.createFolder(payload.path,payload.name, (err) => {
+			console.log(err)
+			socket.emit('editor reload')
+		})
+	}
+}
+
+exports.deleteItem = function(socket,payload) {
+	if(payload.type === "file"){
+		dbutils.deleteFileByPath(payload.path+payload.name,(err) => {
+			console.log(err)
+			socket.emit('editor reload')
+		})
+	}else{
+		dbutils.deleteFolderByPath(payload.path+payload.name+"/",(err) => {
+			console.log(err)
+			socket.emit('editor reload')
+		})
+	}
 }

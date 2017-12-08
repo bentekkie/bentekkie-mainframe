@@ -10,3 +10,8 @@ $(document).ready( function(){
 	})
 });
 
+socket.once('connect', function () {
+	socket.on('editor reload',() => {
+		location.reload(true)
+	})
+})

@@ -11,7 +11,9 @@ module.exports = function (io) {
 		commands['cat'](['start'],socket);
 	})
 	io.on('connection', function(socket){
-		socket.on('save',editor.save)
+		socket.on('save',(payload) => editor.save(socket,payload))
+		socket.on('new item',(payload) => editor.newItem(socket,payload))
+		socket.on('delete item',(payload) => editor.deleteItem(socket,payload))
 		socket.on('get cmdlist', function () {
 			console.log("get cmdlist")
 			socket.emit('send cmdlist', Object.keys(commands))
