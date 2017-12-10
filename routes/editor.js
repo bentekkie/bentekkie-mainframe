@@ -49,6 +49,7 @@ exports.lsdir = function (req, res) {
 					folders.push(resp.folders[i].split("/"))
 				}
 				pathtmp = path.split("/").slice(0,-2).join("/")
+				if(pathtmp == "") pathtmp = "/"
 				res.render('folders',{folders:folders, files:files,path:path,title:"B:"+path,parent:pathtmp})
 		}else{
 			console.log(err)
