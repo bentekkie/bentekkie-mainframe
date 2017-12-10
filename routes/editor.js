@@ -48,9 +48,9 @@ exports.lsdir = function (req, res) {
 				for (var i = 0;resp.folders && i < resp.folders.length; i++) {
 					folders.push(resp.folders[i].split("/"))
 				}
-				parent = "/"
-				if(path !== "/") parent = path.split("/").slice(0,-2).join("/")+"/"
-				res.render('folders',{folders:folders, files:files,path:path,title:"B:"+path,parent:parent})
+				pathtmp = path.split("/").slice(0,-1).join("/")
+				if(pathtmp == "") pathtmp = "/"
+				res.render('folders',{folders:folders, files:files,path:path,title:"B:"+path,parent:pathtmp})
 		}else{
 			console.log(err)
 			res.status(500).send('Something broke!')

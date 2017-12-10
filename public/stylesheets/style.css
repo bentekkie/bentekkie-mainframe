@@ -31,6 +31,7 @@ p {
 }
 
 #content {
+	max-width: 598px;
 	width: 100%; 
 	word-wrap: break-word; 
 	overflow: auto; 
