@@ -10,11 +10,11 @@ phases:
       - npm run build
 artifacts:
   files:
-    - client/build/*
+    - client/build/**/*
     - .ebextentions/**/*
     - .elasticbeanstalk/**/*
     - .settings/**/*
     - commands/**/*
     - raw/**/*
     - routes/**/*
-    - /*
+    - '*'
