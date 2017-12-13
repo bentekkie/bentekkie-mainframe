@@ -1,0 +1,30 @@
+html {
+    color: #008106;
+    font-size: 1em;
+    line-height: 1.4;
+    font-family: "Lucida Console";
+    background-color: #000;
+
+}
+
+
+a {
+  color: #00B7FF;
+}
+
+p {
+  margin: 0 !important
+}
+
+
+.App_container {
+  position:fixed; 
+  bottom:0; 
+  right:0;
+  left:0;
+  color: #008106;
+  font-size: 1em;
+  line-height: 1.4;
+  font-family: "Lucida Console";
+  background-color: #000;
+}

@@ -8,16 +8,17 @@ exports.createFolder = function (path,fName, cb) {
 			 	if(!err){
 			 		fid = resp.Items[0].attrs.fileID;
 			 		fpath = resp.Items[0].attrs.path;
-			 		//console.log(resp.Items[0].attrs.path+fName+"/")
 			 		db.Folder.create({path:fpath+fName+"/",parent:fid}, (err,resp) => {
 			 			if(err) {
 			 				cb(err)
 			 			}else {
 			 				db.Folder.update({fileID:fid,path:fpath,folders:{$add:fName+"/"+resp.get().fileID}}, (err,resp) => {
-				 				if (typeof cb === "function") cb(err)
+				 				if (typeof cb === "function") cb(err,resp.get())
 				 			})
 			 			}
 			 		})
+			 	}else{
+			 		cb(err)
 			 	}
 			 })
 }
@@ -45,7 +46,7 @@ exports.deleteFileByPath = function (path,cb) {
 		   				if(!err){
 			   				parr = path.split("/")
 			   				fname = parr.pop() + "/" + curr.fileID
-			   				db.Folder.update({fileID:folderId,path:parr.join("/")+"/",files:{$del:fname}},(err) => cb(err))
+			   				db.Folder.update({fileID:folderId,path:parr.join("/")+"/",files:{$del:fname}},(err,resp) => (!err)?cb(err,resp.get()):cb(err))
 			   			}else{
 			   				cb(err)
 			   			}
@@ -70,7 +71,7 @@ exports.deleteFolderByPath = function (path,cb) {
 				   				parr = path.split("/")
 				   				parr.pop()
 				   				fname = parr.pop() + "/" + curr.fileID
-				   				db.Folder.update({fileID:parentId,path:parr.join("/")+"/",folders:{$del:fname}},(err) => cb(err))
+				   				db.Folder.update({fileID:parentId,path:parr.join("/")+"/",folders:{$del:fname}},(err,resp) => (!err)?cb(err,resp.get()):cb(err))
 				   			}else{
 				   				cb(err)
 				   			}
@@ -87,18 +88,22 @@ exports.createFile = function (path,fName,content,cb) {
 			 .where("path")
 			 .equals(path).exec((err, resp) => {
 			 	if(!err){
-			 		console.log("path="+path)
 			 		fid = resp.Items[0].attrs.fileID;
 			 		fpath = resp.Items[0].attrs.path;
 			 		db.File.create({path:fpath+fName,content:content,parent:fid}, (err,resp) => {
-			 			db.Folder.update({fileID:fid,path:fpath,files:{$add:fName+"/"+resp.get().fileID}}, (err,resp) => {
-			 				if (typeof cb === "function"){
-				 				cb(err)
-				 			}
-			 			})
+			 			if(!err){
+			 				db.Folder.update({fileID:fid,path:fpath,files:{$add:fName+"/"+resp.get().fileID}}, (err,resp) => {
+				 				if (typeof cb === "function"){
+					 				cb(err,resp.get())
+					 			}
+				 			})
+			 			}else{
+			 				cb(err)
+			 			}
+			 			
 			 		})
 			 	}else{
-			 		console.log(err)
+			 		cb(err)
 			 	}
 			 })
 }
@@ -129,8 +134,8 @@ exports.updateFile = function (path,content,cb,createcb = function(){}) {
 
 exports.getFile= function (uuid,path, cb) {
 	db.File.get({fileID:uuid,path:path},(err, resp) => {
-		if(!err) cb(resp.get())
-		else console.log(err)
+		if(!err) cb(err,resp.get())
+		else cb(err,null)
 	})
 }
 
@@ -143,8 +148,6 @@ exports.getFolder = function (uuid,path, cb) {
 exports.getFolderByPath = function (path, cb) {
 	db.Folder.scan().where("path").equals(path).exec((err, resp) => {
 		if(!err){
-			console.log(resp)
-			console.log(path)
 			if(resp.Items[0]){
 				cb(null,resp.Items[0].attrs)
 			} else {
@@ -167,7 +170,6 @@ exports.getFileByPath = function (path, cb) {
 exports.validateUser = function(username,password,cb){
 	db.User.get(username,(err,resp) => {
 		if(!err){
-			console.log(resp)
 			if(resp === null){
 				cb(null,false)
 			}else if(resp.get('password') === password){

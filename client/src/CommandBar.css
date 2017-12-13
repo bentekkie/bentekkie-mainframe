@@ -1,0 +1,28 @@
+.CommandBar_input {
+	display: inline-flex;
+	width: calc(100% - 5ch);
+	outline-style: none;
+	outline: none;
+	resize: none;
+	border-width: 0;
+	background-color: #000000;
+	color: #008106;
+	font-size: 25px;
+}
+
+.CommandBar_submitText {
+	display: inline-flex;
+}
+
+.CommandBar_form {
+	width: 100%;
+	color: #008106;
+	font-size: 25px;
+}
+
+.CommandBar_submit {
+	position: absolute; 
+	left: -9999px; 
+	width: 1px; 
+	height: 1px;
+}

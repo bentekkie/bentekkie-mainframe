@@ -5,9 +5,7 @@
 var passport = require('passport');
 var Strategy = require('passport-http').BasicStrategy;
 var express = require('express'),
-    editor = require('./routes/editor'),
     dbutils = require('./dbutils'),
-    routes = require('./routes'),
     file = require('./routes/file'),
     path = require('path'),
     favicon = require('serve-favicon');
@@ -39,21 +37,15 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 // development only
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
+app.use('/editor',passport.authenticate('basic', { session: false }), express.static(path.join(__dirname, 'client', 'build')));
 
-
-
-app.get('/', routes.index);
 app.get('/file/:fname', file.download);
-app.get(/\/edit\/.*/,passport.authenticate('basic', { session: false }), editor.index);
-app.get(/\/ls\/.*/,passport.authenticate('basic', { session: false }), editor.lsdir);
-app.get(/\/mkdir\/.*/,passport.authenticate('basic', { session: false }), editor.mkdir);
-app.get(/\/rmdir\/.*/,passport.authenticate('basic', { session: false }), editor.rmdir);
 http.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });

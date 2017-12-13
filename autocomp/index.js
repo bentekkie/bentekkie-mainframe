@@ -16,7 +16,6 @@ module.exports = {
 		for(i in cdir.files){
 			resp.push('cat ' + cdir.files[i].split("/")[0]);	
 		}
-		console.log(resp)
 		return resp;
 	},
 	'clear': function (args,cdir) 

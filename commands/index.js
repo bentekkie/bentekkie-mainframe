@@ -34,8 +34,12 @@ module.exports = {
 				}
 			}
 			if(fuuid !== ""){
-				dbutils.getFile(fuuid,path, (file) => {
-					socket.emit('send api',"<br/>"+file.content)
+				dbutils.getFile(fuuid,path, (err,file) => {
+					if(!err){
+						socket.emit('send api',"<br/>"+file.content+"<br/>")
+					}else{
+						console.log(err)
+					}
 				})
 			}else{
 				socket.emit('send api',"<br/>File not found in current directory. Usage of cat is: cat [file-name].<br/>");
