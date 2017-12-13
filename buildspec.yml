@@ -17,4 +17,6 @@ artifacts:
     - commands/**/*
     - raw/**/*
     - routes/**/*
+    - views/**/*
+    - autocomp/**/*
     - '*'
