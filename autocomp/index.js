@@ -7,7 +7,11 @@ module.exports = {
     },
 	'ls': function (args,cdir) 
 	{
-		return [];
+		resp = []
+		for(i in cdir.folders){
+			resp.push('ls ' + cdir.folders[i].split("/")[0]);	
+		}
+		return resp;
 	},
 	'cat': function (args,cdir)
 	{

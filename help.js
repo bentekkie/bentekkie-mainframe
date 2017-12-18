@@ -2,8 +2,8 @@
 module.exports = {
 	'ls':
 	{
-		usage:'ls',
-		purpose:'To list all pages on the site'
+		usage:'ls [folder-name:optional]',
+		purpose:'To list all contents of a given folder or the current directory if no folder is given.'
 	},
 	'cat':
 	{

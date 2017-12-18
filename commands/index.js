@@ -8,41 +8,70 @@ module.exports = {
     },
 	'ls': function (args,socket) 
 	{
+		function createTable(folder) {
+			resp = "</br>B:"+folder.path
+			resp += "</br><table><tr><th>Name</th><th>Type</th></tr>"
+			for(i in folder.files){
+				resp += "<tr><td>" + folder.files[i].split("/")[0] + "</td><td>File</td></tr>"
+			}
+			for(i in folder.folders){
+				resp += "<tr><td>" + folder.folders[i].split("/")[0] + "</td><td>Folder</td></tr>"
+			}
+			resp += "</table><br/>"
+			return resp
+		}
 		cdir = socket.cdir
-		resp = ""
-		resp = "</br><table><tr><th>Name</th><th>Type</th></tr>"
-		for(i in cdir.files){
-			resp += "<tr><td>" + cdir.files[i].split("/")[0] + "</td><td>File</td></tr>"
+		if(args != null && args.length > 0){
+			if(args[0][0] !== "/") path = cdir.path+args[0]; else path = args[0]
+			patharr = path.split("/")
+			for (var i = patharr.length - 1; i >= 0; i--) {
+				if(patharr[i] == ".."){
+					patharr.splice(i-1,2)
+					i--
+				}
+			}
+			path = patharr.join("/")
+			console.log(path)
+			if(path === "") path = "/"
+			if(path[path.length-1] !== "/") path += "/"
+			dbutils.getFolderByPath(path, (err,folder) => {
+				if(!err){
+					socket.emit('send api', createTable(folder))
+				}else{
+					socket.emit('send api',"<br/>Folder '"+path+"' does not exist. Usage of ls is: ls [folder-name:optional].<br/>");
+				}
+			})
+		}else{
+			socket.emit('send api', createTable(cdir))
 		}
-		for(i in cdir.folders){
-			resp += "<tr><td>" + cdir.folders[i].split("/")[0] + "</td><td>Folder</td></tr>"
-		}
-		resp += "</table><br/>"
-		socket.emit('send api', resp)
 	},
 	'cat': function (args,socket)
 	{
 		cdir = socket.cdir
 		if(args != null && args.length > 0){
 			fuuid = "";
-			path = cdir.path+args[0]
-			for(i in cdir.files){
-				tmp = cdir.files[i].split("/")
-				if(tmp[0] == args[0]) {
-					fuuid = tmp.slice(1).join();
-					
+			if(args[0][0] !== "/") path = cdir.path+args[0]; else path = args[0]
+			patharr = path.split("/")
+			console.log(patharr)
+			for (var i = patharr.length - 1; i >= 0; i--) {
+				if(patharr[i] == ".."){
+					patharr.splice(i-1,2)
+					i--
 				}
 			}
-			if(fuuid !== ""){
-				dbutils.getFile(fuuid,path, (err,file) => {
+			path = patharr.join("/")
+			console.log(path)
+			if(path !== ""){
+				dbutils.getFileByPath(path, (err,file) => {
 					if(!err){
 						socket.emit('send api',"<br/>"+file.content+"<br/>")
 					}else{
+						socket.emit('send api',"<br/>File '"+path+"' does not exits. Usage of cat is: cat [file-name].<br/>");
 						console.log(err)
 					}
 				})
 			}else{
-				socket.emit('send api',"<br/>File not found in current directory. Usage of cat is: cat [file-name].<br/>");
+				socket.emit('send api',"<br/>Path not valid. Usage of cat is: cat [file-name].<br/>");
 			}
 		}else{
 			socket.emit('send api',"<br/>No file name was specified. Usage of cat is: cat [file-name].<br/>");

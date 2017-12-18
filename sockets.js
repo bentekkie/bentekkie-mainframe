@@ -6,7 +6,7 @@ var dbutils = require('./dbutils')
 module.exports = function (io) {
 
 	io.on('get motd', function(socket){
-		commands['cat'](['start'],socket);
+		commands['cat'](['/files/start'],socket);
 	})
 	io.on('connection', function(socket){
 		socket.on('save file',(payload) => {

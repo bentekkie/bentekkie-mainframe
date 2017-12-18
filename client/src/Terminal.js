@@ -25,7 +25,7 @@ class Terminal extends Component {
 			socket.emit('get cmdlist')
 			socket.on('send clear', () => {
 				this.setState({sections: [], rawAutocomp: []})
-				socket.emit('get api',{cmd:'cat',args:['start']});
+				socket.emit('get api',{cmd:'cat',args:['/files/start']});
 			})
 			socket.on('send landing page', function(){
 					window.location.href = 'http://www.bentekkie.com';
