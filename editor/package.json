@@ -1,14 +1,14 @@
 {
-  "name": "client",
+  "name": "editor",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "react": "^16.2.0",
-    "react-contexify": "^2.1.4",
     "react-dom": "^16.2.0",
     "react-icons": "^2.2.7",
     "react-loading-overlay": "^0.2.8",
     "react-rte": "^0.15.0",
+    "react-contexify": "^2.1.4",
     "react-scripts": "1.0.17",
     "socket.io-client": "^2.0.4"
   },

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Terminal from './Terminal'
+import Editor from './Editor'
 import socketIOClient from "socket.io-client";
 
 class App extends Component {
@@ -9,7 +9,7 @@ class App extends Component {
   }
   render() {
     return (
-      <Terminal socket = {this.socket}/>
+      <Editor socket = {this.socket}/>
     );
   }
 }

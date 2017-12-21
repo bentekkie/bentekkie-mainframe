@@ -1,6 +1,6 @@
 {
-  "short_name": "Bentekkie's Mainframe",
-  "name": "Bentekkie's Mainframe",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
