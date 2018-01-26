@@ -1,6 +1,7 @@
 var help = require('../help')
 var jade = require('jade');
 var dbutils = require('../dbutils')
+var request = require('request')
 module.exports = {
 	''	: function (args,socket) 
 	{
@@ -96,7 +97,11 @@ module.exports = {
 	},
 	'download-resume': function (args,socket)
 	{
-		socket.emit('send download resume');
+		var theme = require("jsonresume-theme-spartan");
+		request({url:"http://registry.jsonresume.org/bentekkie.json",json:true}, (err,resp,body) => {
+			var html = theme.render(body);
+			socket.emit('send resume', html);
+		})
 	},
 	'cd': function (args,socket) {
 		cdir = socket.cdir.path

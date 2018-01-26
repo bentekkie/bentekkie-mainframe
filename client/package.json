@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "html2pdf.js": "^0.8.2",
     "react": "^16.2.0",
     "react-contexify": "^2.1.4",
     "react-dom": "^16.2.0",

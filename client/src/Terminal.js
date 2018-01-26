@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Window from './Window';
 import CommandBar from './CommandBar';
+import pdf from 'html2pdf.js';
 import './Terminal.css';
 
 class Terminal extends Component {
@@ -45,6 +46,10 @@ class Terminal extends Component {
 				this.setState((prevState) => ({
 					sections: prevState.sections.concat([data])
 				}))
+			})
+			socket.on('send resume', (src) => {
+				var wnd = window.open("about:blank", "", "_blank");
+				wnd.document.write(src);
 			})
 			socket.on('update cdir', (currentDir) => {
 				if(this.state.currentDir.path === undefined){

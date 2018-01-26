@@ -11,8 +11,10 @@
     "express-session": "^1.15.6",
     "jade": "*",
     "joi": "^13.0.1",
+    "jsonresume-theme-spartan": "^0.2.1",
     "passport": "^0.4.0",
     "passport-http": "^0.3.0",
+    "request": "^2.83.0",
     "serve-favicon": "*",
     "socket.io": "^2.0.3"
   }
