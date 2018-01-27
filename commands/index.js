@@ -86,10 +86,12 @@ module.exports = {
 	'help': function (args,socket)
 	{
 		if(args != null && args.length < 1){
-			socket.emit('send api',jade.renderFile('./views/help-info.jade',{cmds:Object.keys(help)}))
+			socket.emit('send api',jade.renderFile('./views/help-info.jade',{cmds:Object.keys(module.exports)}))
 		}else{
 			if(args[0] in module.exports){
-		  		socket.emit('send api',jade.renderFile('./views/help.jade',{cmd:args[0],data:help[args[0]]}))
+				dbutils.getFile("-1","help", (err,helpfile) => {
+					socket.emit('send api',jade.renderFile('./views/help.jade',{cmd:args[0],data:helpfile["content"][args[0]]}))
+				})
 			}else{
 				socket.emit('send api','<br/>Help file not found.<br/>')
 			}
