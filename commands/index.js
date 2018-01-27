@@ -95,9 +95,9 @@ module.exports = {
 			}
 		}
 	},
-	'download-resume': function (args,socket)
+	'open-resume': function (args,socket)
 	{
-		var theme = require("jsonresume-theme-spartan");
+		var theme = require("jsonresume-theme-spartanbentekkie");
 		request({url:"http://registry.jsonresume.org/bentekkie.json",json:true}, (err,resp,body) => {
 			var html = theme.render(body);
 			socket.emit('send resume', html);
