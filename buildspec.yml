@@ -16,7 +16,7 @@ artifacts:
   files:
     - client/build/**/*
     - editor/build/**/*
-    - .ebextentions/**/*
+    - .ebextensions/**/*
     - .elasticbeanstalk/**/*
     - .settings/**/*
     - commands/**/*
