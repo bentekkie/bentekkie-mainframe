@@ -14,6 +14,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var a = require('./sockets')(io);
 // all environments
+
+/*
 if(process.env.PORT){
   app.get('*', function(req, res, next) {
     //http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/TerminologyandKeyConcepts.html#x-forwarded-proto
@@ -25,6 +27,7 @@ if(process.env.PORT){
     }
 });  
 }
+*/
 
 passport.use(new Strategy(dbutils.validateUser));
 
