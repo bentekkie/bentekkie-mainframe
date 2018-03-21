@@ -51,17 +51,7 @@ var lex = require('greenlock-express').create({
 });
 
 
-// handles acme-challenge and redirects to https
-var http = require('http').createServer(lex.middleware(require('redirect-https')())).listen(parseInt(app.get('port')), function () {
-  console.log("Listening for ACME http-01 challenges on", this.address());
-});
-// handles your app
-var https = require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(parseInt(app.get('port'))+1, function () {
-  console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
-});
 
-var io = require('socket.io')(https);
-var a = require('./sockets')(io);
 
 // all environments
 
@@ -105,6 +95,14 @@ app.get("/",function(req, res) {
     res.sendfile(path.join(__dirname ,'client' ,'build'+'/index.html'));
 })
 app.get('/file/:fname', file.download);
-http.listen(app.get('port'), function() {
-    console.log('Express server listening on port ' + app.get('port'));
+// handles acme-challenge and redirects to https
+var http = require('http').createServer(lex.middleware(require('redirect-https')())).listen(parseInt(app.get('port')), function () {
+  console.log("Listening for ACME http-01 challenges on", this.address());
 });
+// handles your app
+var https = require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(parseInt(app.get('port'))+1, function () {
+  console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
+});
+
+var io = require('socket.io')(https);
+var a = require('./sockets')(io);
