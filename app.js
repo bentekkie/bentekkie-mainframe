@@ -31,7 +31,7 @@ if(process.env.PORT){
 
 passport.use(new Strategy(dbutils.validateUser));
 
-app.set('port', 443);
+app.set('port', process.env.PORT || 2000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(favicon(__dirname + '/client/build/favicon.ico'));
