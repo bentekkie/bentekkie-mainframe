@@ -9,6 +9,8 @@
     "dynamodb": "^1.0.0",
     "express": "3.2.6",
     "express-session": "^1.15.6",
+    "greenlock-express": "^2.0.12",
+    "https": "^1.0.0",
     "jade": "*",
     "joi": "^13.0.1",
     "jsonresume-theme-spartanbentekkie": "^0.2.4",
