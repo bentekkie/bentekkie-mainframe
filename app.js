@@ -52,11 +52,11 @@ var lex = require('greenlock-express').create({
 
 
 // handles acme-challenge and redirects to https
-var http = require('http').createServer(lex.middleware(require('redirect-https')())).listen(app.get('port'), function () {
+var http = require('http').createServer(lex.middleware(require('redirect-https')())).listen(parseInt(app.get('port')), function () {
   console.log("Listening for ACME http-01 challenges on", this.address());
 });
 // handles your app
-var https = require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(app.get('port')+1, function () {
+var https = require('https').createServer(lex.httpsOptions, lex.middleware(app)).listen(parseInt(app.get('port'))+1, function () {
   console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
 });
 
