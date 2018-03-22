@@ -14,8 +14,10 @@
     "jade": "*",
     "joi": "^13.0.1",
     "jsonresume-theme-spartanbentekkie": "^0.2.4",
+    "le-challenge-fs": "^2.0.8",
     "passport": "^0.4.0",
     "passport-http": "^0.3.0",
+    "redirect-https": "^1.1.5",
     "request": "^2.83.0",
     "serve-favicon": "*",
     "socket.io": "^2.0.3"
