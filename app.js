@@ -41,15 +41,14 @@ var lex = require('greenlock-express').create({
 // If you wish to replace the default plugins, you may do so here
 //
 , challenges: { 'http-01': require('le-challenge-fs').create({ webrootPath: '/tmp/acme-challenges' }) }
-, store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' })
 
+,  store: require('le-store-certbot').create({ webrootPath: '/tmp/acme-challenges' }),
 // You probably wouldn't need to replace the default sni handler
 // See https://git.coolaj86.com/coolaj86/le-sni-auto if you think you do
 //, sni: require('le-sni-auto').create({})
 
 , approveDomains: [ 'bentekkiemainframe-env.aizyyr2mr9.us-west-2.elasticbeanstalk.com', 'www.bentekkiemainframe-env.aizyyr2mr9.us-west-2.elasticbeanstalk.com' ]
 });
-
 
 
 
