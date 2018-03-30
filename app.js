@@ -64,7 +64,7 @@ const lex = require('greenlock-express').create({
   approveDomains: (opts, certs, cb) => {
     if (certs) {
       // change domain list here
-      opts.domains = ['bentekkiemainframe-env.aizyyr2mr9.us-west-2.elasticbeanstalk.com', 'bentekkie.com']
+      opts.domains = ['bentekkiemainframe-env.aizyyr2mr9.us-west-2.elasticbeanstalk.com']
     } else {
       // change default email to accept agreement
       opts.email = 'bentekkie@gmail.com';
@@ -85,4 +85,4 @@ var io = require('socket.io')(https);
 var a = require('./sockets')(io);
 const redirectHttps = require('redirect-https');
 require('http').createServer(lex.middleware(redirectHttps())).listen(app.get('port'));
-https.listen(parseInt(app.get('port'))+1);
+https.listen(parseInt(app.get('port'))``+1);
