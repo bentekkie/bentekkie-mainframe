@@ -57,14 +57,14 @@ app.get('/file/:fname', file.download);
 
 
 
-const PROD = false;
+const PROD = true;
 const lex = require('greenlock-express').create({
   server: PROD ? 'https://acme-v01.api.letsencrypt.org/directory' : 'staging',
 
   approveDomains: (opts, certs, cb) => {
     if (certs) {
       // change domain list here
-      opts.domains = ['bentekkiemainframe-env.aizyyr2mr9.us-west-2.elasticbeanstalk.com']
+      opts.domains = ['bentekkie.com','www.bentekkie.com']
     } else {
       // change default email to accept agreement
       opts.email = 'bentekkie@gmail.com';
