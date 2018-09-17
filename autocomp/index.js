@@ -1,58 +1,72 @@
-var commands = require('../commands')
+import commands from '../commands';
 
-module.exports = {
-	''	: function (args,cdir) 
-	{
+export default {
+	'': function () {
 		return [];
     },
-	'ls': function (args,cdir) 
-	{
-		resp = []
-		for(i in cdir.folders){
+	'ls': function (args,cdir) {
+		const resp = []
+		for (const i in cdir.folders) {
 			resp.push('ls ' + cdir.folders[i].split("/")[0]);	
 		}
+
 		return resp;
 	},
-	'cat': function (args,cdir)
-	{
-		
-		resp = []
-		for(i in cdir.files){
+	'cat': function (args,cdir) {
+		const resp = []
+		for (const i in cdir.files) {
 			resp.push('cat ' + cdir.files[i].split("/")[0]);	
 		}
+
 		return resp;
 	},
-	'clear': function (args,cdir) 
-	{
+	'nano': function (args,cdir) {
+		const resp = []
+		for (const i in cdir.files) {
+			resp.push('nano ' + cdir.files[i].split("/")[0]);	
+		}
+
+		return resp;
+	},
+	'clear': function () {
 		return [];
 	},
-	'help': function (args,cdir)
-	{	
-		resp = [];
-		for(key in commands){
+	'help': function () {	
+		const resp = [];
+		for (const key in commands) {
 			resp.push('help '+key);
 		}
+
 		return resp;
 	},
-	'download-resume': function (args,cdir)
-	{
+	'download-resume': function () {
 		return [];
 	},
 	'cd': function (args,cdir) {
-		resp = []
-		for(i in cdir.folders){
+		const resp = []
+		for (const i in cdir.folders) {
 			resp.push('cd ' + cdir.folders[i].split("/")[0]);	
 		}
+
 		return resp;
 	},
-	'landing-page': function (args,cdir) {
-		return [];
-		
-	},/*
-	'guest-book': function (args,cdir) {
-		if(args != null && args.length >1){
-			gbwrite(args[0],args[1]);
+	'landing-page': function () {
+		return [];	
+	},
+	'rm': function (args,cdir) {
+		const resp = []
+		for (const i in cdir.files) {
+			resp.push('rm ' + cdir.files[i].split("/")[0]);	
 		}
-		return "@gb";
-	}*/
-};
+
+		return resp;
+	},
+	'rmdir': function (args,cdir) {
+		const resp = []
+		for (const i in cdir.folders) {
+			resp.push('rmdir ' + cdir.folders[i].split("/")[0]);	
+		}
+
+		return resp;
+	}
+}

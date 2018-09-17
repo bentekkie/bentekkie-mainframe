@@ -3,12 +3,9 @@ import './CommandBar.css';
 
 
 class CommandBar extends Component {
-	constructor(props){
+	constructor(props) {
 		super(props)
 		this.state = {
-			command : "",
-			command_history: [],
-			curr_cmd:0,
 			autocomp: {
 						frag: "",
 						comps: [],
@@ -22,122 +19,120 @@ class CommandBar extends Component {
 	}
 
 	handleChange(event) {
-		this.setState({command: event.target.value});
+		this.props.updateCommand(event.target.value)
 	}
 
 	handleSubmit(event) {
-		if(this.state.command === "")console.log("empty")
-		this.props.commandHandler(this.state.command)
+		this.props.commandHandler(this.props.command)
+		this.props.updateCommand("")
+		this.props.updateCurrCmd(0)
 		this.setState((prevState) => ({
-			command:"",
-			command_history:[prevState.command,...prevState.command_history],
-			curr_cmd:0,
-			autocomp:{
-					frag:"",
-					cindex:0,
-					comps:[]
+			autocomp: {
+					frag: "",
+					cindex: 0,
+					comps: []
 				}
 		}))
 		event.preventDefault()
 	}
+
 	componentWillReceiveProps(nextProps) {
-		function arrays_equal(a,b) { return !!a && !!b && !(a<b || b<a); }
-		if(nextProps.rawAutocomp.length > 0 && !arrays_equal(nextProps.rawAutocomp,this.props.rawAutocomp)){
-			let filteredArr = nextProps.rawAutocomp.filter((s) =>{
-								return s.startsWith(this.state.command);
-							})
-			if(filteredArr.length > 0){ 
+		const arraysEqual = (a,b) => Boolean(a) && Boolean(b) && !(a<b || b<a); 
+
+		if (0 < nextProps.rawAutocomp.length && !arraysEqual(nextProps.rawAutocomp,this.props.rawAutocomp)) {
+			const filteredArr = nextProps.rawAutocomp.filter((s) => s.startsWith(this.props.command))
+			if (0 < filteredArr.length) { 
+				this.props.updateCommand(filteredArr[0])
 				this.setState((prevState) => ({
-					command:filteredArr[0],
-					autocomp:{
-						frag:prevState.command,
-						cindex:1 % filteredArr.length,
-						comps:filteredArr
+					autocomp: {
+						frag: this.props.command,
+						cindex: 1 % filteredArr.length,
+						comps: filteredArr
 					}
 				}))
-			}else{
+			} else {
 				this.setState((prevState) => ({
-					autocomp:{
+					autocomp: {
 						...prevState.autocomp,
-						comps:filteredArr
+						comps: filteredArr
 					}
 				}))
 			}
 		}
 	}
-	handleKeyDown(event){
-		if (event.keyCode === 38){
-			if(this.state.curr_cmd < this.state.command_history.length){
-    			this.setState((prevState) => ({
-    				command:prevState.command_history[prevState.curr_cmd],
-    				curr_cmd:prevState.curr_cmd+1
-    			}))
-    		}
-			event.preventDefault();
-    	}else if(event.keyCode === 40){
-    		if(this.state.curr_cmd > 1){
-    			this.setState((prevState) => ({
-    				command:prevState.command_history[prevState.curr_cmd-2],
-    				curr_cmd:prevState.curr_cmd-1
-    			}))
-    		}else if(this.state.curr_cmd === 1){
-				this.setState({
-    				command:"",
-    				curr_cmd:0
-    			})
-    		}
-        	event.preventDefault();
-    	}else if(event.keyCode === 9){
-    		if(this.state.autocomp.frag === "" || !this.state.command.startsWith(this.state.autocomp.frag)){
-	    		var split = this.state.command.match(/(?:[^\s"]+|"[^"]*")+/g);
-				for(var i = 0; i < split.length; i++) {
-					split[i] = split[i].replace(/"/g,"");
+
+	handleKeyDown(event) {
+		switch (event.keyCode) {
+			case 38:
+				if (this.props.currCmd < this.props.commandHistory.length) {
+					this.props.updateCommand(this.props.commandHistory[this.props.currCmd])
+					this.props.updateCurrCmd(this.props.currCmd+1)
 				}
-	    		if(this.props.cmdNames.indexOf(split[0]) >= 0 && split[1] !== undefined){
-	    			this.props.getNewAutoComp({cmd:split[0],params:split.slice(1)})
-	    		}else {
-		    		let filteredArr = this.props.cmdNames.filter((s) => {
-						    			return s.startsWith(this.state.command);
-						    		})
-		    		if(filteredArr.length > 0){ 
-						this.setState((prevState) => ({
-							command:filteredArr[0],
-							autocomp:{
-								frag:prevState.command,
-								cindex:1 % filteredArr.length,
-								comps:filteredArr
-							}
-						}))
-					}else{
-						this.setState((prevState) => ({
-							autocomp:{
-								...prevState.autocomp,
-								comps:filteredArr
-							}
-						}))
+				event.preventDefault();
+				break;
+			case 40:
+				if (1 < this.props.currCmd) {
+					this.props.updateCommand(this.props.commandHistory[this.props.currCmd-2])
+					this.props.updateCurrCmd(this.props.currCmd-1)
+				} else if (1 === this.props.currCmd) {
+					this.props.updateCommand("")
+					this.props.updateCurrCmd(0)
+				}
+				event.preventDefault();
+				break;
+			case 9:
+				if ("" === this.state.autocomp.frag || !this.props.command.startsWith(this.state.autocomp.frag)) {
+					var split = this.props.command.match(/(?:[^\s"]+|"[^"]*")+/gu);
+					if (!split) {
+						split = []
 					}
-	    		}
-	    		
-	    	}else if(this.state.autocomp.comps.length > 0){
-	    		this.setState((prevState) => ({
-					command:prevState.autocomp.comps[prevState.autocomp.cindex],
-					autocomp:{
-						...prevState.autocomp,
-						cindex:(prevState.autocomp.cindex+1) % prevState.autocomp.comps.length
+					for (var i = 0; i < split.length; i += 1) {
+						split[i] = split[i].replace(/"/gu,"");
+					}
+					if (0 <= this.props.cmdNames.indexOf(split[0]) && split[1] !== undefined) {
+						this.props.getNewAutoComp({ cmd: split[0],params: split.slice(1) })
+					} else {
+						const filteredArr = this.props.cmdNames.filter((s) => s.startsWith(this.props.command))
+						if (0 < filteredArr.length) { 
+							this.props.updateCommand(filteredArr[0])
+							this.setState((prevState) => ({
+								autocomp: {
+									frag: this.props.command,
+									cindex: 1 % filteredArr.length,
+									comps: filteredArr
+								}
+							}))
+						} else {
+							this.setState((prevState) => ({
+								autocomp: {
+									...prevState.autocomp,
+									comps: filteredArr
+								}
+							}))
+						}
+					}
+					
+				} else if (0 < this.state.autocomp.comps.length) {
+					this.props.updateCommand(this.state.autocomp.comps[this.state.autocomp.cindex])
+					this.setState((prevState) => ({
+						autocomp: {
+							...prevState.autocomp,
+							cindex: (prevState.autocomp.cindex+1) % prevState.autocomp.comps.length
+						}
+					}))
+				}
+				event.preventDefault();
+				break;
+			default:
+				this.setState(() => ({
+					autocomp: {
+						frag: "",
+						cindex: 0,
+						comps: []
 					}
 				}))
-	    	}
-    	
-    		event.preventDefault();
-    	}else{
-    		this.setState((prevState) => ({
-				autocomp:{
-					frag:"",
-					cindex:0,
-					comps:[]
-				}
-			}))
-    	}
+				break;
+		}
 	}
 
 	render() {
@@ -147,9 +142,9 @@ class CommandBar extends Component {
 					<div className="CommandBar_submitText">{this.props.prompt}</div>
 					<input 
 						className= "CommandBar_input" 
-						style={{width:"calc(100% - " + (this.props.prompt.length+6) + "ch)"}} 
+						style={{ width: "calc(100% - " + (this.props.prompt.length+6) + "ch)" }} 
 						type="text" 
-						value={this.state.command} 
+						value={this.props.command} 
 						onChange={this.handleChange} 
 						placeholder="Enter command"
 						autoFocus
@@ -159,10 +154,10 @@ class CommandBar extends Component {
 						onKeyDown={this.handleKeyDown} 
 					/>
 				</div>
-				<input className= "CommandBar_submit" type="submit" tabIndex='-1'/>
+				<input className= "CommandBar_submit" type="submit" tabIndex="-1"/>
 			</form>
 		);
 	}
 }
 
-export default CommandBar;
+export default CommandBar
