@@ -12,7 +12,6 @@ import { createServer as _createServer } from 'https';
 import socketIo from 'socket.io';
 import redirectHttps from 'redirect-https';
 import sockets from './sockets';
-import logger from './logger';
 
 var app = express();
 
@@ -44,7 +43,7 @@ if ("dev" === process.argv[2]) {
     const server = createServer(app)
     const io = socketIo(server);
     sockets(io);
-    server.listen(app.get('port'),() => logger.log("info","Dev server running on port" + app.get('port')))
+    server.listen(app.get('port'),() => console.log("info","Dev server running on port" + app.get('port')))
 } else {
     const PROD = true;
     const lex = create({
