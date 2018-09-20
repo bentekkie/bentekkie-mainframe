@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SaveIcon from 'react-icons/lib/md/save'
+import CloseIcon from 'react-icons/lib/md/close'
 import './EditFile.css';
 import RichTextEditor from 'react-rte';
 import Button from 'react-rte/lib/ui/Button'
@@ -7,7 +8,7 @@ import Button from 'react-rte/lib/ui/Button'
 
 
 class EditFile extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       value: RichTextEditor.createEmptyValue()
@@ -21,9 +22,9 @@ class EditFile extends Component {
     }))
   }
 
-  onChange(value){
-    this.setState({value});
-  };
+  onChange(value) {
+    this.setState({ value });
+  }
 
   render () {
     return (
@@ -38,6 +39,14 @@ class EditFile extends Component {
           onClick={() => this.props.onSave(this.state.value.toString('html'))}
         >
           <SaveIcon className="Editor_save"/>
+        </Button>,
+        <Button 
+          key = {2}
+          label="Close"
+          focusOnClick={false}
+          onClick={() => this.props.onClose()}
+          >
+          <CloseIcon className="Editor_save"/>
         </Button>
         ]}
         />
