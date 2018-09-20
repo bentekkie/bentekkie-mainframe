@@ -48,8 +48,8 @@ if ("dev" === process.argv[2]) {
 } else {
     const PROD = true;
     const lex = create({
-      server: PROD ? 'https://acme-v01.api.letsencrypt.org/directory' : 'staging',
-    
+      version: 'v02',
+      server: PROD ? 'https://acme-v02.api.letsencrypt.org/directory' : 'staging',
       approveDomains: (opts, certs, cb) => {
         if (certs) {
           // change domain list here

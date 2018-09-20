@@ -1,5 +1,5 @@
 import dynamo from 'dynamodb'
-import Joi from 'Joi'
+import Joi from 'joi'
 dynamo.AWS.config.update({ region: "us-west-2" });
 
 export const File = dynamo.define('Event', {
