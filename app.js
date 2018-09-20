@@ -44,11 +44,7 @@ if ("dev" === process.argv[2]) {
     const server = createServer(app)
     const io = socketIo(server);
     sockets(io);
-<<<<<<< HEAD
     server.listen(app.get('port'),() => logger.log("info","Dev server running on port" + app.get('port')))
-=======
-    server.listen(app.get('port'),() => console.log("info","Dev server running on port" + app.get('port')))
->>>>>>> 27d709a0757d9a31a6a8496cdd51d24f14070b7e
 } else {
     const PROD = true;
     const lex = create({
