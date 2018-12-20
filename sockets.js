@@ -2,8 +2,10 @@ import commands from './commands';
 import cmdautos from './autocomp';
 import { updateFile, createFile, createFolder, deleteFileByPath, deleteFolderByPath, getFolderByPath, getFileByPath } from './dbutils';
 
+import socketIo from 'socket.io'
+
 /**
- * @param {Socket} io SocketIo Object
+ * @param {socketIo.Server} io SocketIo Object
  * @returns {void}
  */
 export default function (io) {

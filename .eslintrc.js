@@ -4,6 +4,7 @@ module.exports = {
         "node": true
     },
     "extends": "eslint:recommended",
+    "parser":"babel-eslint",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
@@ -41,7 +42,7 @@ module.exports = {
         "callback-return": "error",
         "camelcase": "error",
         "capitalized-comments": "off",
-        "class-methods-use-this": "error",
+        "class-methods-use-this": "off",
         "comma-dangle": "error",
         "comma-spacing": "off",
         "comma-style": [

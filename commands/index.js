@@ -3,7 +3,7 @@ import { getFolderByPath, getFileByPath, getFile, validateUser, createFile, crea
 import request from 'request';
 import { render } from "jsonresume-theme-spartanbentekkie";
 import logger from "../logger"
-
+import { SocketServer } from './SocketServer';
 
 const createTable = (folder) => {
 	let resp = "</br>B:"+folder.path
@@ -24,6 +24,12 @@ const createTable = (folder) => {
 }
 
 export default {
+
+/**
+ * @param {string[]} args - command args
+ * @param {any} socket - socket
+ * @returns {void}
+ */
 '': function (args,socket) {
 	socket.emit('send empty');
 },
