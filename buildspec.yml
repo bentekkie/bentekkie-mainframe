@@ -3,6 +3,7 @@ version: 0.2
 environment_variables:
   plaintext:
     PACKAGE: "github.com/bentekkie/bentekkie-mainframe"
+    GODIR: "/go"
 
 phases:
   install:
@@ -11,11 +12,21 @@ phases:
       nodejs: 10
     commands:
       - cd client && npm install
-      - go get ./...
+      - echo CODEBUILD_SRC_DIR - $CODEBUILD_SRC_DIR
+      - echo GOPATH - $GODIR
+
+      - echo Create dir in GOPATH for sources
+      - mkdir -p ${GODIR}/src/${PACKAGE}
+
+      - echo Copy source files into GOPATH
+      - echo cp -a ${CODEBUILD_SRC_DIR}/.  ${GODIR}/src/${PACKAGE}
+      - cp -a ${CODEBUILD_SRC_DIR}/.  ${GODIR}/src/${PACKAGE}
+
+      - cd ${GODIR}/src/${PACKAGE} && go get ./...
   build:
     commands:
       - cd ${CODEBUILD_SRC_DIR}/client && npm run build
-      - go build -o ${CODEBUILD_SRC_DIR}/serverbin
+      - cd ${GODIR}/src/${PACKAGE} && go build -o ${CODEBUILD_SRC_DIR}/serverbin
 
 artifacts:
   files:
