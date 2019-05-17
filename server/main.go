@@ -7,7 +7,6 @@ import (
 	pb "github.com/bentekkie/bentekkie-mainframe/server/generated"
 	"github.com/bentekkie/bentekkie-mainframe/server/mainframe"
 	"github.com/bentekkie/bentekkie-mainframe/server/middleware"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"golang.org/x/crypto/acme/autocert"
