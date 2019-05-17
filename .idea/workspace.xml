@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9cd5d4c-8d8b-47ee-88b4-a671a761b90e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/iptables.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/iptables.config" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,7 +30,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/main.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="169">
@@ -60,11 +60,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
+            <state relative-caret-position="51">
+              <caret line="3" column="23" lean-forward="true" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -103,12 +103,12 @@
         <option value="$PROJECT_DIR$/server/mainframe/shell_service.go" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/buildspec.yml" />
-        <option value="$PROJECT_DIR$/.ebextensions/iptables.config" />
         <option value="$PROJECT_DIR$/client/src/App.tsx" />
         <option value="$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" />
         <option value="$PROJECT_DIR$/.old-ebextensions/https-instance.config" />
         <option value="$PROJECT_DIR$/.ebextensions/https-instance.config" />
         <option value="$PROJECT_DIR$/server/main.go" />
+        <option value="$PROJECT_DIR$/.ebextensions/iptables.config" />
       </list>
     </option>
   </component>
@@ -343,13 +343,6 @@
     <entry file="file://$PROJECT_DIR$/messages/command.proto">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -374,6 +367,13 @@
           <folding>
             <element signature="e#16#381#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="23" lean-forward="true" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
         </state>
       </provider>
     </entry>
