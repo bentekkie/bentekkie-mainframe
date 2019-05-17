@@ -2,11 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9cd5d4c-8d8b-47ee-88b4-a671a761b90e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.ebextensions/9-letsencrypt-ssl-install.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.ebextensions/9-post-renew-cp-s3.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.ebextensions/ssl.conf.template" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/9-letsencrypt-ssl-install.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/9-post-renew-cp-s3.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/ssl.conf.template" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.old-ebextensions/https-instance-single.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/https-instance-single.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.old-ebextensions/https-instance.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/https-instance.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.old-ebextensions/iptables.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/iptables.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,40 +38,26 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.ebextensions/ssl.conf.template">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="10" lean-forward="true" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-393">
-              <caret line="8" column="41" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="28" column="34" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
+            <state relative-caret-position="189">
+              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance.config">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.old-ebextensions/iptables.config">
+        <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
               <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
@@ -76,17 +66,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance-single.config">
+        <entry file="file://$PROJECT_DIR$/messages/command.proto">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" selection-start-line="6" selection-end-line="6" />
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -114,8 +100,11 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/buildspec.yml" />
         <option value="$PROJECT_DIR$/.ebextensions/iptables.config" />
-        <option value="$PROJECT_DIR$/server/main.go" />
         <option value="$PROJECT_DIR$/client/src/App.tsx" />
+        <option value="$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" />
+        <option value="$PROJECT_DIR$/.old-ebextensions/https-instance.config" />
+        <option value="$PROJECT_DIR$/.ebextensions/https-instance.config" />
+        <option value="$PROJECT_DIR$/server/main.go" />
       </list>
     </option>
   </component>
@@ -146,12 +135,12 @@
             <path>
               <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
               <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name=".old-ebextensions" type="462c0819:PsiDirectoryNode" />
+              <item name="messages" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
               <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name="messages" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
@@ -176,6 +165,9 @@
     <property name="ts.external.directory.path" value="C:\Users\bente\go\src\github.com\bentekkie\bentekkie-mainframe\client\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bente\go\src\github.com\bentekkie\bentekkie-mainframe\.ebextensions" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\bente\go\src\github.com\bentekkie\bentekkie-mainframe" />
     </key>
@@ -203,11 +195,11 @@
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Version Control" weight="0.32980132" />
-      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.32980132" />
+      <window_info anchor="bottom" id="Terminal" weight="0.32980132" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32980132" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32980132" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -304,16 +296,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance-single.config">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.old-ebextensions/iptables.config">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/middleware/grpcWeb.go">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -322,16 +304,6 @@
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="28" column="34" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance.config">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/buildspec.yml">
       <provider selected="true" editor-type-id="text-editor">
@@ -350,14 +322,44 @@
     <entry file="file://$PROJECT_DIR$/.ebextensions/ssl.conf.template">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="6" column="10" lean-forward="true" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
+          <caret line="6" column="10" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="10" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.ebextensions/9-letsencrypt-ssl-install.sh">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-393">
-          <caret line="8" column="41" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="41" />
+        <state relative-caret-position="355">
+          <caret line="66" column="36" selection-start-line="66" selection-start-column="30" selection-end-line="66" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/messages/command.proto">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
         </state>
       </provider>
     </entry>
