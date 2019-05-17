@@ -1,14 +1,29 @@
 version: 0.2
 
+environment_variables:
+  plaintext:
+    PACKAGE: "github.com/bentekkie/bentekkie-mainframe"
+
 phases:
   install:
     commands:
-      - npm install
-      - cd client
-      - npm install
+      - cd client && npm install
+      - echo CODEBUILD_SRC_DIR - $CODEBUILD_SRC_DIR
+      - echo GOPATH - $GOPATH
+
+      - echo Create dir in GOPATH for sources
+      - mkdir -p ${GOPATH}/src/${PACKAGE}
+
+      - echo Copy source files into GOPATH
+      - echo cp -a ${CODEBUILD_SRC_DIR}/.  ${GOPATH}/src/${PACKAGE}
+      - cp -a ${CODEBUILD_SRC_DIR}/.  ${GOPATH}/src/${PACKAGE}
+
+      - cd ${GOPATH}/src/${PACKAGE} && go get ./...
   build:
     commands:
       - npm run build
+      - cd ${GOPATH}/src/${PACKAGE} && go build -o ${CODEBUILD_SRC_DIR}/serverbin
+
 artifacts:
   files:
     - client/build/**/*
@@ -20,4 +35,5 @@ artifacts:
     - routes/**/*
     - views/**/*
     - autocomp/**/*
+    - serverbin
     - '*'

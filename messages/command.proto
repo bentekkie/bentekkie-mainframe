@@ -1,0 +1,43 @@
+syntax = "proto3";
+package mainframe;
+import "google/protobuf/empty.proto";
+
+service shell{
+    rpc runCommand(Command) returns (Response);
+    rpc autoComplete(Command) returns (AutoCompResponse);
+    rpc getRoot(google.protobuf.Empty) returns (Folder);
+};
+
+message AutoCompResponse {
+    repeated string completions=1;
+}
+
+message Folder {
+    string fileID = 1;
+    repeated string files =3;
+    repeated string folders =4;
+    string parent = 2;
+    string path = 5;
+}
+
+enum CommandType{
+    ls=0;
+    cat=1;
+    cd=2;
+    help=3;
+    clear=4;
+    landing=5;
+    download_resume=6;
+}
+
+message Command{
+    CommandType command=1;
+    repeated string args=2;
+    Folder currentDir=3;
+}
+
+message Response{
+    Command command=1;
+    Folder currentDir=2;
+    string resp=3;
+}

@@ -1,23 +1,35 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "bentekkie-mainframe-client",
+  "version": "2.0.0",
   "private": true,
   "dependencies": {
-    "html2pdf.js": "^0.8.2",
-    "loglevel": "^1.6.1",
-    "react": "^16.2.0",
-    "react-contexify": "^2.1.4",
-    "react-dom": "^16.2.0",
-    "react-icons": "^2.2.7",
-    "react-loading-overlay": "^0.2.8",
-    "react-rte": "^0.15.0",
-    "react-scripts": "1.0.17",
-    "socket.io-client": "^2.0.4"
+    "@improbable-eng/grpc-web": "^0.9.5",
+    "@types/google-protobuf": "^3.2.7",
+    "@types/jest": "24.0.12",
+    "@types/node": "12.0.0",
+    "@types/react": "16.8.17",
+    "@types/react-dom": "16.8.4",
+    "google-protobuf": "^3.8.0-rc.1",
+    "proto": "^1.0.19",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts-ts": "3.1.0",
+    "ts-protoc-gen": "^0.9.0",
+    "tslib": "^1.9.3",
+    "typescript": "3.4.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.2",
+    "@types/react": "^16.8.17",
+    "@types/react-dom": "^16.8.4",
+    "typescript": "^3.4.5"
+  },
+  "proxy": "http://localhost:8080/"
 }

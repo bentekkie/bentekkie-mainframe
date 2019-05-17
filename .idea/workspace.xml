@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e9cd5d4c-8d8b-47ee-88b4-a671a761b90e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/bentekkie-mainframe.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.jshintrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.npmrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/.jsdtscope" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/com.eclipsesource.jshint.ui.prefs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.wst.jsdt.core.prefs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.wst.jsdt.ui.superType.container" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.wst.jsdt.ui.superType.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.tern-project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/autocomp/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/buildspec.yml" beforeDir="false" afterPath="$PROJECT_DIR$/buildspec.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/client/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/client/public/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/public/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/CommandBar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/EditFile.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/EditFile.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/Nano.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/Nano.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/Terminal.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/Window.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/registerServiceWorker.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/client/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbutils.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logger.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw/benjaminSegallsResume.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw/guestbook.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/file.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sockets.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/help-info.jade" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/help.jade" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout.jade" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/layout2.jade" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+              <folding>
+                <element signature="e#14#58#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/server/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+              <folding>
+                <element signature="e#16#290#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/middleware/grpcWeb.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#20#89#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/mainframe/shell_service.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="9" lean-forward="true" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/generated/command.pb.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#94#347#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/db/db.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#12#354#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/server/main.go" />
+        <option value="$PROJECT_DIR$/server/mainframe/shell_service.go" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="20" />
+    <option name="y" value="40" />
+    <option name="width" value="2696" />
+    <option name="height" value="1664" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+              <item name="db" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+              <item name="generated" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+              <item name="mainframe" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+              <item name="middleware" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-6" y="-6" width="1381" height="885" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2494331" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+          <folding>
+            <element signature="e#14#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/middleware/grpcWeb.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#20#89#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/mainframe/shell_service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="9" lean-forward="true" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/generated/command.pb.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#94#347#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/db/db.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#12#354#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+          <folding>
+            <element signature="e#16#290#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
