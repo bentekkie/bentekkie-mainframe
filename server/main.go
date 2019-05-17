@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 )
 
-var clientBuildDir, _ = filepath.Abs("client2/build")
+var clientBuildDir, _ = filepath.Abs("client/build")
 
 func Run() {
 	grpcServer := grpc.NewServer()
@@ -26,5 +26,5 @@ func Run() {
 	rtr.PathPrefix("/").Handler(http.FileServer(http.Dir(clientBuildDir)))
 	log.Println("Listening...")
 	corsObj := handlers.AllowedOrigins([]string{"*"})
-	_ = http.ListenAndServe(":8082", handlers.CORS(corsObj)(rtr))
+	_ = http.ListenAndServe(":5000", handlers.CORS(corsObj)(rtr))
 }

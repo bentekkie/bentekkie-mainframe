@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9cd5d4c-8d8b-47ee-88b4-a671a761b90e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.ebextensions/nodecommand.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/https-instance-single.config" beforeDir="false" afterPath="$PROJECT_DIR$/.old-ebextensions/https-instance-single.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/https-instance.config" beforeDir="false" afterPath="$PROJECT_DIR$/.old-ebextensions/https-instance.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ebextensions/iptables.config" beforeDir="false" afterPath="$PROJECT_DIR$/.old-ebextensions/iptables.config" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/buildspec.yml" beforeDir="false" afterPath="$PROJECT_DIR$/buildspec.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,20 +19,33 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/buildspec.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="33" column="24" lean-forward="true" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+            <state relative-caret-position="561">
+              <caret line="33" column="24" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
+        <entry file="file://$PROJECT_DIR$/server/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="28" column="34" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance.config">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/.old-ebextensions/iptables.config">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -39,7 +54,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
+        <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance-single.config">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
@@ -83,17 +98,6 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/db/db.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#12#354#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="GOROOT" path="C:\Go" />
@@ -104,10 +108,11 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/main.go" />
-        <option value="$PROJECT_DIR$/server/main.go" />
         <option value="$PROJECT_DIR$/server/mainframe/shell_service.go" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/buildspec.yml" />
+        <option value="$PROJECT_DIR$/.ebextensions/iptables.config" />
+        <option value="$PROJECT_DIR$/server/main.go" />
       </list>
     </option>
   </component>
@@ -133,12 +138,7 @@
             <path>
               <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
               <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name=".ebextensions" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name=".elasticbeanstalk" type="462c0819:PsiDirectoryNode" />
+              <item name=".old-ebextensions" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
@@ -211,11 +211,11 @@
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.32980132" />
+      <window_info anchor="bottom" id="Version Control" weight="0.32980132" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32980132" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -257,16 +257,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-          <folding>
-            <element signature="e#16#290#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -313,24 +303,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/middleware/grpcWeb.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#20#89#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/.elasticbeanstalk/config.yml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -341,10 +313,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance-single.config">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.old-ebextensions/iptables.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="92" selection-start-line="2" selection-start-column="88" selection-end-line="2" selection-end-column="92" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/middleware/grpcWeb.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#20#89#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="28" column="34" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.old-ebextensions/https-instance.config">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/buildspec.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="33" column="24" lean-forward="true" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+        <state relative-caret-position="561">
+          <caret line="33" column="24" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
         </state>
       </provider>
     </entry>
