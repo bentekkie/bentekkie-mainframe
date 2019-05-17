@@ -26,18 +26,10 @@ phases:
   build:
     commands:
       - cd ${CODEBUILD_SRC_DIR}/client && npm run build
-      - cd ${GODIR}/src/${PACKAGE} && go build -o ${CODEBUILD_SRC_DIR}/serverbin
+      - cd ${GODIR}/src/${PACKAGE} && go build -o ${CODEBUILD_SRC_DIR}/application
 
 artifacts:
   files:
     - client/build/**/*
     - .ebextensions/**/*
-    - .elasticbeanstalk/**/*
-    - .settings/**/*
-    - commands/**/*
-    - raw/**/*
-    - routes/**/*
-    - views/**/*
-    - autocomp/**/*
-    - serverbin
-    - '*'
+    - application
