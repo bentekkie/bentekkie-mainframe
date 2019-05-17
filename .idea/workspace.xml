@@ -2,14 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9cd5d4c-8d8b-47ee-88b4-a671a761b90e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.ebextensions/9-letsencrypt-ssl-install.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ebextensions/9-post-renew-cp-s3.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ebextensions/ssl.conf.template" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.old-ebextensions/https-instance-single.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/https-instance-single.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.old-ebextensions/https-instance.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/https-instance.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.old-ebextensions/iptables.config" beforeDir="false" afterPath="$PROJECT_DIR$/.ebextensions/iptables.config" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,8 +33,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+            <state relative-caret-position="206">
+              <caret line="48" column="5" lean-forward="true" selection-start-line="48" selection-start-column="5" selection-end-line="48" selection-end-column="5" />
+              <folding>
+                <element signature="e#16#381#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -50,7 +45,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
+            <state relative-caret-position="29">
               <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
             </state>
           </provider>
@@ -336,14 +331,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
+    <entry file="file://$PROJECT_DIR$/messages/command.proto">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/.ebextensions/iptables.config">
@@ -353,13 +341,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/messages/command.proto">
+    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance-single.config">
       <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.ebextensions/https-instance.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="29">
+          <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+        <state relative-caret-position="206">
+          <caret line="48" column="5" lean-forward="true" selection-start-line="48" selection-start-column="5" selection-end-line="48" selection-end-column="5" />
+          <folding>
+            <element signature="e#16#381#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

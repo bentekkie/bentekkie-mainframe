@@ -42,8 +42,6 @@ func Run() {
 	rtr.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join(clientBuildDir, "static")))))
 	rtr.PathPrefix("/").Handler(http.FileServer(http.Dir(clientBuildDir)))
 	log.Println("Listening...")
-	corsObj := handlers.AllowedOrigins([]string{"*"})
-	_ = http.ListenAndServe(":5000", handlers.CORS(corsObj)(rtr))
 	m := &autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: hostPolicy,
