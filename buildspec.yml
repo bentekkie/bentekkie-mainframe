@@ -11,21 +11,11 @@ phases:
       nodejs: 10
     commands:
       - cd client && npm install
-      - echo CODEBUILD_SRC_DIR - $CODEBUILD_SRC_DIR
-      - echo GOPATH - $GOPATH
-
-      - echo Create dir in GOPATH for sources
-      - mkdir -p ${GOPATH}/src/${PACKAGE}
-
-      - echo Copy source files into GOPATH
-      - echo cp -a ${CODEBUILD_SRC_DIR}/.  ${GOPATH}/src/${PACKAGE}
-      - cp -a ${CODEBUILD_SRC_DIR}/.  ${GOPATH}/src/${PACKAGE}
-
-      - cd ${GOPATH}/src/${PACKAGE} && go get ./...
+      - go get ./...
   build:
     commands:
-      - npm run build
-      - cd ${GOPATH}/src/${PACKAGE} && go build -o ${CODEBUILD_SRC_DIR}/serverbin
+      - cd ${CODEBUILD_SRC_DIR}/client && npm run build
+      - go build -o ${CODEBUILD_SRC_DIR}/serverbin
 
 artifacts:
   files:
