@@ -14,7 +14,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 )
 
 var clientBuildDir, _ = filepath.Abs("client/build")
@@ -24,8 +23,8 @@ func Run() {
 	dataDir := "."
 	hostPolicy := func(ctx context.Context, host string) error {
 		// Note: change to your real domain
-		allowedHost := "bentekkie.com"
-		if strings.HasPrefix(host,allowedHost) {
+		allowedHost := "v2.bentekkie.com"
+		if host == {
 			return nil
 		}
 		return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
@@ -47,7 +46,7 @@ func Run() {
 		Cache:      autocert.DirCache(dataDir),
 	}
 	server := &http.Server{
-		Addr:      ":8082",
+		Addr:      ":443",
 		Handler:   rtr,
 		TLSConfig: &tls.Config{
 			GetCertificate: m.GetCertificate,
