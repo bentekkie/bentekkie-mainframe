@@ -24,7 +24,7 @@ func Run() {
 	hostPolicy := func(ctx context.Context, host string) error {
 		// Note: change to your real domain
 		allowedHost := "v2.bentekkie.com"
-		if host == {
+		if host == allowedHost{
 			return nil
 		}
 		return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
