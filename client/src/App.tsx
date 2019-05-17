@@ -6,9 +6,12 @@ import {shellClient} from "./generated/command_pb_service";
 
 
 class App extends Component {
-  client : shellClient = new shellClient("http://localhost:8080");
+  client : shellClient;
   constructor(props: Readonly<{}>){
     super(props);
+    const protocol = location.protocol;
+    const host = window.location.hostname;
+    this.client = new shellClient(protocol+"//"+host);
   }
   render() {
     return (
