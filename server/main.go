@@ -46,7 +46,7 @@ func Run() {
 		Cache:      autocert.DirCache(dataDir),
 	}
 	server := &http.Server{
-		Addr:      ":443",
+		Addr:      ":8082",
 		Handler:   rtr,
 		TLSConfig: &tls.Config{
 			GetCertificate: m.GetCertificate,
