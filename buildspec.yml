@@ -6,6 +6,9 @@ environment_variables:
 
 phases:
   install:
+    runtime-versions:
+      golang: 1.12
+      nodejs: 10
     commands:
       - cd client && npm install
       - echo CODEBUILD_SRC_DIR - $CODEBUILD_SRC_DIR
