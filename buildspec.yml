@@ -33,3 +33,4 @@ artifacts:
     - client/build/**/*
     - .ebextensions/**/*
     - application
+    - appspec.yml
