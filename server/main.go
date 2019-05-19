@@ -53,6 +53,7 @@ func getenvBool(key string) (bool, error) {
 
 
 func Run() {
+	fmt.Println(prod)
 	if prod {
 
 		dataDir := "."
