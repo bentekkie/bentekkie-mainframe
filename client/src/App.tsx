@@ -11,7 +11,8 @@ class App extends Component {
     super(props);
     const protocol = location.protocol;
     const host = window.location.hostname;
-    this.client = new shellClient(protocol+"//"+host);
+    const port = window.location.port;
+    this.client = new shellClient(protocol+"//"+host+":"+port);
   }
   render() {
     return (

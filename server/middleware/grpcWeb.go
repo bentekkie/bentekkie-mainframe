@@ -1,8 +1,8 @@
 package middleware
 
 import (
-"github.com/improbable-eng/grpc-web/go/grpcweb"
-"net/http"
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"net/http"
 )
 
 type GrpcWebMiddleware struct {
