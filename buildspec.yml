@@ -31,6 +31,6 @@ phases:
 artifacts:
   files:
     - client/build/**/*
-    - .ebextensions/**/*
+    - deploy/**/*
     - application
     - appspec.yml
