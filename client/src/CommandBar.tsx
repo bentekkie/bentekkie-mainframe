@@ -105,16 +105,13 @@ class CommandBar extends Component<IProps,IState> {
             }
             event.preventDefault();
         }else if(event.keyCode === 9){
-            console.log("completing");
             if(this.state.autoComp.frag === "" || !this.state.command.startsWith(this.state.autoComp.frag)){
                 let split = this.state.command.match(/(?:[^\s"]+|"[^"]*")+/g);
                 if(!split) split = [];
                 for(let i = 0; i < split.length; i++) {
                     split[i] = split[i].replace(/"/g,"");
                 }
-                console.log("....");
                 if(this.props.cmdNames.indexOf(split[0]) >= 0 && split[1] !== undefined){
-                    console.log("retriving");
                     this.props.getNewAutoComp(split[0],split.slice(1))
                 }else {
                     let filteredArr = this.props.cmdNames.filter((s) => {
