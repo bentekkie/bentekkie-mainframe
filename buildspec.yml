@@ -11,7 +11,6 @@ phases:
       golang: 1.12
       nodejs: 10
     commands:
-      - cd client && npm install
       - echo CODEBUILD_SRC_DIR - $CODEBUILD_SRC_DIR
       - echo GOPATH - $GODIR
 
@@ -23,9 +22,10 @@ phases:
       - cp -a ${CODEBUILD_SRC_DIR}/.  ${GODIR}/src/${PACKAGE}
       - cd ${GODIR}/src/${PACKAGE} && go get -u github.com/gobuffalo/packr/packr
       - cd ${GODIR}/src/${PACKAGE} && go get ./...
+      - cd ${GODIR}/src/${PACKAGE}/client && npm install
   build:
     commands:
-      - cd ${CODEBUILD_SRC_DIR}/client && npm run build
+      - cd ${GODIR}/src/${PACKAGE}/client && npm run build
       - cd ${GODIR}/src/${PACKAGE} && packr build -o ${CODEBUILD_SRC_DIR}/application
 
 artifacts:
