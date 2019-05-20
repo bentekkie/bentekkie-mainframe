@@ -21,16 +21,15 @@ phases:
       - echo Copy source files into GOPATH
       - echo cp -a ${CODEBUILD_SRC_DIR}/.  ${GODIR}/src/${PACKAGE}
       - cp -a ${CODEBUILD_SRC_DIR}/.  ${GODIR}/src/${PACKAGE}
-
+      - cd ${GODIR}/src/${PACKAGE} && go get -u github.com/gobuffalo/packr/packr
       - cd ${GODIR}/src/${PACKAGE} && go get ./...
   build:
     commands:
       - cd ${CODEBUILD_SRC_DIR}/client && npm run build
-      - cd ${GODIR}/src/${PACKAGE} && go build -o ${CODEBUILD_SRC_DIR}/application
+      - cd ${GODIR}/src/${PACKAGE} && packr build -o ${CODEBUILD_SRC_DIR}/application
 
 artifacts:
   files:
-    - client/build/**/*
     - deploy/**/*
     - application
     - appspec.yml

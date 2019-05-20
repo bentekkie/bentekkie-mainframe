@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"github.com/gobuffalo/packr"
 )
 
 var clientBuildDir, _ = filepath.Abs("client/build")
@@ -54,6 +55,7 @@ func getenvBool(key string) (bool, error) {
 
 func Run() {
 	fmt.Println(prod)
+	box := packr.NewBox(clientBuildDir)
 	if prod {
 
 		dataDir := "."
@@ -73,8 +75,7 @@ func Run() {
 		wrappedGrpc := grpcweb.WrapServer(grpcServer)
 		rtr := mux.NewRouter()
 		rtr.Use(middleware.NewGrpcWebMiddleware(wrappedGrpc).Handler)
-		rtr.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join(clientBuildDir, "static")))))
-		rtr.PathPrefix("/").Handler(http.FileServer(http.Dir(clientBuildDir)))
+		rtr.PathPrefix("/").Handler(http.FileServer(box))
 		log.Println("Listening...")
 		m := &autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
@@ -113,7 +114,7 @@ func Run() {
 			}).Handler,
 		)
 
-		FileServer(router, "/", http.Dir(clientBuildDir))
+		FileServer(router, "/", box)
 
 		if err := http.ListenAndServe(":8082", router); err != nil {
 			grpclog.Fatalf("failed starting http2 server: %v", err)
