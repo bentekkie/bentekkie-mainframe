@@ -10,6 +10,7 @@ import (
 	"github.com/bentekkie/bentekkie-mainframe/server/middleware"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
+	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/rs/cors"
@@ -19,13 +20,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
-	"github.com/gobuffalo/packr"
 )
 
-var clientBuildDir, _ = filepath.Abs("client/build")
 
 var prod, _ = getenvBool("PROD")
 
@@ -55,7 +53,7 @@ func getenvBool(key string) (bool, error) {
 
 func Run() {
 	fmt.Println(prod)
-	box := packr.NewBox(clientBuildDir)
+	box := packr.NewBox("../client/build")
 	if prod {
 
 		dataDir := "."
