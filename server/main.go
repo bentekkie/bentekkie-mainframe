@@ -8,12 +8,10 @@ import (
 	pb "github.com/bentekkie/bentekkie-mainframe/server/generated"
 	"github.com/bentekkie/bentekkie-mainframe/server/mainframe"
 	"github.com/bentekkie/bentekkie-mainframe/server/middleware"
-	"github.com/go-chi/chi"
-	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/gobuffalo/packr"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
-	"github.com/rs/cors"
 	"golang.org/x/crypto/acme/autocert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -25,12 +23,12 @@ import (
 )
 
 
-var prod, _ = getenvBool("PROD")
+var prod, _ = getEnvBool("PROD")
 
 var ErrEnvVarEmpty = errors.New("getenv: environment variable empty")
 
 
-func getenvStr(key string) (string, error) {
+func getEnvStr(key string) (string, error) {
 	v := os.Getenv(key)
 	if v == "" {
 		return v, ErrEnvVarEmpty
@@ -38,8 +36,8 @@ func getenvStr(key string) (string, error) {
 	return v, nil
 }
 
-func getenvBool(key string) (bool, error) {
-	s, err := getenvStr(key)
+func getEnvBool(key string) (bool, error) {
+	s, err := getEnvStr(key)
 	if err != nil {
 		return false, err
 	}
@@ -54,8 +52,14 @@ func getenvBool(key string) (bool, error) {
 func Run() {
 	fmt.Println(prod)
 	box := packr.NewBox("../client/build")
+	grpcServer := grpc.NewServer()
+	shellServer := mainframe.NewShellServer()
+	pb.RegisterShellServer(grpcServer, shellServer)
+	wrappedGrpc := grpcweb.WrapServer(grpcServer)
+	rtr := mux.NewRouter()
+	rtr.Use(middleware.NewGrpcWebMiddleware(wrappedGrpc).Handler)
+	rtr.PathPrefix("/").Handler(http.FileServer(box))
 	if prod {
-
 		dataDir := "."
 		hostPolicy := func(ctx context.Context, host string) error {
 			// Note: change to your real domain
@@ -65,15 +69,6 @@ func Run() {
 			}
 			return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
 		}
-
-
-		grpcServer := grpc.NewServer()
-		shellServer := mainframe.NewShellServer()
-		pb.RegisterShellServer(grpcServer, shellServer)
-		wrappedGrpc := grpcweb.WrapServer(grpcServer)
-		rtr := mux.NewRouter()
-		rtr.Use(middleware.NewGrpcWebMiddleware(wrappedGrpc).Handler)
-		rtr.PathPrefix("/").Handler(http.FileServer(box))
 		log.Println("Listening...")
 		m := &autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
@@ -91,50 +86,14 @@ func Run() {
 
 		log.Fatal(server.ListenAndServeTLS("", ""))
 	} else {
-		grpcServer := grpc.NewServer()
-		shellServer := mainframe.NewShellServer()
-		pb.RegisterShellServer(grpcServer, shellServer)
-
-		wrappedGrpc := grpcweb.WrapServer(grpcServer)
-
-		router := chi.NewRouter()
-		router.Use(
-			chiMiddleware.Logger,
-			chiMiddleware.Recoverer,
-			middleware.NewGrpcWebMiddleware(wrappedGrpc).Handler,	// Must come before general CORS handling
-			cors.New(cors.Options{
-				AllowedOrigins: []string{"*"},
-				AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-				AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", },
-				ExposedHeaders:   []string{"Link"},
-				AllowCredentials: true,
-				MaxAge:           300, // Maximum value not ignored by any of major browsers
-			}).Handler,
-		)
-
-		FileServer(router, "/", box)
-
-		if err := http.ListenAndServe(":8082", router); err != nil {
-			grpclog.Fatalf("failed starting http2 server: %v", err)
+		log.Println("Listening...")
+		if err := http.ListenAndServe(":8082",
+			handlers.CORS(
+				handlers.AllowedOrigins([]string{"*"}),
+				handlers.AllowedHeaders([]string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token",}),
+				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}))(rtr));
+			err != nil {
+				grpclog.Fatalf("failed starting http2 server: %v", err)
 		}
 	}
-}
-
-
-func FileServer(r chi.Router, path string, root http.FileSystem) {
-	if strings.ContainsAny(path, "{}*") {
-		panic("FileServer does not permit URL parameters.")
-	}
-
-	fs := http.StripPrefix(path, http.FileServer(root))
-
-	if path != "/" && path[len(path)-1] != '/' {
-		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
-		path += "/"
-	}
-	path += "*"
-
-	r.Get(path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fs.ServeHTTP(w, r)
-	}))
 }
