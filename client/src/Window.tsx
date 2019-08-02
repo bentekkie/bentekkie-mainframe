@@ -1,24 +1,20 @@
-import React, {Component, RefObject} from 'react';
+import React, {useEffect, useRef} from 'react';
 import './Window.css';
 
-
-class Window extends Component {
-    content : RefObject<HTMLDivElement> = React.createRef();
-    render() {
-        return (
-            <div ref={this.content} className = "Window_content">
-                <div className = "Window_contentInner">
-                    {this.props.children}
-                </div>
-            </div>
-        );
-    }
-    componentDidUpdate () {
-        let el = this.content.current;
+const Window : React.FunctionComponent = (props) => {
+    const contentRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        let el =   contentRef.current;
         if(el){
             el.scrollTop = el.scrollHeight;
         }
-    }
-}
-
+    });
+    return (
+        <div ref={contentRef} className = "Window_content">
+            <div className = "Window_contentInner">
+                {props.children}
+            </div>
+        </div>
+    );
+};
 export default Window;
