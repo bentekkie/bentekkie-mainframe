@@ -11,7 +11,6 @@ enum ActionType {
     ClearAutoComp,
     SetCurrentDir,
     NewCommand,
-    ResetAutoComp,
     SetAutoComp,
     SetCommand,
     NextCommand,
@@ -53,9 +52,6 @@ interface NextCommandAction {
 interface PrevCommandAction {
     type: ActionType.PrevCommand
 }
-interface ResetAutoCompAction {
-    type: ActionType.ResetAutoComp
-}
 interface SetAutoCompAction {
     type: ActionType.SetAutoComp
     payload: {
@@ -88,9 +84,8 @@ type IAction =
     AddSectionAction | ClearSectionsAction |
     ClearAutoCompAction | NewCommandAction |
     AutoCompleteAction | SetCurrentDirAction |
-    ResetAutoCompAction | SetCommandAction |
-    SetAutoCompAction | NextCommandAction |
-    PrevCommandAction
+    SetCommandAction | SetAutoCompAction | 
+    NextCommandAction | PrevCommandAction
 
 const initialState : IState = {
     sections: [],
@@ -145,15 +140,13 @@ const reducer : React.Reducer<IState,IAction> = (state, action) => {
             }
             return {...state,rawAutoComp:action.rawAutoComp};
         case ActionType.ClearAutoComp:
-            return {...state,rawAutoComp:[]};
+            return {...state,rawAutoComp:[],autoComp:{
+                frag:"",
+                cIndex:0,
+                comps:[]
+            }};
         case ActionType.SetCurrentDir:
             return {...state,currentDir:action.currentDir};
-        case ActionType.ResetAutoComp:
-            return {...state,autoComp:{
-                    frag:"",
-                    cIndex:0,
-                    comps:[]
-                }};
         case ActionType.SetCommand:
             return {...state,command:action.command};
         case ActionType.SetAutoComp:
@@ -229,7 +222,7 @@ export const AppContextProvider : React.FunctionComponent<IProps> = (props) => {
         command ?: string
     }) => dispatch({type:ActionType.SetAutoComp,payload});
 
-    const clearAutoComplete = () => dispatch({type:ActionType.ResetAutoComp});
+    const clearAutoComplete = () => dispatch({type:ActionType.ClearAutoComp});
 
     const setCommand = (command : string) => dispatch({type:ActionType.SetCommand,command});
 
@@ -311,7 +304,6 @@ export const AppContextProvider : React.FunctionComponent<IProps> = (props) => {
             section:state.prompt+command+"<br /> "
         });
         dispatch({type:ActionType.ClearAutoComp});
-        dispatch({type:ActionType.ResetAutoComp});
         if( command !== ""){
             dispatch({type:ActionType.NewCommand,command});
             let split = command.match(/(?:[^\s"]+|"[^"]*")+/g);

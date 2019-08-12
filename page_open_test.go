@@ -1,12 +1,13 @@
 package main_test
 
 import (
-	"github.com/bentekkie/bentekkie-mainframe/server"
+	server2 "github.com/bentekkie/bentekkie-mainframe/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/sclevine/agouti"
 	. "github.com/sclevine/agouti/matchers"
 	"io/ioutil"
+	"net/http/httptest"
 )
 
 var b,_ = ioutil.ReadFile("ascii_art.txt")
@@ -14,19 +15,21 @@ var ascii_art = "______            _                 _          _____           
 
 
 var _ = Describe("PageOpen", func() {
-	var page *agouti.Page
+	var (
+		page *agouti.Page
+		server *httptest.Server
+	)
 
 	BeforeEach(func() {
-		go server.Run()
-
 		var err error
+		server = server2.RunTest()
 		page, err = agoutiDriver.NewPage()
 		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("Show welcome banner on page load",func() {
 		By("opening page", func () {
-			Expect(page.Navigate("http://localhost:8082")).To(Succeed())
+			Expect(page.Navigate(server.URL)).To(Succeed())
 			Eventually(page.FindByClass("Window_contentInner")).Should(BeFound())
 		})
 		By("Displaying ascci art", func() {
@@ -38,5 +41,6 @@ var _ = Describe("PageOpen", func() {
 
 	AfterEach(func() {
 		Expect(page.Destroy()).To(Succeed())
+		server.Close()
 	})
 })

@@ -17,21 +17,20 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"strconv"
 	"strings"
 )
 
-
 var prod, _ = getEnvBool("PROD")
 
-var ErrEnvVarEmpty = errors.New("getenv: environment variable empty")
-
+var errEnvVarEmpty = errors.New("getenv: environment variable empty")
 
 func getEnvStr(key string) (string, error) {
 	v := os.Getenv(key)
 	if v == "" {
-		return v, ErrEnvVarEmpty
+		return v, errEnvVarEmpty
 	}
 	return v, nil
 }
@@ -49,7 +48,8 @@ func getEnvBool(key string) (bool, error) {
 }
 
 
-func Run() {
+// Run starts server
+func Run(port int) {
 	fmt.Println(prod)
 	box := packr.NewBox("../client/build")
 	grpcServer := grpc.NewServer()
@@ -62,9 +62,8 @@ func Run() {
 	if prod {
 		dataDir := "."
 		hostPolicy := func(ctx context.Context, host string) error {
-			// Note: change to your real domain
 			allowedHost := "bentekkie.com"
-			if strings.HasSuffix(host,allowedHost){
+			if strings.HasSuffix(host, allowedHost) {
 				return nil
 			}
 			return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
@@ -76,8 +75,8 @@ func Run() {
 			Cache:      autocert.DirCache(dataDir),
 		}
 		server := &http.Server{
-			Addr:      ":8082",
-			Handler:   rtr,
+			Addr:    ":"+strconv.Itoa(port),
+			Handler: rtr,
 			TLSConfig: &tls.Config{
 				GetCertificate: m.GetCertificate,
 			},
@@ -87,13 +86,28 @@ func Run() {
 		log.Fatal(server.ListenAndServeTLS("", ""))
 	} else {
 		log.Println("Listening...")
-		if err := http.ListenAndServe(":8082",
+		if err := http.ListenAndServe(":"+strconv.Itoa(port),
 			handlers.CORS(
 				handlers.AllowedOrigins([]string{"*"}),
-				handlers.AllowedHeaders([]string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token",}),
-				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}))(rtr));
-			err != nil {
-				grpclog.Fatalf("failed starting http2 server: %v", err)
+				handlers.AllowedHeaders([]string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"}),
+				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}))(rtr)); err != nil {
+			grpclog.Fatalf("failed starting http2 server: %v", err)
 		}
 	}
+}
+
+func RunTest() *httptest.Server {
+	box := packr.NewBox("../client/build")
+	grpcServer := grpc.NewServer()
+	shellServer := mainframe.NewShellServer()
+	pb.RegisterShellServer(grpcServer, shellServer)
+	wrappedGrpc := grpcweb.WrapServer(grpcServer)
+	rtr := mux.NewRouter()
+	rtr.Use(middleware.NewGrpcWebMiddleware(wrappedGrpc).Handler)
+	rtr.PathPrefix("/").Handler(http.FileServer(box))
+	return httptest.NewServer(handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedHeaders([]string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}))(rtr))
+
 }

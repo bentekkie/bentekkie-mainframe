@@ -28,19 +28,18 @@ const CommandBar : React.FunctionComponent = () => {
                     switch (event.keyCode) {
                         case 38:
                             nextCommand();
-                            event.preventDefault();
                             break;
                         case 40:
                             prevCommand();
-                            event.preventDefault();
                             break;
                         case 9:
                             autoComplete();
-                            event.preventDefault();
                             break;
                         default:
                             clearAutoComplete();
+                            return
                     }
+                    event.preventDefault();
 
                 }}
             />

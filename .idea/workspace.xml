@@ -2,13 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e9cd5d4c-8d8b-47ee-88b4-a671a761b90e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ascii_art.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/AppContext.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bentekkie_mainframe_suite_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/bentekkie_mainframe_suite_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/AppContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/AppContext.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/CommandBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/CommandBar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/Terminal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/Terminal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/Window.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/Window.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/page_open_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/page_open_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,66 +22,86 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/Terminal.tsx">
+        <entry file="file://$PROJECT_DIR$/bentekkie_mainframe_suite_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="16" lean-forward="true" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+            <state relative-caret-position="151">
+              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
               <folding>
-                <element signature="e#0#61#0" expanded="true" />
+                <element signature="e#19#127#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/AppContext.tsx">
+        <entry file="file://$PROJECT_DIR$/generateProto.bat">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/page_open_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-818">
-              <caret line="312" column="37" lean-forward="true" selection-start-line="312" selection-start-column="37" selection-end-line="312" selection-end-column="37" />
+            <state relative-caret-position="86">
+              <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
               <folding>
-                <element signature="e#0#49#0" expanded="true" />
+                <element signature="e#19#220#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/App.tsx">
+        <entry file="file://$PROJECT_DIR$/command_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
+            <state relative-caret-position="120">
+              <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="19" selection-end-column="34" />
               <folding>
-                <element signature="e#0#49#0" expanded="true" />
+                <element signature="e#19#220#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/src/generated/command_pb_service.d.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="72" column="2" selection-start-line="72" selection-start-column="2" selection-end-line="72" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/package.json">
+        <entry file="file://$PROJECT_DIR$/../../onsi/ginkgo/ginkgo_dsl.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="129">
-              <caret line="30" column="30" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
+              <caret line="429" column="5" selection-start-line="429" selection-start-column="5" selection-end-line="429" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/src/Window.tsx">
+        <entry file="file://$PROJECT_DIR$/server/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="7" lean-forward="true" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
+            <state relative-caret-position="32">
+              <caret line="98" column="33" selection-start-line="98" selection-start-column="33" selection-end-line="98" selection-end-column="33" />
               <folding>
-                <element signature="e#0#50#0" expanded="true" />
+                <element signature="e#16#535#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/db/db.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-4405">
+              <caret line="45" column="13" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
+              <folding>
+                <element signature="e#12#354#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+              <folding>
+                <element signature="e#14#75#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -87,11 +110,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/src/CommandBar.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="34" lean-forward="true" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
-              <folding>
-                <element signature="e#0#100#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="51">
+              <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -102,27 +122,6 @@
             <state>
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/node_modules/@types/react/index.d.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="810" column="9" selection-start-line="810" selection-start-column="9" selection-end-line="810" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
-              <folding>
-                <element signature="e#14#75#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -152,7 +151,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/server/mainframe/shell_service.go" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" />
@@ -166,19 +164,21 @@
         <option value="$PROJECT_DIR$/deploy/before_install.sh" />
         <option value="$PROJECT_DIR$/deploy/application_start.sh" />
         <option value="$PROJECT_DIR$/buildspec.yml" />
-        <option value="$PROJECT_DIR$/server/main.go" />
         <option value="$PROJECT_DIR$/client/public/index.html" />
         <option value="$PROJECT_DIR$/client/public/manifest.json" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/deploy/validate_service.sh" />
-        <option value="$PROJECT_DIR$/bentekkie_mainframe_suite_test.go" />
         <option value="$PROJECT_DIR$/ascii_art.txt" />
-        <option value="$PROJECT_DIR$/page_open_test.go" />
         <option value="$PROJECT_DIR$/client/src/Window.tsx" />
         <option value="$PROJECT_DIR$/client/src/App.tsx" />
         <option value="$PROJECT_DIR$/client/src/CommandBar.tsx" />
         <option value="$PROJECT_DIR$/client/src/Terminal.tsx" />
         <option value="$PROJECT_DIR$/client/src/AppContext.tsx" />
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/command_test.go" />
+        <option value="$PROJECT_DIR$/page_open_test.go" />
+        <option value="$PROJECT_DIR$/bentekkie_mainframe_suite_test.go" />
+        <option value="$PROJECT_DIR$/server/main.go" />
       </list>
     </option>
   </component>
@@ -193,7 +193,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -201,30 +200,11 @@
               <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
               <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bentekkie-mainframe" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bentekkie-mainframe" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -244,7 +224,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Go" />
     <property name="ts.external.directory.path" value="C:\Users\bente\go\src\github.com\bentekkie\bentekkie-mainframe\client\node_modules\typescript\lib" />
   </component>
   <component name="RecentsManager">
@@ -268,7 +248,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go">
+  <component name="RunManager" selected="Go Test.go test github.com/bentekkie/bentekkie-mainframe">
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="bentekkie-mainframe" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -329,43 +309,43 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.go test github.com/bentekkie/bentekkie-mainframe" />
         <item itemvalue="npm.start" />
         <item itemvalue="Go Build.go build main.go" />
-        <item itemvalue="Go Test.go test github.com/bentekkie/bentekkie-mainframe" />
         <item itemvalue="Go Test.TestBentekkieMainframe in github.com/bentekkie/bentekkie-mainframe" />
         <item itemvalue="Docker.Dockerfile" />
       </list>
     </recent_temporary>
   </component>
   <component name="TestHistory">
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 12m 01s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 10h 55m 17s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 12m 57s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 10h 56m 48s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 15m 21s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 10h 57m 40s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 16m 31s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 00m 15s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 18m 14s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 01m 00s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 21m 11s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 01m 14s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 21m 53s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 01m 41s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 22m 21s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 05m 55s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 24m 22s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 06m 26s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
-    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.06.15 at 14h 25m 05s.xml">
+    <history-entry file="go_test_github_com_bentekkie_bentekkie-mainframe - 2019.08.12 at 11h 21m 40s.xml">
       <configuration name="go test github.com/bentekkie/bentekkie-mainframe" configurationId="GoTestRunConfiguration" />
     </history-entry>
   </component>
@@ -374,29 +354,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.26832956" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="1" weight="0.32980132" />
-      <window_info anchor="bottom" id="Database Changes" order="2" />
-      <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="4" weight="0.32980132" />
-      <window_info anchor="bottom" id="Message" order="5" />
-      <window_info anchor="bottom" id="TypeScript" order="6" weight="0.32980132" />
-      <window_info active="true" anchor="bottom" id="Find" order="7" visible="true" weight="0.32980132" />
-      <window_info anchor="bottom" id="Run" order="8" weight="0.42119205" />
-      <window_info anchor="bottom" id="Debug" order="9" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="12" />
-      <window_info anchor="right" id="Database" order="0" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
-    </layout>
-    <layout-to-restore>
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.26832956" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.27588814" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="1" weight="0.32980132" />
@@ -406,7 +364,7 @@
       <window_info anchor="bottom" id="Message" order="5" />
       <window_info anchor="bottom" id="TypeScript" order="6" weight="0.32980132" />
       <window_info anchor="bottom" id="Find" order="7" weight="0.32980132" />
-      <window_info active="true" anchor="bottom" id="Run" order="8" visible="true" weight="0.9602649" />
+      <window_info anchor="bottom" id="Run" order="8" visible="true" weight="0.42119205" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
@@ -415,7 +373,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
-    </layout-to-restore>
+    </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -464,26 +422,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.ebextensions/nodecommand.config" />
-    <entry file="file://$PROJECT_DIR$/server/db/db.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#12#354#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/generated/command.pb.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#94#347#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.ebextensions/ssl.conf.template" />
     <entry file="file://$PROJECT_DIR$/.ebextensions/9-letsencrypt-ssl-install.sh" />
     <entry file="file://$PROJECT_DIR$/.ebextensions/9-ssl-letsencrypt-single-instance.config" />
     <entry file="file://$PROJECT_DIR$/../../../golang.org/x/crypto/acme/autocert/autocert.go">
@@ -657,31 +595,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1088">
-          <caret line="84" column="25" selection-start-line="84" selection-start-column="25" selection-end-line="84" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bentekkie_mainframe_suite_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="12" column="43" selection-start-line="12" selection-start-column="43" selection-end-line="12" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../onsi/gomega/matchers.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4420">
           <caret line="265" column="5" selection-start-line="265" selection-start-column="5" selection-end-line="265" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ascii_art.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="61" selection-start-line="13" selection-start-column="61" selection-end-line="13" selection-end-column="61" />
         </state>
       </provider>
     </entry>
@@ -692,27 +609,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/page_open_test.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="12" column="1017" selection-start-line="12" selection-start-column="1017" selection-end-line="12" selection-end-column="1017" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="129">
           <caret line="30" column="30" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-          <folding>
-            <element signature="e#14#75#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -723,20 +623,52 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/Terminal.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/AppContext.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5117">
+          <caret line="305" column="37" selection-start-line="305" selection-start-column="37" selection-end-line="305" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/App.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/src/generated/command_pb_service.d.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
+        <state relative-caret-position="1173">
           <caret line="72" column="2" selection-start-line="72" selection-start-column="2" selection-end-line="72" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ascii_art.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="61" selection-start-line="13" selection-start-column="61" selection-end-line="13" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/src/Window.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="10" column="7" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/src/CommandBar.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="34" lean-forward="true" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#100#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="51">
+          <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -749,42 +681,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/AppContext.tsx">
+    <entry file="file://$PROJECT_DIR$/generateProto.bat">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/db/db.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-818">
-          <caret line="312" column="37" lean-forward="true" selection-start-line="312" selection-start-column="37" selection-end-line="312" selection-end-column="37" />
+        <state relative-caret-position="-4405">
+          <caret line="45" column="13" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
           <folding>
-            <element signature="e#0#49#0" expanded="true" />
+            <element signature="e#12#354#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/App.tsx">
+    <entry file="file://$PROJECT_DIR$/../../onsi/ginkgo/ginkgo_dsl.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
+        <state relative-caret-position="129">
+          <caret line="429" column="5" selection-start-line="429" selection-start-column="5" selection-end-line="429" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_open_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="86">
+          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
           <folding>
-            <element signature="e#0#49#0" expanded="true" />
+            <element signature="e#19#220#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/Terminal.tsx">
+    <entry file="file://$PROJECT_DIR$/command_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="16" lean-forward="true" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+        <state relative-caret-position="120">
+          <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="19" selection-end-column="34" />
           <folding>
-            <element signature="e#0#61#0" expanded="true" />
+            <element signature="e#19#220#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/Window.tsx">
+    <entry file="file://$PROJECT_DIR$/bentekkie_mainframe_suite_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="7" lean-forward="true" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
+        <state relative-caret-position="151">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
           <folding>
-            <element signature="e#0#50#0" expanded="true" />
+            <element signature="e#19#127#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding>
+            <element signature="e#14#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="98" column="33" selection-start-line="98" selection-start-column="33" selection-end-line="98" selection-end-column="33" />
+          <folding>
+            <element signature="e#16#535#0" expanded="true" />
           </folding>
         </state>
       </provider>

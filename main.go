@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	server.Run()
+	server.Run(8082)
 
 }
 

@@ -4,7 +4,7 @@ import CommandBar from './CommandBar';
 import './Terminal.css';
 import {AppContext} from "./AppContext";
 
-const Terminal : React.FunctionComponent = () => {
+export const Terminal : React.FunctionComponent = () => {
     const [{sections},{bootstrap}] = useContext(AppContext);
     useEffect(bootstrap,[]);
     return (
@@ -16,4 +16,3 @@ const Terminal : React.FunctionComponent = () => {
         </div>
     );
 };
-export default Terminal;
