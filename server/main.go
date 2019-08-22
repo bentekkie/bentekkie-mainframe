@@ -3,8 +3,8 @@ package server
 import (
 	"context"
 	"crypto/tls"
-	"errors"
 	"fmt"
+	"github.com/bentekkie/bentekkie-mainframe/server/env"
 	pb "github.com/bentekkie/bentekkie-mainframe/server/generated"
 	"github.com/bentekkie/bentekkie-mainframe/server/mainframe"
 	"github.com/bentekkie/bentekkie-mainframe/server/middleware"
@@ -18,34 +18,11 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strconv"
 	"strings"
 )
 
-var prod, _ = getEnvBool("PROD")
-
-var errEnvVarEmpty = errors.New("getenv: environment variable empty")
-
-func getEnvStr(key string) (string, error) {
-	v := os.Getenv(key)
-	if v == "" {
-		return v, errEnvVarEmpty
-	}
-	return v, nil
-}
-
-func getEnvBool(key string) (bool, error) {
-	s, err := getEnvStr(key)
-	if err != nil {
-		return false, err
-	}
-	v, err := strconv.ParseBool(s)
-	if err != nil {
-		return false, err
-	}
-	return v, nil
-}
+var prod, _ = env.GetEnvBool("PROD")
 
 
 // Run starts server

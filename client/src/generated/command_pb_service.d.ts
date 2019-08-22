@@ -14,12 +14,30 @@ type shellrunCommand = {
   readonly responseType: typeof command_pb.Response;
 };
 
+type shellrunSudoCommand = {
+  readonly methodName: string;
+  readonly service: typeof shell;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof command_pb.SudoCommand;
+  readonly responseType: typeof command_pb.SudoResponse;
+};
+
 type shellautoComplete = {
   readonly methodName: string;
   readonly service: typeof shell;
   readonly requestStream: false;
   readonly responseStream: false;
   readonly requestType: typeof command_pb.Command;
+  readonly responseType: typeof command_pb.AutoCompResponse;
+};
+
+type shellsudoAutoComplete = {
+  readonly methodName: string;
+  readonly service: typeof shell;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof command_pb.SudoCommand;
   readonly responseType: typeof command_pb.AutoCompResponse;
 };
 
@@ -35,7 +53,9 @@ type shellgetRoot = {
 export class shell {
   static readonly serviceName: string;
   static readonly runCommand: shellrunCommand;
+  static readonly runSudoCommand: shellrunSudoCommand;
   static readonly autoComplete: shellautoComplete;
+  static readonly sudoAutoComplete: shellsudoAutoComplete;
   static readonly getRoot: shellgetRoot;
 }
 
@@ -80,6 +100,15 @@ export class shellClient {
     requestMessage: command_pb.Command,
     callback: (error: ServiceError|null, responseMessage: command_pb.Response|null) => void
   ): UnaryResponse;
+  runSudoCommand(
+    requestMessage: command_pb.SudoCommand,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: command_pb.SudoResponse|null) => void
+  ): UnaryResponse;
+  runSudoCommand(
+    requestMessage: command_pb.SudoCommand,
+    callback: (error: ServiceError|null, responseMessage: command_pb.SudoResponse|null) => void
+  ): UnaryResponse;
   autoComplete(
     requestMessage: command_pb.Command,
     metadata: grpc.Metadata,
@@ -87,6 +116,15 @@ export class shellClient {
   ): UnaryResponse;
   autoComplete(
     requestMessage: command_pb.Command,
+    callback: (error: ServiceError|null, responseMessage: command_pb.AutoCompResponse|null) => void
+  ): UnaryResponse;
+  sudoAutoComplete(
+    requestMessage: command_pb.SudoCommand,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: command_pb.AutoCompResponse|null) => void
+  ): UnaryResponse;
+  sudoAutoComplete(
+    requestMessage: command_pb.SudoCommand,
     callback: (error: ServiceError|null, responseMessage: command_pb.AutoCompResponse|null) => void
   ): UnaryResponse;
   getRoot(

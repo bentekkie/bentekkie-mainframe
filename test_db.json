@@ -1,0 +1,31 @@
+{
+  "name" : "",
+  "folders" : [
+    {
+      "name" : "files",
+      "files" : [
+        {
+          "name" : "hello-world",
+          "contents" : "hello world!"
+        },
+        {
+          "name" : "about-me",
+          "contents" : "I am awesome <b>wow</b>"
+        }
+      ],
+      "folders": []
+    },
+    {
+      "files": [],
+      "folders": [
+        {
+          "files": [],
+          "folders": [],
+          "name": "super-secret-folder"
+        }
+      ],
+      "name": "hidden"
+    }
+  ],
+  "files": []
+}

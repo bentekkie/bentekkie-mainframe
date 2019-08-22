@@ -1,3 +1,4 @@
+/* eslint-disable */
 // package: mainframe
 // file: command.proto
 
@@ -20,12 +21,30 @@ shell.runCommand = {
   responseType: command_pb.Response
 };
 
+shell.runSudoCommand = {
+  methodName: "runSudoCommand",
+  service: shell,
+  requestStream: false,
+  responseStream: false,
+  requestType: command_pb.SudoCommand,
+  responseType: command_pb.SudoResponse
+};
+
 shell.autoComplete = {
   methodName: "autoComplete",
   service: shell,
   requestStream: false,
   responseStream: false,
   requestType: command_pb.Command,
+  responseType: command_pb.AutoCompResponse
+};
+
+shell.sudoAutoComplete = {
+  methodName: "sudoAutoComplete",
+  service: shell,
+  requestStream: false,
+  responseStream: false,
+  requestType: command_pb.SudoCommand,
   responseType: command_pb.AutoCompResponse
 };
 
@@ -76,11 +95,73 @@ shellClient.prototype.runCommand = function runCommand(requestMessage, metadata,
   };
 };
 
+shellClient.prototype.runSudoCommand = function runSudoCommand(requestMessage, metadata, callback) {
+  if (arguments.length === 2) {
+    callback = arguments[1];
+  }
+  var client = grpc.unary(shell.runSudoCommand, {
+    request: requestMessage,
+    host: this.serviceHost,
+    metadata: metadata,
+    transport: this.options.transport,
+    debug: this.options.debug,
+    onEnd: function (response) {
+      if (callback) {
+        if (response.status !== grpc.Code.OK) {
+          var err = new Error(response.statusMessage);
+          err.code = response.status;
+          err.metadata = response.trailers;
+          callback(err, null);
+        } else {
+          callback(null, response.message);
+        }
+      }
+    }
+  });
+  return {
+    cancel: function () {
+      callback = null;
+      client.close();
+    }
+  };
+};
+
 shellClient.prototype.autoComplete = function autoComplete(requestMessage, metadata, callback) {
   if (arguments.length === 2) {
     callback = arguments[1];
   }
   var client = grpc.unary(shell.autoComplete, {
+    request: requestMessage,
+    host: this.serviceHost,
+    metadata: metadata,
+    transport: this.options.transport,
+    debug: this.options.debug,
+    onEnd: function (response) {
+      if (callback) {
+        if (response.status !== grpc.Code.OK) {
+          var err = new Error(response.statusMessage);
+          err.code = response.status;
+          err.metadata = response.trailers;
+          callback(err, null);
+        } else {
+          callback(null, response.message);
+        }
+      }
+    }
+  });
+  return {
+    cancel: function () {
+      callback = null;
+      client.close();
+    }
+  };
+};
+
+shellClient.prototype.sudoAutoComplete = function sudoAutoComplete(requestMessage, metadata, callback) {
+  if (arguments.length === 2) {
+    callback = arguments[1];
+  }
+  var client = grpc.unary(shell.sudoAutoComplete, {
     request: requestMessage,
     host: this.serviceHost,
     metadata: metadata,

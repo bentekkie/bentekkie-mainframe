@@ -1,0 +1,23 @@
+version: '3'
+services:
+#  server:
+#    build: .
+#    ports:
+#      - 8082:8082
+#    links:
+#      - postgres
+#    environment:
+#      - JWT=SUPERSECRET
+#      - PROD=false
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=data
+    ports:
+      - "54320:5432"
+    volumes:
+      - my_dbdata:/var/lib/postgresql/data
+volumes:
+  my_dbdata:

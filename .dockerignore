@@ -1,0 +1,9 @@
+.*
+**/*
+!**/*.go
+!*.go
+!client/build/**/*
+!client/.*
+!client/public/**/*
+!client/src/**/*
+

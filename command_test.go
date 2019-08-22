@@ -20,6 +20,8 @@ var _ = Describe("Commands", func() {
 		server = server2.RunTest()
 		page, err = agoutiDriver.NewPage()
 		Expect(err).NotTo(HaveOccurred())
+		err = page.SetImplicitWait(5000)
+		Expect(err).NotTo(HaveOccurred())
 	})
 
 	var openPage = func() {
@@ -74,6 +76,31 @@ var _ = Describe("Commands", func() {
 			Should(ContainSubstring(
 				"Available Commands are listed below, for help on a specific command type \"help [command]\""))
 	})
+
+	It("should clear the screen with clear command", func() {
+		By("opening page", openPage)
+		By("typing help command", typeCommand("ls"))
+		Eventually(page.All(".Window_contentInner > p")).Should(HaveCount(3))
+		By("typing 'clear' command", func() {
+			Eventually(page.Find("input[type=text]")).Should(BeFound())
+			Expect(page.Find("input[type=text]").SendKeys("clear" + "\uE007")).To(Succeed())
+			Expect(page.Find("input[type=text]")).Should(HaveAttribute("value", ""))
+		})
+		Eventually(page.Find(".Window_contentInner > p")).Should(HaveCount(1))
+	})
+
+	for _, command := range []string{"cat","ls","help","cd"} {
+		cmd := command
+		It("should show help for "+cmd+" with help command", func() {
+			By("opening page", openPage)
+			By("typing help " + cmd + " command", typeCommand("help "+ cmd))
+			Eventually(page.Find(".Window_contentInner > p:last-child > table")).Should(BeFound())
+			Expect(page.AllByXPath("//div[contains(@class,'Window_contentInner')]/p[last()]//tr")).Should(HaveCount(2))
+			selection := page.AllByXPath("//div[contains(@class,'Window_contentInner')]/p[last()]//tr")
+			Expect(selection.At(0).Find("td:first-child")).Should(HaveText("Usage"))
+			Expect(selection.At(1).Find("td:first-child")).Should(HaveText("Purpose"))
+		})
+	}
 
 	AfterEach(func() {
 		Expect(page.Destroy()).To(Succeed())
