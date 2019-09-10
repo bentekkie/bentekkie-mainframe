@@ -6,7 +6,7 @@ import {AppContextProvider} from "./AppContext";
 
 
 const App : React.FunctionComponent = () => {
-  const protocol = location.protocol;
+  const protocol = window.location.protocol;
   const host = window.location.hostname;
   const port = window.location.port;
   return (

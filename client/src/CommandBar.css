@@ -6,7 +6,7 @@
 	resize: none;
 	border-width: 0;
 	background-color: #000000;
-	color: #008106;
+/*	color: #008106; */
 	font-size: 25px;
 }
 
@@ -16,7 +16,7 @@
 
 .CommandBar_form {
 	width: 100%;
-	color: #008106;
+/*	color: #008106; */
 	font-size: 25px;
 }
 

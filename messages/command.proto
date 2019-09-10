@@ -4,7 +4,9 @@ import "google/protobuf/empty.proto";
 
 service shell{
     rpc runCommand(Command) returns (Response);
+    rpc runSudoCommand(SudoCommand) returns (SudoResponse);
     rpc autoComplete(Command) returns (AutoCompResponse);
+    rpc sudoAutoComplete(SudoCommand) returns (AutoCompResponse);
     rpc getRoot(google.protobuf.Empty) returns (Folder);
 };
 
@@ -13,10 +15,6 @@ message AutoCompResponse {
 }
 
 message Folder {
-    string fileID = 1;
-    repeated string files =3;
-    repeated string folders =4;
-    string parent = 2;
     string path = 5;
 }
 
@@ -28,6 +26,33 @@ enum CommandType{
     clear=4;
     landing=5;
     download_resume=6;
+    login=7;
+    exec=8;
+}
+
+enum SudoCommandType{
+    logout=0;
+    touch=1;
+    mkdir=2;
+    rm=3;
+    adduser=4;
+    edit=5;
+    seed=6;
+    dump=7;
+}
+
+enum ResponseType{
+    text=0;
+    markdown=1;
+    html=2;
+    json=3;
+}
+
+message SudoCommand{
+    SudoCommandType command=1;
+    repeated string args=2;
+    Folder currentDir=3;
+    string jwt=4;
 }
 
 message Command{
@@ -40,4 +65,12 @@ message Response{
     Command command=1;
     Folder currentDir=2;
     string resp=3;
+    ResponseType type=4;
+}
+
+message SudoResponse{
+    SudoCommand command=1;
+    Folder currentDir=2;
+    string resp=3;
+    ResponseType type=4;
 }

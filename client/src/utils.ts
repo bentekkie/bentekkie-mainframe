@@ -1,7 +1,10 @@
-import {CommandType} from "./generated/command_pb";
+import {CommandType, SudoCommandType} from "./generated/command_pb";
 
 export function isValidCommand(cmd: string ): cmd is keyof typeof CommandType{
     return cmd in CommandType;
+}
+export function isValidSudoCommand(cmd: string ): cmd is keyof typeof SudoCommandType{
+    return cmd in SudoCommandType;
 }
 
 

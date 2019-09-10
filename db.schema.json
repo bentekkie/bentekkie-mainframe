@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/Folder",
+  "definitions": {
+    "Folder": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[^\\s]*$"
+        },
+        "folders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Folder"
+          },
+          "description": "Child folders"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/File"
+          },
+          "description": "Child files"
+        },
+        "$schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Pointer to the schema against which this document should be validated."
+        }
+      },
+      "required": [
+        "files",
+        "folders",
+        "name"
+      ],
+      "title": "Folder"
+    },
+    "File": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[^\\s]*$"
+        },
+        "contents": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contents",
+        "name"
+      ],
+      "title": "File"
+    }
+  }
+}

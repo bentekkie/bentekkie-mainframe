@@ -1,3 +1,4 @@
+/* eslint-disable */
 // package: mainframe
 // file: command.proto
 
@@ -27,22 +28,6 @@ export namespace AutoCompResponse {
 }
 
 export class Folder extends jspb.Message {
-  getFileid(): string;
-  setFileid(value: string): void;
-
-  clearFilesList(): void;
-  getFilesList(): Array<string>;
-  setFilesList(value: Array<string>): void;
-  addFiles(value: string, index?: number): string;
-
-  clearFoldersList(): void;
-  getFoldersList(): Array<string>;
-  setFoldersList(value: Array<string>): void;
-  addFolders(value: string, index?: number): string;
-
-  getParent(): string;
-  setParent(value: string): void;
-
   getPath(): string;
   setPath(value: string): void;
 
@@ -58,17 +43,49 @@ export class Folder extends jspb.Message {
 
 export namespace Folder {
   export type AsObject = {
-    fileid: string,
-    filesList: Array<string>,
-    foldersList: Array<string>,
-    parent: string,
     path: string,
   }
 }
 
+export class SudoCommand extends jspb.Message {
+  getCommand(): SudoCommandTypeMap[keyof SudoCommandTypeMap];
+  setCommand(value: SudoCommandTypeMap[keyof SudoCommandTypeMap]): void;
+
+  clearArgsList(): void;
+  getArgsList(): Array<string>;
+  setArgsList(value: Array<string>): void;
+  addArgs(value: string, index?: number): string;
+
+  hasCurrentdir(): boolean;
+  clearCurrentdir(): void;
+  getCurrentdir(): Folder | undefined;
+  setCurrentdir(value?: Folder): void;
+
+  getJwt(): string;
+  setJwt(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SudoCommand.AsObject;
+  static toObject(includeInstance: boolean, msg: SudoCommand): SudoCommand.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: SudoCommand, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SudoCommand;
+  static deserializeBinaryFromReader(message: SudoCommand, reader: jspb.BinaryReader): SudoCommand;
+}
+
+export namespace SudoCommand {
+  export type AsObject = {
+    command: SudoCommandTypeMap[keyof SudoCommandTypeMap],
+    argsList: Array<string>,
+    currentdir?: Folder.AsObject,
+    jwt: string,
+  }
+}
+
 export class Command extends jspb.Message {
-  getCommand(): CommandType;
-  setCommand(value: CommandType): void;
+  getCommand(): CommandTypeMap[keyof CommandTypeMap];
+  setCommand(value: CommandTypeMap[keyof CommandTypeMap]): void;
 
   clearArgsList(): void;
   getArgsList(): Array<string>;
@@ -92,7 +109,7 @@ export class Command extends jspb.Message {
 
 export namespace Command {
   export type AsObject = {
-    command: CommandType,
+    command: CommandTypeMap[keyof CommandTypeMap],
     argsList: Array<string>,
     currentdir?: Folder.AsObject,
   }
@@ -112,6 +129,9 @@ export class Response extends jspb.Message {
   getResp(): string;
   setResp(value: string): void;
 
+  getType(): ResponseTypeMap[keyof ResponseTypeMap];
+  setType(value: ResponseTypeMap[keyof ResponseTypeMap]): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Response.AsObject;
   static toObject(includeInstance: boolean, msg: Response): Response.AsObject;
@@ -127,16 +147,78 @@ export namespace Response {
     command?: Command.AsObject,
     currentdir?: Folder.AsObject,
     resp: string,
+    type: ResponseTypeMap[keyof ResponseTypeMap],
   }
 }
 
-export enum CommandType {
-  LS = 0,
-  CAT = 1,
-  CD = 2,
-  HELP = 3,
-  CLEAR = 4,
-  LANDING = 5,
-  DOWNLOAD_RESUME = 6,
+export class SudoResponse extends jspb.Message {
+  hasCommand(): boolean;
+  clearCommand(): void;
+  getCommand(): SudoCommand | undefined;
+  setCommand(value?: SudoCommand): void;
+
+  hasCurrentdir(): boolean;
+  clearCurrentdir(): void;
+  getCurrentdir(): Folder | undefined;
+  setCurrentdir(value?: Folder): void;
+
+  getResp(): string;
+  setResp(value: string): void;
+
+  getType(): ResponseTypeMap[keyof ResponseTypeMap];
+  setType(value: ResponseTypeMap[keyof ResponseTypeMap]): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SudoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SudoResponse): SudoResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: SudoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SudoResponse;
+  static deserializeBinaryFromReader(message: SudoResponse, reader: jspb.BinaryReader): SudoResponse;
 }
 
+export namespace SudoResponse {
+  export type AsObject = {
+    command?: SudoCommand.AsObject,
+    currentdir?: Folder.AsObject,
+    resp: string,
+    type: ResponseTypeMap[keyof ResponseTypeMap],
+  }
+}
+
+export interface CommandTypeMap {
+  LS: 0;
+  CAT: 1;
+  CD: 2;
+  HELP: 3;
+  CLEAR: 4;
+  LANDING: 5;
+  DOWNLOAD_RESUME: 6;
+  LOGIN: 7;
+  EXEC: 8;
+}
+
+export const CommandType: CommandTypeMap;
+
+export interface SudoCommandTypeMap {
+  LOGOUT: 0;
+  TOUCH: 1;
+  MKDIR: 2;
+  RM: 3;
+  ADDUSER: 4;
+  EDIT: 5;
+  SEED: 6;
+  DUMP: 7;
+}
+
+export const SudoCommandType: SudoCommandTypeMap;
+
+export interface ResponseTypeMap {
+  TEXT: 0;
+  MARKDOWN: 1;
+  HTML: 2;
+  JSON: 3;
+}
+
+export const ResponseType: ResponseTypeMap;

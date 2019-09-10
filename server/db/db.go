@@ -1,342 +1,281 @@
 package db
 
 import (
+	"database/sql"
 	"errors"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
+	"fmt"
 	p "path"
 	"strings"
+
+	"github.com/bentekkie/bentekkie-mainframe/server/env"
+	"github.com/jmoiron/sqlx"
+	"github.com/sethvargo/go-password/password"
+	log "github.com/sirupsen/logrus"
 )
 
-type Status int
-
-const (
-	CREATED Status = iota
-	DELETED
-	NOTFOUND
-	FOUND
-	UPDATED
-	ERROR
-)
-
-type Table int
-
-const (
-	UserTable Table = iota
-	ItemTable
-)
-
-func (t Table) String() string {
-	return [...]string{"bentekkie-mainframe-users", "bentekkie-mainframe-store"}[t]
+//Connection represents a connection to the database
+type Connection struct {
+	conn *sqlx.DB
+	Root *INode
 }
 
-type Item struct {
-	FileID  string   `json:"fileID"`
-	Path    string   `json:"path"`
-	Type    string   `json:"type"`
-	Files   []string `json:"files"`
-	Folders []string `json:"folders"`
-	Content string   `json:"content"`
-	Parent string	`json:"parent"`
-	Client  Client   `json:"-"`
+//INode represents a row in the inodes table
+type INode struct {
+	ID          sql.NullInt64
+	ParentINode sql.NullInt64
+	Path        sql.NullString
+	IsFile      bool
 }
 
-type HelpItem struct {
-	FileID  string   `json:"fileID"`
-	Path    string   `json:"path"`
-	Content map[string]struct{
-		Purpose string `json:"purpose"`
-		Usage string	`json:"usage"`
-	}   `json:"content"`
-	Client  Client   `json:"-"`
+//File represents a row in the files table
+type File struct {
+	INode
+	Contents sql.NullString
 }
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Client   Client `json:"-"`
-}
+var schema = `
+CREATE SEQUENCE IF NOT EXISTS inodes_id_seq;
+CREATE TABLE IF NOT EXISTS inodes (
+                                      id integer PRIMARY KEY NOT NULL DEFAULT nextval('inodes_id_seq'),
+                                      parentinode integer REFERENCES inodes (id) ON DELETE CASCADE,
+                                      path text UNIQUE
+);
+CREATE TABLE IF NOT EXISTS files (
+                                     inode integer REFERENCES inodes (id) ON DELETE CASCADE,
+                                     contents text
+);
+CREATE TABLE IF NOT EXISTS users (
+    username text primary key,
+    password text
+);
+CREATE OR REPLACE FUNCTION isfile(id integer) 
+RETURNS boolean AS $$ BEGIN RETURN exists(SELECT 1 from files where inode = id); END; $$LANGUAGE PLPGSQL;
+`
 
-type Client struct {
-	dynamoDbTable string
-	awsRegion     string
-	ddb           *dynamodb.DynamoDB
-}
+//DbConnection is the current connection to the database
+var DbConnection, _ = Connect("localhost", 54320, "dbuser", "password", "data")
 
-func NewDynamoDBClient(dynamoDbTable Table, awsRegion string) Client {
-	sess := session.Must(session.NewSession(&aws.Config{Region: aws.String(awsRegion)}))
-	ddb := dynamodb.New(sess)
-	c := Client{dynamoDbTable: dynamoDbTable.String(), awsRegion: awsRegion, ddb: ddb}
-	return c
-}
-
-func (user *User) Read() (Status, error) {
-	err := user.Client.read(
-		struct {
-			Username string `json:"username"`
-		}{user.Username}, &user)
-	if err != nil {
-		return ERROR, err
-	}
-	return FOUND, nil
-}
-
-func (user *User) Write() (Status, error) {
-	err := user.Client.write(user)
-	if err != nil {
-		return ERROR, err
-	}
-	return CREATED, nil
-}
-
-func (user *User) Delete() (Status, error) {
-	panic("implement me")
-}
-
-func (user *User) HealthCheck() error {
-	panic("implement me")
-}
-
-func (item *Item) Read() (Status, error) {
-	err := item.Client.read(struct {
-		FileID string `json:"fileID"`
-		Path   string `json:"path"`
-	}{item.FileID, item.Path}, &item)
-	if err != nil {
-		return ERROR, err
-	}
-	return FOUND, nil
-}
-func (item *HelpItem) Read() (Status, error) {
-	err := item.Client.read(struct {
-		FileID string `json:"fileID"`
-		Path   string `json:"path"`
-	}{item.FileID, item.Path}, &item)
-	if err != nil {
-		return ERROR, err
-	}
-	return FOUND, nil
-}
-
-func (item *Item) Write() (Status, error) {
-	err := item.Client.write(item)
-	if err != nil {
-		return ERROR, err
-	}
-	return CREATED, nil
-}
-
-func (item *Item) Scan() ([]Item, Status, error) {
-	avmap, err := item.Client.scan(
-		expression.Name("path").Equal(expression.Value(item.Path)))
-	if err != nil {
-		return nil, ERROR, err
-	}
-	items := &[]Item{}
-	err = dynamodbattribute.UnmarshalListOfMaps(avmap, items)
-	if err != nil {
-		return nil, ERROR, err
-	}
-	for idx  := range *items{
-		(*items)[idx].Client = item.Client
-	}
-	return *items, FOUND, nil
-}
-
-func (item *Item) AddChild(name string,child Item) error {
-	update := expression.UpdateBuilder{}
-
-	update.Add(expression.Name(child.Type+"s"),expression.Value(name+"/"+child.FileID))
-
-	return item.Client.update(struct {
-		FileID string `json:"fileID"`
-	}{item.FileID},update)
-}
-
-func (c *Client) scan(filter expression.ConditionBuilder) ([]map[string]*dynamodb.AttributeValue, error) {
-	exp, err := expression.NewBuilder().WithFilter(filter).Build()
+//Connect creates a Connection object
+func Connect(host string, port int, user string, password string, dbname string) (*Connection, error) {
+	t := "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable"
+	connectionString := fmt.Sprintf(t, host, port, user, password, dbname)
+	var db *sqlx.DB
+	db, err := sqlx.Open("postgres", connectionString)
 	if err != nil {
 		return nil, err
 	}
-	input := &dynamodb.ScanInput{
-		ExpressionAttributeNames:  exp.Names(),
-		ExpressionAttributeValues: exp.Values(),
-		FilterExpression:          exp.Filter(),
-		TableName:                 &c.dynamoDbTable,
-	}
-	output, err := c.ddb.Scan(input)
+	db.MapperFunc(strings.ToLower)
+	c := &Connection{conn: db, Root: nil}
+	err = c.InitSchema()
+	c.InitAdminUser()
 	if err != nil {
-		return nil, err
+		log.WithError(err).Error("Connect error")
 	}
-
-	return output.Items, nil
+	return c, err
 }
 
-func (item *Item) Delete() (Status, error) {
-	panic("implement me")
+//CreateTestConnection for testing
+func CreateTestConnection(db *sql.DB, root *INode) *Connection {
+	return &Connection{sqlx.NewDb(db, "postgres"), root}
 }
 
-func (s *Client) HealthCheck() error {
-	_, err := s.ddb.DescribeTable(&dynamodb.DescribeTableInput{TableName: &s.dynamoDbTable})
-	return err
-}
-
-func (c *Client) read(query interface{}, output interface{}) error {
-	input := &dynamodb.GetItemInput{}
-	input.SetTableName(c.dynamoDbTable)
-	k, err := dynamodbattribute.MarshalMap(query)
-	if err != nil {
-		return err
+//InitSchema initializes the currect connection with the correct schema
+func (c *Connection) InitSchema() error {
+	_, err := c.conn.Exec(schema)
+	for err != nil {
+		_, err = c.conn.Exec(schema)
 	}
-	input.SetKey(k)
-	result, err := c.ddb.GetItem(input)
-	if err != nil {
-		log.WithError(err).WithField("k", k).Error("Could not get item")
-		return err
+	root := &INode{
+		Path:        sql.NullString{String: "/", Valid: true},
+		ID:          sql.NullInt64{},
+		ParentINode: sql.NullInt64{},
 	}
-	return dynamodbattribute.UnmarshalMap(result.Item, &output)
-}
-
-func (c *Client) write(record interface{}) error {
-	input := &dynamodb.PutItemInput{}
-	input.SetTableName(c.dynamoDbTable)
-	k, err := dynamodbattribute.MarshalMap(record)
+	// Ensure that the root exists
+	err = root.insert(c)
 	if err != nil {
-		return err
+		root, err = c.FindINodeByPath("/")
+		if err != nil {
+			return err
+		}
 	}
-	input.SetItem(k)
-	result, err := c.ddb.PutItem(input)
-	if err != nil {
-		return err
-	}
-	return dynamodbattribute.UnmarshalMap(result.Attributes, &record)
-}
-
-func (c *Client) update(key interface{}, update expression.UpdateBuilder) error {
-	input := &dynamodb.UpdateItemInput{}
-	exp,err := expression.NewBuilder().WithUpdate(update).Build()
-	if err != nil {
-		return err
-	}
-	input.SetTableName(c.dynamoDbTable)
-	input.SetUpdateExpression(*exp.Update())
-	input.SetExpressionAttributeNames(exp.Names())
-	input.SetExpressionAttributeValues(exp.Values())
-	k, err := dynamodbattribute.MarshalMap(key)
-	if err != nil {
-		return err
-	}
-	input.SetKey(k)
-	_, err = c.ddb.UpdateItem(input)
-	if err != nil {
-		return err
-	}
+	c.Root = root
 	return nil
 }
 
-func NewFolder(path string, name string) error {
-	itemsClient := NewDynamoDBClient(ItemTable, "us-west-2")
-	parent := Item{
-		Path: path,
-		Client:itemsClient,
+//InitAdminUser adds admin user if it dosnt exits
+func (c *Connection) InitAdminUser() {
+	username, err := env.GetEnvStr("ADMIN_USER")
+	if err == nil {
+		_, _ = c.conn.Exec("DELETE FROM users where username=$1", username)
+		pswd, err := password.Generate(15, 15, 0, false, true)
+		if err != nil {
+			log.WithError(err).Info("error generating password")
+			return
+		}
+		_, err = c.conn.Exec("INSERT INTO users (username,password) VALUES ($1,$2)", username, pswd)
+		if err != nil {
+			log.WithError(err).Info("error generating password")
+			return
+		}
+		log.Info("Admin user created username:", username, " password:", pswd)
 	}
-	items, _, err := parent.Scan()
+}
+
+func (iNode *INode) insert(c *Connection) error {
+
+	var id sql.NullInt64
+	rows, err := c.conn.NamedQuery("INSERT INTO inodes (path, parentinode) VALUES (:path,:parentinode) RETURNING id", iNode)
 	if err != nil {
+		log.WithError(err).Error("Could not insert node", iNode)
 		return err
 	}
-	folder := Item{
-		Type:"folder",
-		Parent:items[0].FileID,
-		Folders: []string{},
-		Files: []string{},
-		FileID:uuid.New().String(),
-		Client:itemsClient,
-		Path:items[0].Path+name+"/",
-	}
-	_, err = folder.Write()
-
+	defer rows.Close()
+	rows.Next()
+	err = rows.Scan(&id)
 	if err != nil {
+		log.Error(err)
 		return err
 	}
+	iNode.ID = id
 
-	return items[0].AddChild(name,folder)
+	return err
 }
 
-func NewFile(path string, name string, content string) error {
-	itemsClient := NewDynamoDBClient(ItemTable, "us-west-2")
-	parent := Item{
-		Path: path,
-		Client:itemsClient,
-	}
-	items, _, err := parent.Scan()
+//DeleteAll deletes all inodes from the current database
+func (c *Connection) DeleteAll() {
+	c.conn.MustExec("DELETE FROM inodes WHERE id=$1", c.Root.ID)
+	c.Root = nil
+	err := c.InitSchema()
 	if err != nil {
-		return err
+		panic(err)
 	}
-	if len(items) < 1 {
-		return errors.New("parent not found")
-	}
-	folder := Item{
-		Type:"file",
-		Parent:items[0].FileID,
-		FileID:uuid.New().String(),
-		Client:itemsClient,
-		Path:items[0].Path+name,
-		Content:content,
-	}
-	_, err = folder.Write()
+}
 
+//FindINodeByPath finds the INode with the given path
+func (c *Connection) FindINodeByPath(path string) (*INode, error) {
+	iNode := INode{}
+
+	err := c.conn.Get(&iNode, `SELECT *,isfile(id) FROM inodes WHERE inodes.path=$1 LIMIT 1`, path)
+
+	return &iNode, err
+}
+
+//FindINodeByID finds an INode with a given id
+func (c *Connection) FindINodeByID(id int64) (*INode, error) {
+	iNode := INode{}
+
+	err := c.conn.Get(&iNode, `SELECT *,isfile(id) FROM inodes WHERE inodes.id=$1 LIMIT 1`, id)
+
+	return &iNode, err
+}
+
+//NewDir creates a new directory
+func (c *Connection) NewDir(parent *INode, name string) (*INode, error) {
+	if parent == nil {
+		return nil, errors.New("parent invalid")
+	}
+	folder := &INode{
+		Path:        sql.NullString{String: p.Join(parent.Path.String, name), Valid: true},
+		ParentINode: parent.ID,
+		ID:          sql.NullInt64{},
+	}
+	err := folder.insert(c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return items[0].AddChild(name,folder)
+	return folder, err
 }
 
-func GetFileByPath(path string) (*Item,error) {
-	return getItemByPath(p.Clean(path))
-}
-func GetFolderByPath(path string) (*Item,error) {
-	cleaned := p.Clean(path)
-	if cleaned != "/" {
-		cleaned += "/"
+//NewFile creates a new file
+func (c *Connection) NewFile(parent *INode, name string, content string) (*File, error) {
+	fileINode := INode{
+		Path:        sql.NullString{String: p.Join(parent.Path.String, name), Valid: true},
+		ParentINode: parent.ID,
+		ID:          sql.NullInt64{},
 	}
-	return getItemByPath(cleaned)
-}
-
-
-func getItemByPath(path string) (*Item,error) {
-	itemsClient := NewDynamoDBClient(ItemTable, "us-west-2")
-	file := Item {
-		Path: path,
-		Client:itemsClient,
-	}
-	items, _, err := file.Scan()
+	err := fileINode.insert(c)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	if len(items) < 1 {
-		return nil,errors.New("parent not found")
+	file := &File{
+		INode:    fileINode,
+		Contents: sql.NullString{String: content, Valid: true},
 	}
-	return &items[0],nil
+	_, err = c.conn.NamedExec("INSERT INTO files (inode, contents) VALUES (:id,:contents)", file)
+	if err != nil {
+		c.conn.MustExec("DELETE FROM inodes where id=$1", fileINode.ID)
+		return nil, err
+	}
+
+	return file, err
 }
 
-func (item *Item) DirListing() string {
-	if item.Type == "file" {
-		return "<br/>this is a file<br/>"
-	}
-	resp := "</br>B:"+item.Path
-	resp += "</br><table><tr><th>Name</th><th>Type</th></tr>"
-	for _,file := range item.Files {
-		resp += "<tr><td>" + strings.Split(file,"/")[0] + "</td><td>File</td></tr>"
-	}
-	for _,folder := range item.Folders {
-		resp += "<tr><td>" + strings.Split(folder,"/")[0] + "</td><td>Folder</td></tr>"
-	}
-	resp += "</table><br/>"
-	return resp
+//FindFile finds a file with an given id
+func (c *Connection) FindFile(id int64) (*File, error) {
+	file := File{}
+
+	err := c.conn.Get(&file, "SELECT inodes.*,files.contents FROM files JOIN inodes on files.inode = inodes.id where files.inode=$1", id)
+
+	return &file, err
+}
+
+//DeleteINode deletes a given INode
+func (c *Connection) DeleteINode(iNode *INode) error {
+	_, err := c.conn.Exec("DELETE FROM inodes WHERE id=$1", iNode.ID)
+
+	return err
+}
+
+//UpdateFileByPath sets the given File's content to the given contents
+func (c *Connection) UpdateFileByPath(file *File, contents string) error {
+	_, err := c.conn.Exec("UPDATE files SET contents=$1 WHERE inode=$2", contents, file.ID)
+
+	return err
+}
+
+//FindDirListings finds all INodes that are direct decendands of the INode given
+func (c *Connection) FindDirListings(parent *INode) ([]*INode, error) {
+	var listings []*INode
+
+	err := c.conn.Select(&listings, `
+	SELECT *,isfile(id) FROM inodes
+	WHERE parentinode=$1`, parent.ID)
+
+	return listings, err
+}
+
+//FindDirListingsByPath finds all INodes that are direct decendands of the path given
+func (c *Connection) FindDirListingsByPath(currentDir string) ([]*INode, error) {
+	var listings []*INode
+
+	err := c.conn.Select(&listings, `
+SELECT inodes.*,isfile(id) FROM inodes
+WHERE path LIKE $1 AND path NOT LIKE $2`,
+		p.Join(currentDir, "_%"),
+		p.Join(currentDir, "_%", "_%"))
+
+	return listings, err
+}
+
+//IsFile checks if given INode is a file
+func (c *Connection) IsFile(iNode *INode) (bool, error) {
+	var result bool
+
+	err := c.conn.Get(&result, "SELECT exists(select 1 from files WHERE inode=65)")
+
+	return result, err
+}
+
+// GetPassword for given user
+func (c *Connection) GetPassword(username string) (string, error) {
+	var password string
+	err := c.conn.Get(&password, "SELECT password from users Where username=$1", username)
+	return password, err
+}
+
+//NewUser registers a new user
+func (c *Connection) NewUser(username string, password string) error {
+	_, err := c.conn.Exec("INSERT INTO users (username,password) VALUES ($1,$2)", username, password)
+	return err
 }

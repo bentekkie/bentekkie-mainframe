@@ -4,32 +4,43 @@
   "private": true,
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.9.5",
-    "@types/google-protobuf": "^3.2.7",
-    "@types/jest": "24.0.12",
-    "@types/node": "12.0.0",
-    "@types/react": "16.8.17",
-    "@types/react-dom": "16.8.4",
     "google-protobuf": "^3.8.0-rc.1",
     "proto": "^1.0.19",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts-ts": "3.1.0",
-    "ts-protoc-gen": "^0.9.0",
-    "tslib": "^1.9.3",
-    "typescript": "3.4.5"
+    "react-markdown": "^4.1.0",
+    "react-mde": "^7.6.2",
+    "react-modal": "^3.9.1",
+    "react-scripts": "^3.1.0",
+    "ts-protoc-gen": "^0.11.0",
+    "tslib": "^1.9.3"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "watch": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "@types/google-protobuf": "^3.2.7",
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.2",
     "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
+    "@types/react-modal": "^3.8.2",
     "typescript": "^3.4.5"
   },
-  "proxy": "http://localhost:8082/"
+  "proxy": "http://localhost:8082/",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

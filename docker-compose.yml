@@ -1,0 +1,22 @@
+version: "3"
+services:
+  server:
+    build: .
+    ports:
+      - 8082:8082
+    links:
+      - postgresProd
+    depends_on: 
+      - postgresProd
+    env_file: 
+      - 'prod.env'
+    restart: always
+  postgresProd:
+    image: postgres
+    env_file: 
+      - 'prod.env'
+    volumes:
+      - my_dbdata_prod:/var/lib/postgresql/data
+    restart: always
+volumes: 
+  my_dbdata_prod:
