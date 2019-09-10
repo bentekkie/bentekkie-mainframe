@@ -1,3 +1,4 @@
+/* eslint-disable */
 // package: mainframe
 // file: command.proto
 
@@ -47,8 +48,8 @@ export namespace Folder {
 }
 
 export class SudoCommand extends jspb.Message {
-  getCommand(): SudoCommandType;
-  setCommand(value: SudoCommandType): void;
+  getCommand(): SudoCommandTypeMap[keyof SudoCommandTypeMap];
+  setCommand(value: SudoCommandTypeMap[keyof SudoCommandTypeMap]): void;
 
   clearArgsList(): void;
   getArgsList(): Array<string>;
@@ -75,7 +76,7 @@ export class SudoCommand extends jspb.Message {
 
 export namespace SudoCommand {
   export type AsObject = {
-    command: SudoCommandType,
+    command: SudoCommandTypeMap[keyof SudoCommandTypeMap],
     argsList: Array<string>,
     currentdir?: Folder.AsObject,
     jwt: string,
@@ -83,8 +84,8 @@ export namespace SudoCommand {
 }
 
 export class Command extends jspb.Message {
-  getCommand(): CommandType;
-  setCommand(value: CommandType): void;
+  getCommand(): CommandTypeMap[keyof CommandTypeMap];
+  setCommand(value: CommandTypeMap[keyof CommandTypeMap]): void;
 
   clearArgsList(): void;
   getArgsList(): Array<string>;
@@ -108,7 +109,7 @@ export class Command extends jspb.Message {
 
 export namespace Command {
   export type AsObject = {
-    command: CommandType,
+    command: CommandTypeMap[keyof CommandTypeMap],
     argsList: Array<string>,
     currentdir?: Folder.AsObject,
   }
@@ -128,8 +129,8 @@ export class Response extends jspb.Message {
   getResp(): string;
   setResp(value: string): void;
 
-  getType(): ResponseType;
-  setType(value: ResponseType): void;
+  getType(): ResponseTypeMap[keyof ResponseTypeMap];
+  setType(value: ResponseTypeMap[keyof ResponseTypeMap]): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Response.AsObject;
@@ -146,7 +147,7 @@ export namespace Response {
     command?: Command.AsObject,
     currentdir?: Folder.AsObject,
     resp: string,
-    type: ResponseType,
+    type: ResponseTypeMap[keyof ResponseTypeMap],
   }
 }
 
@@ -164,8 +165,8 @@ export class SudoResponse extends jspb.Message {
   getResp(): string;
   setResp(value: string): void;
 
-  getType(): ResponseType;
-  setType(value: ResponseType): void;
+  getType(): ResponseTypeMap[keyof ResponseTypeMap];
+  setType(value: ResponseTypeMap[keyof ResponseTypeMap]): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SudoResponse.AsObject;
@@ -182,33 +183,42 @@ export namespace SudoResponse {
     command?: SudoCommand.AsObject,
     currentdir?: Folder.AsObject,
     resp: string,
-    type: ResponseType,
+    type: ResponseTypeMap[keyof ResponseTypeMap],
   }
 }
 
-export enum CommandType {
-  LS = 0,
-  CAT = 1,
-  CD = 2,
-  HELP = 3,
-  CLEAR = 4,
-  LANDING = 5,
-  DOWNLOAD_RESUME = 6,
-  LOGIN = 7,
+export interface CommandTypeMap {
+  LS: 0;
+  CAT: 1;
+  CD: 2;
+  HELP: 3;
+  CLEAR: 4;
+  LANDING: 5;
+  DOWNLOAD_RESUME: 6;
+  LOGIN: 7;
+  EXEC: 8;
 }
 
-export enum SudoCommandType {
-  LOGOUT = 0,
-  TOUCH = 1,
-  MKDIR = 2,
-  RM = 3,
-  ADDUSER = 4,
-  EDIT = 5,
+export const CommandType: CommandTypeMap;
+
+export interface SudoCommandTypeMap {
+  LOGOUT: 0;
+  TOUCH: 1;
+  MKDIR: 2;
+  RM: 3;
+  ADDUSER: 4;
+  EDIT: 5;
+  SEED: 6;
+  DUMP: 7;
 }
 
-export enum ResponseType {
-  TEXT = 0,
-  MARKDOWN = 1,
-  HTML = 2,
+export const SudoCommandType: SudoCommandTypeMap;
+
+export interface ResponseTypeMap {
+  TEXT: 0;
+  MARKDOWN: 1;
+  HTML: 2;
+  JSON: 3;
 }
 
+export const ResponseType: ResponseTypeMap;

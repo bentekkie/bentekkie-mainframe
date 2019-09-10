@@ -3,21 +3,54 @@ package main
 import (
 	"flag"
 	"fmt"
+
 	"github.com/bentekkie/bentekkie-mainframe/server"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
+	"github.com/bentekkie/bentekkie-mainframe/server/env"
 	log "github.com/sirupsen/logrus"
+
 	"io/ioutil"
 	"os"
+
+	"github.com/joho/godotenv"
 
 	_ "github.com/lib/pq"
 )
 
+// init is invoked before main()
+func init() {
+	// loads values from .env into the system
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
-	seedFlag := flag.String("seed","","File to seed database with")
+	seedFlag := flag.String("seed", "", "File to seed database with")
 	flag.Parse()
 	log.SetReportCaller(true)
 	var err error
-	db.DbConnection, err = db.Connect("localhost",54320,"dbuser","password","data")
+	dbHost, err := env.GetEnvStr("POSTGRES_HOST")
+	if err != nil {
+		panic("POSTGRES_HOST not defined")
+	}
+	dbUser, err := env.GetEnvStr("POSTGRES_USER")
+	if err != nil {
+		panic("POSTGRES_USER not defined")
+	}
+	dbPassword, err := env.GetEnvStr("POSTGRES_PASSWORD")
+	if err != nil {
+		panic("POSTGRES_PASSWORD not defined")
+	}
+	dbName, err := env.GetEnvStr("POSTGRES_DB")
+	if err != nil {
+		panic("POSTGRES_DB not defined")
+	}
+	dbPort, err := env.GetEnvInt("POSTGRES_PORT")
+	if err != nil {
+		panic("POSTGRES_PORT not defined")
+	}
+	db.DbConnection, err = db.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -28,8 +61,7 @@ func main() {
 		}
 		defer jsonFile.Close()
 		byteValue, _ := ioutil.ReadAll(jsonFile)
-		db.DbConnection.SeedDB(byteValue)
+		db.DbConnection.SeedDB(byteValue, true)
 	}
 	server.Run(8082)
 }
-

@@ -7,7 +7,7 @@ const CommandBar : React.FunctionComponent = () => {
 
     return <form className= "CommandBar_form" onSubmit={event => {
         if(command === "")console.log("empty");
-        sendCommand(command);
+        sendCommand(command, true);
         setCommand("");
         event.preventDefault();
     }}>

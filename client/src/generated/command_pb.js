@@ -1,4 +1,5 @@
 /* eslint-disable */
+// source: command.proto
 /**
  * @fileoverview
  * @enhanceable
@@ -1411,7 +1412,8 @@ proto.mainframe.CommandType = {
   CLEAR: 4,
   LANDING: 5,
   DOWNLOAD_RESUME: 6,
-  LOGIN: 7
+  LOGIN: 7,
+  EXEC: 8
 };
 
 /**
@@ -1423,7 +1425,9 @@ proto.mainframe.SudoCommandType = {
   MKDIR: 2,
   RM: 3,
   ADDUSER: 4,
-  EDIT: 5
+  EDIT: 5,
+  SEED: 6,
+  DUMP: 7
 };
 
 /**
@@ -1432,7 +1436,8 @@ proto.mainframe.SudoCommandType = {
 proto.mainframe.ResponseType = {
   TEXT: 0,
   MARKDOWN: 1,
-  HTML: 2
+  HTML: 2,
+  JSON: 3
 };
 
 goog.object.extend(exports, proto.mainframe);

@@ -14,13 +14,20 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/Folder"
-          }
+          },
+          "description": "Child folders"
         },
         "files": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/File"
-          }
+          },
+          "description": "Child files"
+        },
+        "$schema": {
+          "type": "string",
+          "title": "Schema",
+          "description": "Pointer to the schema against which this document should be validated."
         }
       },
       "required": [

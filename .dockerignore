@@ -1,9 +1,2 @@
-.*
-**/*
-!**/*.go
-!*.go
-!client/build/**/*
-!client/.*
-!client/public/**/*
-!client/src/**/*
-
+client/node_modules
+client/build

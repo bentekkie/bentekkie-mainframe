@@ -27,6 +27,7 @@ enum CommandType{
     landing=5;
     download_resume=6;
     login=7;
+    exec=8;
 }
 
 enum SudoCommandType{
@@ -36,12 +37,15 @@ enum SudoCommandType{
     rm=3;
     adduser=4;
     edit=5;
+    seed=6;
+    dump=7;
 }
 
 enum ResponseType{
     text=0;
     markdown=1;
     html=2;
+    json=3;
 }
 
 message SudoCommand{

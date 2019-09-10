@@ -220,4 +220,3 @@ shellClient.prototype.getRoot = function getRoot(requestMessage, metadata, callb
 };
 
 exports.shellClient = shellClient;
-

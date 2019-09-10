@@ -6,11 +6,11 @@ import ReactModal from 'react-modal';
 ReactModal.setAppElement("#root");
 
 export const LoginModal : React.FunctionComponent = () => {
-    const [{loggingIn},{login}] = useContext(AppContext);
+    const [{loggingIn, registering},{login, register}] = useContext(AppContext);
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
     return (
-        <ReactModal isOpen={loggingIn} style={{content: {
+        <ReactModal isOpen={loggingIn || registering} style={{content: {
                 position: "absolute",
                 left: "25%",
                 right: "25%",
@@ -21,7 +21,11 @@ export const LoginModal : React.FunctionComponent = () => {
             <form
                 className={"LoginModal_form"}
                 onSubmit={event => {
-                    login(username,password);
+                    if(loggingIn){
+                        login(username,password);
+                    } else if(registering) {
+                        register(username,password);
+                    }
                     event.preventDefault()}}>
                 <label htmlFor="username">Username</label><br/>
                 <input className={"LoginModal_input"} name="username" type="username" value={username} onChange={event => setUsername(event.target.value)}/>
