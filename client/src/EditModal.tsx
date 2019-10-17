@@ -26,7 +26,7 @@ export const EditModal : React.FunctionComponent = () => {
                     onChange={setValue}
                     selectedTab={selectedTab}
                     onTabChange={setSelectedTab}
-                    generateMarkdownPreview={async (md) => <ReactMarkdown source={md}/>}
+                    generateMarkdownPreview={async (md) => <ReactMarkdown source={md} linkTarget={"_blank"}/>}
                 /><br/>
             <button onClick={() => updateFile(value)}>Save</button>
             </ReactModal>
