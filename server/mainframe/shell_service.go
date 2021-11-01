@@ -11,6 +11,7 @@ import (
 	"github.com/bentekkie/bentekkie-mainframe/server/auth"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
 	mainframe "github.com/bentekkie/bentekkie-mainframe/server/generated"
+	middleware "github.com/bentekkie/bentekkie-mainframe/server/middleware"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 )
@@ -292,7 +293,8 @@ func (ss ShellServer) RunSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			Type:       mainframe.ResponseType_text,
 		}, nil
 	case mainframe.SudoCommandType_dump:
-		result, err := db.DbConnection.DumpDB()
+		url := ctx.Value(middleware.URLContextKey).(string)
+		result, err := db.DbConnection.DumpDB(url + "dbschema")
 		if err != nil {
 			log.WithError(err).Error("dump error")
 			return &mainframe.SudoResponse{

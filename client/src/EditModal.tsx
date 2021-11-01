@@ -1,5 +1,5 @@
-import React, {useContext, useEffect} from 'react';
-import {AppContext} from "./AppContext";
+import React, {useEffect, useState} from 'react';
+import {useAppContext} from "./AppContext";
 import ReactModal from 'react-modal';
 import ReactMde from "react-mde";
 import ReactMarkdown from "react-markdown"
@@ -8,9 +8,9 @@ import "react-mde/lib/styles/css/react-mde-all.css";
 ReactModal.setAppElement("#root");
 
 export const EditModal : React.FunctionComponent = () => {
-    const [{editing, editorFile},{updateFile}] = useContext(AppContext);
-    const [value, setValue] = React.useState(editorFile.contents);
-    const [selectedTab, setSelectedTab] = React.useState<"write"|"preview">("write");
+    const [{editing, editorFile},{updateFile}] = useAppContext();
+    const [value, setValue] = useState(editorFile.contents);
+    const [selectedTab, setSelectedTab] = useState<"write"|"preview">("write");
     useEffect(() => setValue(editorFile.contents),[editorFile.contents])
     return (
         <ReactModal isOpen={editing} style={{content: {

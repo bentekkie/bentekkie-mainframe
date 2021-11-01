@@ -1,12 +1,11 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import './CommandBar.css';
-import {AppContext} from "./AppContext";
+import {useAppContext} from "./AppContext";
 
 const CommandBar : React.FunctionComponent = () => {
-    const [{prompt, command, jwt}, {sendCommand, setCommand, clearAutoComplete, autoComplete, nextCommand, prevCommand}] = useContext(AppContext);
+    const [{prompt, command}, {sendCommand, setCommand, clearAutoComplete, autoComplete, nextCommand, prevCommand, loggedIn}] = useAppContext();
 
     return <form className= "CommandBar_form" onSubmit={event => {
-        if(command === "")console.log("empty");
         sendCommand(command, true);
         setCommand("");
         event.preventDefault();
@@ -15,7 +14,7 @@ const CommandBar : React.FunctionComponent = () => {
             <div className="CommandBar_submitText">{prompt}</div>
             <input
                 className= "CommandBar_input"
-                style={{width:"calc(100% - " + (prompt.length+6) + "ch)",color:(jwt?"red":"green")}}
+                style={{width:"calc(100% - " + (prompt.length+6) + "ch)",color:(loggedIn()?"red":"green")}}
                 type="text"
                 value={command}
                 onChange={event => setCommand(event.target.value)}
@@ -37,10 +36,9 @@ const CommandBar : React.FunctionComponent = () => {
                             break;
                         default:
                             clearAutoComplete();
-                            return
+                            return;
                     }
                     event.preventDefault();
-
                 }}
             />
         </div>

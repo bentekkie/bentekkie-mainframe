@@ -1,12 +1,12 @@
-import React, {useContext, useState} from 'react';
-import {AppContext} from "./AppContext";
+import React, {useState} from 'react';
+import {useAppContext} from "./AppContext";
 import './LoginModal.css'
 import ReactModal from 'react-modal';
 
 ReactModal.setAppElement("#root");
 
 export const LoginModal : React.FunctionComponent = () => {
-    const [{loggingIn, registering},{login, register}] = useContext(AppContext);
+    const [{loggingIn, registering},{login, register}] = useAppContext();
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
     return (
@@ -23,8 +23,12 @@ export const LoginModal : React.FunctionComponent = () => {
                 onSubmit={event => {
                     if(loggingIn){
                         login(username,password);
+                        setUsername("")
+                        setPassword("")
                     } else if(registering) {
                         register(username,password);
+                        setUsername("")
+                        setPassword("")
                     }
                     event.preventDefault()}}>
                 <label htmlFor="username">Username</label><br/>

@@ -1,18 +1,18 @@
 import React from 'react';
 import './App.css';
-import {Terminal} from "./Terminal";
-import {shellClient} from "./generated/command_pb_service";
-import {AppContextProvider} from "./AppContext";
+import { Terminal } from "./Terminal";
+import { shellClient } from "./generated/command_pb_service";
+import { AppContextProvider } from "./AppContext";
+import { CookiesProvider } from 'react-cookie';
 
 
-const App : React.FunctionComponent = () => {
-  const protocol = window.location.protocol;
-  const host = window.location.hostname;
-  const port = window.location.port;
+const App: React.FunctionComponent = () => {
   return (
-      <AppContextProvider client={new shellClient(protocol+"//"+host+":"+port)}>
-        <Terminal/>
+    <CookiesProvider>
+      <AppContextProvider client={new shellClient(`${window.location.protocol}//${window.location.hostname}:${window.location.port}`)}>
+        <Terminal />
       </AppContextProvider>
+    </CookiesProvider>
 
   );
 };
