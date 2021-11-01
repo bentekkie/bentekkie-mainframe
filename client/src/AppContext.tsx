@@ -664,7 +664,7 @@ export const AppContextProvider: React.FunctionComponent<IProps> = (props) => {
             case ResponseType.HTML:
                 return <p dangerouslySetInnerHTML={{ __html: resp.getResp() }} />;
             case ResponseType.MARKDOWN:
-                return <ReactMarkdown source={resp.getResp()} />
+                return <ReactMarkdown source={resp.getResp()}  linkTarget={"_blank"} />
             case ResponseType.JSON:
                 var element = document.createElement('a');
                 element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(resp.getResp()));
