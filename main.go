@@ -50,6 +50,12 @@ func main() {
 	if err != nil {
 		panic("POSTGRES_PORT not defined")
 	}
+
+	port, err := env.GetEnvInt("PORT")
+	if err != nil {
+		port = 8082
+	}
+	log.Debug("Starting")
 	db.DbConnection, err = db.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
 	if err != nil {
 		fmt.Println(err)
@@ -63,5 +69,6 @@ func main() {
 		byteValue, _ := ioutil.ReadAll(jsonFile)
 		db.DbConnection.SeedDB(byteValue, true)
 	}
-	server.Run(8082)
+	log.Debug("Starting")
+	server.Run(port)
 }

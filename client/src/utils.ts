@@ -1,18 +1,17 @@
-import {CommandType, SudoCommandType} from "./generated/command_pb";
+import { Reducer } from "react";
 
-export function isValidCommand(cmd: string ): cmd is keyof typeof CommandType{
-    return cmd in CommandType;
+type KeyType = string | number | symbol
+
+export function isValidEnum<T>(str: KeyType, map: T): str is keyof T {
+    return str in map
 }
-export function isValidSudoCommand(cmd: string ): cmd is keyof typeof SudoCommandType{
-    return cmd in SudoCommandType;
+
+export const arrays_equal = (a: any[], b: any[]) => !!a && !!b && !(a < b || b < a);
+
+export interface DeltaReducer<S,A> {
+    (prevState: S, action: A): Partial<S>
 }
 
-
-export function promisify<T,U,V,R>(func: (param : T,param2: R,cb:(err : U|null,data: V|null) => void) => void) {
-    return (param : T,param2: R) =>
-        new Promise<V>((resolve, reject) => {
-            const callback = (err: U | null, data: V | null) => err ? reject(err) : data ? resolve(data) : reject(Error("internal error"));
-
-            func.apply(func, [param, param2,callback])
-        })
+export function deltaReducer<S, A>(reducer: DeltaReducer<S,A>): Reducer<S, A> {
+    return (state, action) => ({...state,...reducer(state,action)})
 }

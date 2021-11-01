@@ -7,15 +7,21 @@ import (
 
 //JSONINode stores a json representation of an INode
 type JSONINode struct {
-	Name    string      `json:"name"`
-	Folders []JSONINode `json:"folders"`
-	Files   []JSONFile  `json:"files"`
+	Name    string      `json:"name" jsonschema_description:"Name of folder"`
+	Folders []JSONINode `json:"folders" jsonschema_description:"Folders in folder"`
+	Files   []JSONFile  `json:"files" jsonschema_description:"Files in folder"`
+}
+
+//JSONRoot stores the root json node
+type JSONRoot struct {
+	JSONINode
+	Schema string `json:"$schema"`
 }
 
 //JSONFile stores a json representation of a File
 type JSONFile struct {
-	Name     string `json:"name"`
-	Contents string `json:"contents"`
+	Name     string `json:"name"  jsonschema_description:"Name of file"`
+	Contents string `json:"contents" jsonschema_description:"Contents of file"`
 }
 
 //SeedDB seeds the current db with json
@@ -33,7 +39,7 @@ func (c *Connection) SeedDB(jsonString []byte, wipeDB bool) error {
 }
 
 //SeedDBForTest with go struct
-func (c *Connection) SeedDBForTest(tree  JSONINode, wipeDB bool) {
+func (c *Connection) SeedDBForTest(tree JSONINode, wipeDB bool) {
 	if wipeDB {
 		c.DeleteAll()
 	}
@@ -41,16 +47,20 @@ func (c *Connection) SeedDBForTest(tree  JSONINode, wipeDB bool) {
 }
 
 //DumpDB dumps all database info to json
-func (c *Connection) DumpDB() (string, error) {
+func (c *Connection) DumpDB(schemaURL string) (string, error) {
 	childFiles, childFolders, err := c.addINode(c.Root)
 	if err != nil {
 		return "", err
 	}
-	jsonData, err := json.Marshal(JSONINode{
-		Name:    "",
-		Folders: childFolders,
-		Files:   childFiles,
-	})
+	rootNode := JSONRoot{
+		Schema: schemaURL,
+		JSONINode: JSONINode{
+			Name:    "",
+			Folders: childFolders,
+			Files:   childFiles,
+		},
+	}
+	jsonData, err := json.Marshal(&rootNode)
 	return string(jsonData), err
 }
 
