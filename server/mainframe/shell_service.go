@@ -18,7 +18,7 @@ import (
 //ShellServer is a ShellServer
 type ShellServer struct{}
 
-var validFilename, _ = regexp.Compile("^[0-9a-zA-Z_\\-.]+$")
+var validFilename, _ = regexp.Compile(`^[0-9a-zA-Z_\-.]+$`)
 
 //RunSudoCommand runs a sudo command
 func (ss ShellServer) RunSudoCommand(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.SudoResponse, error) {
@@ -510,10 +510,37 @@ func (ShellServer) RunCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 			Type:    mainframe.ResponseType_text,
 		}, nil
 	case mainframe.CommandType_help:
+		if len(cmd.Args) == 0 {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       ALL_COMMANDS_HELP,
+				Type:       mainframe.ResponseType_markdown,
+			}, nil
+		}
+		if len(cmd.Args) == 1 {
+			if _, found := mainframe.CommandType_value[cmd.Args[0]]; !found {
+				return &mainframe.Response{
+					Command:    cmd,
+					CurrentDir: cmd.CurrentDir,
+					Resp:       "Command does not exist",
+					Type:       mainframe.ResponseType_text,
+				}, nil
+			}
+			argCmdType := mainframe.CommandType(mainframe.CommandType_value[cmd.Args[0]])
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       HelpText(&argCmdType),
+				Type:       mainframe.ResponseType_markdown,
+			}, nil
+		}
+
 		return &mainframe.Response{
 			Command:    cmd,
 			CurrentDir: cmd.CurrentDir,
-			Resp:       "Unimplemented",
+			Resp:       "Invalid command usage",
+			Type:       mainframe.ResponseType_text,
 		}, nil
 	case mainframe.CommandType_login:
 		if len(cmd.Args) != 2 {
