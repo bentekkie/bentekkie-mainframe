@@ -70,7 +70,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                             case CommandType.DOWNLOAD_RESUME: {
                                 const link = document.createElement('a');
                                 link.download = "Benjamin Segall's Resume.pdf";
-                                link.href = '/file/benjaminSegallsResume.pdf';
+                                link.href = 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf';
                                 const clickEvent = document.createEvent("MouseEvent");
                                 clickEvent.initEvent("click", true, true);
 
