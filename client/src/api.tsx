@@ -353,7 +353,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
             props.client.getRoot(new Empty(), (_, rootFolder) => {
                 if (rootFolder) {
                     dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: rootFolder } });
-                    sendCommand("exec .init", false, rootFolder)
+                    sendCommand("exec init", false, rootFolder)
                 }
             });
         },

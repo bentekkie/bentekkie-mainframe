@@ -12,11 +12,20 @@ services:
       - 'prod.env'
     restart: always
   postgresProd:
-    image: postgres
+    image: postgres:11-alpine
     env_file: 
       - 'prod.env'
     volumes:
       - my_dbdata_prod:/var/lib/postgresql/data
     restart: always
+  adminer:
+    image: adminer
+    restart: always
+    links:
+      - postgresProd
+    depends_on:
+      - postgresProd
+    ports:
+      - 8085:8080
 volumes: 
   my_dbdata_prod:
