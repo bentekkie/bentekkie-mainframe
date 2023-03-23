@@ -1,10 +1,11 @@
 import { CoreApi, IState, IAction, ActionType, IProps } from './AppContextTypes'
 import { useCookies } from 'react-cookie'
-import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from './generated/command_pb';
+import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from '@/generated/command_pb';
 import React, { useState, useEffect, Dispatch, RefObject } from 'react';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { isValidEnum } from './utils';
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const JWT_COOKIE_KEY = 'jwt'
 
@@ -182,7 +183,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                         if (interactive) {
                             dispatch({
                                 type: ActionType.AddSection,
-                                section: <div>Invalid command "{command}"<br /></div>
+                                section: <div>Invalid command `&quot;`{command}`&quot;`<br /></div>
                             });
                         }
                         resolve(currentDir)
@@ -239,7 +240,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
             case ResponseType.HTML:
                 return <p dangerouslySetInnerHTML={{ __html: resp.getResp() }} />;
             case ResponseType.MARKDOWN:
-                return <ReactMarkdown source={resp.getResp()} linkTarget={"_blank"} />
+                return <ReactMarkdown linkTarget={"_blank"} remarkPlugins={[remarkGfm]} >{resp.getResp()}</ReactMarkdown>
             case ResponseType.JSON:
                 var element = document.createElement('a');
                 element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(resp.getResp()));
@@ -280,7 +281,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         sendCommand,
         autoComplete: () => {
             if (state.autoComp.frag === "" || !state.command.startsWith(state.autoComp.frag)) {
-                let split = state.command.match(/(?:[^\s"]+|"[^"]*")+/g);
+                let split : string[] | null = state.command.match(/(?:[^\s"]+|"[^"]*")+/g);
                 if (!split) split = [];
                 for (let i = 0; i < split.length; i++) {
                     split[i] = split[i].replace(/"/g, "");

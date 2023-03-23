@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {useAppContext} from "./AppContext";
-import './LoginModal.css'
 import ReactModal from 'react-modal';
 
 ReactModal.setAppElement("#root");

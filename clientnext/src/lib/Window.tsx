@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from 'react';
-import './Window.css';
 
-const Window : React.FunctionComponent = (props) => {
+const Window : React.FunctionComponent<{children: any}> = (props) => {
     const contentRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         let el = contentRef.current;

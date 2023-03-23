@@ -1,6 +1,6 @@
-import { Folder } from "./generated/command_pb";
+import { Folder } from "@/generated/command_pb";
 import { ReactNode } from "react";
-import { shellClient } from "./generated/command_pb_service";
+import { shellClient } from "@/generated/command_pb_service";
 
 export enum ActionType {
     AddSection,
@@ -174,4 +174,5 @@ export type IAction =
 
     export interface IProps {
         client: shellClient
+        children: any
     }

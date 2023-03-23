@@ -1,10 +1,12 @@
 FROM node:alpine AS clientBuilder
 WORKDIR /
-COPY client/package.json .
-RUN npm install
+RUN npm config set legacy-peer-deps true
+COPY clientnext/package.json .
+COPY clientnext/yarn.lock .
+RUN yarn
 
-COPY client/ .
-RUN npm run build
+COPY clientnext/ .
+RUN yarn build
 
 
 ############################
@@ -22,12 +24,12 @@ ENV GO111MODULE=on
 COPY go.mod .
 COPY go.sum .
 
-RUN go get -u github.com/gobuffalo/packr/packr
+RUN go install github.com/gobuffalo/packr/packr@latest
 
 RUN go mod download
 
-COPY --from=clientBuilder build client/build/
-RUN ls client
+COPY --from=clientBuilder out clientnext/out/
+RUN ls clientnext
 COPY . .
 # Build the binary.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 packr build -ldflags="-w -s" -o /go/bin/hello

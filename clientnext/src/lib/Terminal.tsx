@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Window from './Window';
 import CommandBar from './CommandBar';
-import './Terminal.css';
 import { useAppContext } from "./AppContext";
 import { LoginModal } from "./LoginModal";
 import { EditModal } from "./EditModal";

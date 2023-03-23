@@ -1,5 +1,4 @@
 import React from 'react';
-import './CommandBar.css';
 import {useAppContext} from "./AppContext";
 
 const CommandBar : React.FunctionComponent = () => {

@@ -26,7 +26,7 @@ import (
 // Run starts server
 func Run(port int) {
 	auth.InitJWT()
-	box := packr.NewBox("../client/build")
+	box := packr.NewBox("../clientnext/out")
 	grpcServer := grpc.NewServer()
 	shellServer := mainframe.NewShellServer()
 	pb.RegisterShellServer(grpcServer, shellServer)
@@ -69,7 +69,7 @@ func overridePath(path string, override http.HandlerFunc) mux.MiddlewareFunc {
 func RunTest(mockDbConnection *db.Connection) *httptest.Server {
 	auth.InitJWT()
 	db.DbConnection = mockDbConnection
-	box := packr.NewBox("../client/build")
+	box := packr.NewBox("../clientnext/out")
 	grpcServer := grpc.NewServer()
 	shellServer := mainframe.NewShellServer()
 	pb.RegisterShellServer(grpcServer, shellServer)

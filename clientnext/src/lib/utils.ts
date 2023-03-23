@@ -2,7 +2,7 @@ import { Reducer } from "react";
 
 type KeyType = string | number | symbol
 
-export function isValidEnum<T>(str: KeyType, map: T): str is keyof T {
+export function isValidEnum<T extends object>(str: KeyType, map: T): str is keyof T {
     return str in map
 }
 
