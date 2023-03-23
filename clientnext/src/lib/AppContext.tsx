@@ -1,9 +1,10 @@
 import React, { useReducer, useRef, useContext } from 'react'
 import { IState, IAction, ActionType, CoreApi, IProps } from './AppContextTypes'
 import { useApi } from './api'
-import { arrays_equal, deltaReducer, DeltaReducer } from './utils';
+import { arrays_equal, deltaReducer } from './utils';
 
 const initialState: IState = {
+    bootstrapped: false,
     sections: [],
     prompt: "B:/>",
     command_arr: [],
@@ -97,6 +98,10 @@ const reducer: React.Reducer<IState, IAction> = deltaReducer((state, action) : P
                     path: "",
                     contents: ""
                 }
+            }
+        case ActionType.Bootstrap:
+            return {
+                bootstrapped: true
             }
         case ActionType.RegisterFlow:
         case ActionType.LoginFlow:

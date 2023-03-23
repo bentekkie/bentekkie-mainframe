@@ -9,6 +9,12 @@
     "build": "next build && next export"
   },
   "dependencies": {
+    "@bufbuild/buf": "^1.15.0-1",
+    "@bufbuild/connect": "^0.8.4",
+    "@bufbuild/connect-web": "^0.8.4",
+    "@bufbuild/protobuf": "^1.1.1",
+    "@bufbuild/protoc-gen-connect-es": "^0.8.4",
+    "@bufbuild/protoc-gen-es": "^1.1.1",
     "@improbable-eng/grpc-web": "^0.15.0",
     "@types/google-protobuf": "^3.15.6",
     "@types/node": "18.15.5",
@@ -19,6 +25,7 @@
     "eslint-config-next": "13.2.4",
     "google-protobuf": "^3.21.2",
     "next": "13.2.4",
+    "protoc-gen-ts": "^0.8.5",
     "react": "18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "18.2.0",

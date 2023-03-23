@@ -1,3 +1,4 @@
+import React from 'react'
 import Head from 'next/head'
 import App from '@/lib/App'
 
@@ -12,7 +13,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div id='root'>
-        <App></App>
+        <React.StrictMode>
+          <App></App>
+        </React.StrictMode>
       </div>
     </>
   )

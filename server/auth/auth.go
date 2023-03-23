@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 type customClaims struct {
 	Username string `json:"username"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
-//Status of JWT token
+// Status of JWT token
 type Status int
 
-//Statuses for JWT tokens
+// Statuses for JWT tokens
 const (
 	VALID Status = iota
 	EXPIRED
@@ -30,20 +30,20 @@ func InitJWT() {
 	rand.Read(key)
 }
 
-//NewJWT creates a new JWT token
+// NewJWT creates a new JWT token
 func NewJWT(username string) (string, error) {
 	now := time.Now()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, customClaims{
 		username,
-		jwt.StandardClaims{
+		jwt.RegisteredClaims{
 			Issuer:    "bentekkie-mainframe",
-			ExpiresAt: now.Unix() + int64(time.Duration(time.Hour*24).Seconds()),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour * 24)),
 		},
 	})
 	return token.SignedString(key)
 }
 
-//ParseJWT parses a JWT token
+// ParseJWT parses a JWT token
 func ParseJWT(jwtString string) (Status, error) {
 	token, err := jwt.ParseWithClaims(jwtString, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
@@ -59,7 +59,7 @@ func ParseJWT(jwtString string) (Status, error) {
 	}
 	now := time.Now()
 	if claims, ok := token.Claims.(*customClaims); ok && token.Valid {
-		if now.Add(time.Minute * 2).Before(time.Unix(claims.ExpiresAt, 0)) {
+		if now.Add(time.Minute * 2).Before(claims.ExpiresAt.Time) {
 			return VALID, nil
 		}
 		return EXPIRED, nil

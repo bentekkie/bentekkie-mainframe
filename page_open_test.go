@@ -10,7 +10,7 @@ import (
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/ory/dockertest"
+	"github.com/ory/dockertest/v3"
 	"github.com/sclevine/agouti"
 	. "github.com/sclevine/agouti/matchers"
 )

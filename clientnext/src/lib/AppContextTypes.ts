@@ -1,6 +1,10 @@
-import { Folder } from "@/generated/command_pb";
+import { Folder } from "@/generated/messages/command_pb";
 import { ReactNode } from "react";
-import { shellClient } from "@/generated/command_pb_service";
+import {shell as shell} from "@/generated/messages/command_connect"
+import { PromiseClient } from "@bufbuild/connect";
+
+
+
 
 export enum ActionType {
     AddSection,
@@ -16,10 +20,12 @@ export enum ActionType {
     LoginFlow,
     RegisterFlow,
     StartEditing,
-    EndEditing
+    EndEditing,
+    Bootstrap,
 }
 
 export interface IState {
+    bootstrapped: boolean,
     sections: ReactNode[]
     prompt: string
     command_arr: string[]
@@ -134,6 +140,10 @@ interface EndEditingAction {
     type: ActionType.EndEditing
 }
 
+interface BootstrapAction {
+    type: ActionType.Bootstrap
+}
+
 export type IAction =
     AddSectionAction | ClearSectionsAction |
     ClearAutoCompAction | NewCommandAction |
@@ -142,7 +152,7 @@ export type IAction =
     NextCommandAction | PrevCommandAction |
     LoginFlowAction |
     StartEditingAction | EndEditingAction |
-    RegisterFlowAction
+    RegisterFlowAction | BootstrapAction
 
 
 
@@ -173,6 +183,6 @@ export type IAction =
     }
 
     export interface IProps {
-        client: shellClient
+        client: PromiseClient<typeof shell>,
         children: any
     }

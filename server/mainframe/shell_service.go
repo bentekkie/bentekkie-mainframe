@@ -10,19 +10,28 @@ import (
 
 	"github.com/bentekkie/bentekkie-mainframe/server/auth"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
-	mainframe "github.com/bentekkie/bentekkie-mainframe/server/generated"
-	middleware "github.com/bentekkie/bentekkie-mainframe/server/middleware"
-	"github.com/golang/protobuf/ptypes/empty"
+	mainframe "github.com/bentekkie/bentekkie-mainframe/server/generated/messages"
+	"github.com/bufbuild/connect-go"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-//ShellServer is a ShellServer
+// ShellServer is a ShellServer
 type ShellServer struct{}
 
 var validFilename, _ = regexp.Compile(`^[0-9a-zA-Z_\-.]+$`)
 
-//RunSudoCommand runs a sudo command
-func (ss ShellServer) RunSudoCommand(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.SudoResponse, error) {
+// RunSudoCommand runs a sudo command
+func (ss ShellServer) RunSudoCommand(ctx context.Context, req *connect.Request[mainframe.SudoCommand]) (*connect.Response[mainframe.SudoResponse], error) {
+	resp, err := ss.runSudoCommand(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(resp), nil
+}
+
+// RunSudoCommand runs a sudo command
+func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.SudoResponse, error) {
 	status, err := auth.ParseJWT(cmd.Jwt)
 	if err != nil || status == auth.ERROR {
 		log.WithError(err).Error(status, cmd)
@@ -86,7 +95,7 @@ func (ss ShellServer) RunSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		} else if len(cmd.Args) == 1 {
-			res, err := ss.RunCommand(ctx, &mainframe.Command{
+			res, err := ss.runCommand(ctx, &mainframe.Command{
 				Command:    mainframe.CommandType_cat,
 				CurrentDir: cmd.CurrentDir,
 				Args:       []string{cmd.Args[0]},
@@ -293,22 +302,11 @@ func (ss ShellServer) RunSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			Type:       mainframe.ResponseType_text,
 		}, nil
 	case mainframe.SudoCommandType_dump:
-		url := ctx.Value(middleware.URLContextKey).(string)
-		result, err := db.DbConnection.DumpDB(url + "dbschema")
-		if err != nil {
-			log.WithError(err).Error("dump error")
-			return &mainframe.SudoResponse{
-				Command:    cmd,
-				CurrentDir: cmd.CurrentDir,
-				Resp:       "Internal Server Error",
-				Type:       mainframe.ResponseType_text,
-			}, nil
-		}
 		return &mainframe.SudoResponse{
 			Command:    cmd,
 			CurrentDir: cmd.CurrentDir,
-			Resp:       result,
-			Type:       mainframe.ResponseType_json,
+			Resp:       "Unimplemented",
+			Type:       mainframe.ResponseType_text,
 		}, nil
 	case mainframe.SudoCommandType_seed:
 		if len(cmd.Args) < 1 || len(cmd.Args) > 2 {
@@ -361,21 +359,37 @@ func (ss ShellServer) RunSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 
 }
 
-//NewShellServer creates a new ShellServer
+// NewShellServer creates a new ShellServer
 func NewShellServer() *ShellServer {
 	return &ShellServer{}
 }
 
-//GetRoot returns the root of the filesystem
-func (ShellServer) GetRoot(ctx context.Context, in *empty.Empty) (*mainframe.Folder, error) {
+// GetRoot returns the root of the filesystem
+func (ss ShellServer) GetRoot(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[mainframe.Folder], error) {
+	resp, err := ss.getRoot(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(resp), nil
+}
+
+func (ShellServer) getRoot(ctx context.Context, in *emptypb.Empty) (*mainframe.Folder, error) {
 	root := db.DbConnection.Root
 	return &mainframe.Folder{
 		Path: root.Path.String,
 	}, nil
 }
 
-//RunCommand runs a given command
-func (ShellServer) RunCommand(ctx context.Context, cmd *mainframe.Command) (*mainframe.Response, error) {
+// RunCommand runs a given command
+func (ss ShellServer) RunCommand(ctx context.Context, req *connect.Request[mainframe.Command]) (*connect.Response[mainframe.Response], error) {
+	resp, err := ss.runCommand(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(resp), nil
+}
+
+func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mainframe.Response, error) {
 	if cmd == nil || cmd.CurrentDir == nil {
 		return nil, errors.New("internal error")
 	}
@@ -588,8 +602,16 @@ func (ShellServer) RunCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 	}
 }
 
-//AutoComplete generates the completions for a given command
-func (ShellServer) AutoComplete(ctx context.Context, cmd *mainframe.Command) (*mainframe.AutoCompResponse, error) {
+// AutoComplete generates the completions for a given command
+func (ss ShellServer) AutoComplete(ctx context.Context, req *connect.Request[mainframe.Command]) (*connect.Response[mainframe.AutoCompResponse], error) {
+	resp, err := ss.autoComplete(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(resp), nil
+}
+
+func (ShellServer) autoComplete(ctx context.Context, cmd *mainframe.Command) (*mainframe.AutoCompResponse, error) {
 	if cmd == nil || cmd.CurrentDir == nil {
 		return nil, errors.New("internal error")
 	}
@@ -665,8 +687,15 @@ func (ShellServer) AutoComplete(ctx context.Context, cmd *mainframe.Command) (*m
 	}
 }
 
-//SudoAutoComplete generates the completions for a given sudo command
-func (ss ShellServer) SudoAutoComplete(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.AutoCompResponse, error) {
+// SudoAutoComplete generates the completions for a given sudo command
+func (ss ShellServer) SudoAutoComplete(ctx context.Context, req *connect.Request[mainframe.SudoCommand]) (*connect.Response[mainframe.AutoCompResponse], error) {
+	resp, err := ss.sudoAutoComplete(ctx, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+	return connect.NewResponse(resp), nil
+}
+func (ss ShellServer) sudoAutoComplete(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.AutoCompResponse, error) {
 	if cmd == nil || cmd.CurrentDir == nil {
 		return nil, errors.New("internal error")
 	}

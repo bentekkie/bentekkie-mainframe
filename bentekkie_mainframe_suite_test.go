@@ -11,7 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/ory/dockertest"
+	"github.com/ory/dockertest/v3"
 	"github.com/sclevine/agouti"
 	log "github.com/sirupsen/logrus"
 )

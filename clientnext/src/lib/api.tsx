@@ -1,7 +1,7 @@
 import { CoreApi, IState, IAction, ActionType, IProps } from './AppContextTypes'
 import { useCookies } from 'react-cookie'
-import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from '@/generated/command_pb';
-import React, { useState, useEffect, Dispatch, RefObject } from 'react';
+import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from '@/generated/messages/command_pb';
+import React, { Dispatch, RefObject, useMemo } from 'react';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { isValidEnum } from './utils';
 import ReactMarkdown from 'react-markdown'
@@ -10,195 +10,190 @@ import remarkGfm from 'remark-gfm'
 const JWT_COOKIE_KEY = 'jwt'
 
 export function useCommandNames(jwt : string | null) {
-    const [names, setNames] = useState<string[]>([])
+    return useMemo(() => [...Object.keys(CommandType),...(jwt ? Object.keys(SudoCommandType) : [])].map(cmd => cmd.toLowerCase()), [jwt])
+}
 
-    useEffect(() => setNames([...Object.keys(CommandType),...(jwt ? Object.keys(SudoCommandType) : [])].map(cmd => cmd.toLowerCase())), [jwt])
-
-    return names
+function useCookie(key : string): [string | null, (v: string) => void, () => void]{
+    const [cookies, setCookie, removeCookie] = useCookies([key])
+    return [cookies[key] || null, (newJwt : string) => setCookie(key, newJwt), () => removeCookie(key)]
 }
 
 export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps, inputOpenFileRef: RefObject<HTMLInputElement>): CoreApi {
-    const [cookies, setCookie, removeCookie] = useCookies([JWT_COOKIE_KEY])
-    const jwt : string | null= cookies[JWT_COOKIE_KEY] || null
+    const [jwt, setJwt, removeJwt] = useCookie(JWT_COOKIE_KEY)
     const cmdNames = useCommandNames(jwt);
 
     const parseCommand = (command: string) => {
         const split = command.match(/(?:[^\s"]+|"[^"]*")+/g);
         if (split) {
             let [cmd, ...args] = split.map(part => part.replace(/"/g, ""))
-            cmd = cmd.toUpperCase();
+            cmd = cmd.toLowerCase();
             return { cmd, args }
         }
         return null
     }
 
-    const runCommands = (commands: string[], currentDir?: Folder) => {
-        return commands
-            .map(cmd => (cdir?: Folder) => sendCommand(cmd, false, cdir))
-            .reduce((prev, next) => prev.then(next), Promise.resolve(currentDir))
+    const runCommands = async (commands: string[], currentDir?: Folder) => {
+        for(const command of commands) {
+            currentDir = await sendCommand(command, false, currentDir)
+        }
+        return currentDir
     }
 
-    const sendCommand = (command: string, interactive: boolean, currentDir?: Folder) => {
+    const sendCommand = async (command: string, interactive: boolean, currentDir?: Folder): Promise<Folder | undefined> => {
         currentDir = currentDir || state.currentDir
-        return new Promise<typeof currentDir>(resolve => {
+        if (interactive) {
+            dispatch({
+                type: ActionType.AddSection,
+                section: <div>{state.prompt + command}<br /></div>
+            });
+            dispatch({ type: ActionType.ClearAutoComp });
+        }
+        if (command !== "") {
             if (interactive) {
-                dispatch({
-                    type: ActionType.AddSection,
-                    section: <div>{state.prompt + command}<br /></div>
-                });
-                dispatch({ type: ActionType.ClearAutoComp });
+                dispatch({ type: ActionType.NewCommand, payload: { command } });
             }
-            if (command !== "") {
-                if (interactive) {
-                    dispatch({ type: ActionType.NewCommand, payload: { command } });
-                }
-                const split = parseCommand(command)
-                if (split) {
-                    const { cmd, args } = split
-                    if (isValidEnum(cmd, CommandType)) {
-                        switch (CommandType[cmd]) {
-                            case CommandType.CLEAR: {
-                                dispatch({ type: ActionType.ClearAutoComp });
-                                dispatch({ type: ActionType.ClearSections });
-                                resolve(currentDir)
-                                break;
-                            }
-                            case CommandType.LANDING: {
-                                window.location.href = 'http://www.bentekkie.com';
-                                resolve(currentDir)
-                                break;
-                            }
-                            case CommandType.DOWNLOAD_RESUME: {
-                                const link = document.createElement('a');
-                                link.download = "Benjamin Segall's Resume.pdf";
-                                link.href = 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf';
-                                const clickEvent = document.createEvent("MouseEvent");
-                                clickEvent.initEvent("click", true, true);
+            const split = parseCommand(command)
+            if (split) {
+                const { cmd, args } = split
+                if (isValidEnum(cmd, CommandType)) {
+                    switch (CommandType[cmd]) {
+                        case CommandType.clear: {
+                            dispatch({ type: ActionType.ClearAutoComp });
+                            dispatch({ type: ActionType.ClearSections });
+                            return currentDir
+                        }
+                        case CommandType.landing: {
+                            window.location.href = 'http://www.bentekkie.com';
+                            return currentDir
+                        }
+                        case CommandType.download_resume: {
+                            const link = document.createElement('a');
+                            link.download = "Benjamin Segall's Resume.pdf";
+                            link.href = 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf';
+                            const clickEvent = document.createEvent("MouseEvent");
+                            clickEvent.initEvent("click", true, true);
 
-                                link.dispatchEvent(clickEvent);
-                                const element = document.getElementById("content");
-                                if (element) {
-                                    element.scrollTop = element.scrollHeight;
-                                }
-                                resolve(currentDir)
-                                break;
+                            link.dispatchEvent(clickEvent);
+                            const element = document.getElementById("content");
+                            if (element) {
+                                element.scrollTop = element.scrollHeight;
                             }
-                            case CommandType.LOGIN: {
-                                if (args.length === 0) {
-                                    dispatch({
-                                        type: ActionType.LoginFlow,
-                                        payload : { loggingIn : true }
-                                    })
-                                }
-                                resolve(currentDir)
-                                break;
+                            return currentDir
+                        }
+                        case CommandType.login: {
+                            if (args.length === 0) {
+                                dispatch({
+                                    type: ActionType.LoginFlow,
+                                    payload : { loggingIn : true }
+                                })
                             }
-                            case CommandType.EXEC: {
-                                if (args.length === 1) {
-                                    let command = new Command();
-                                    command.setCurrentdir(currentDir);
-                                    command.setArgsList(args);
-                                    command.setCommand(CommandType.CAT);
-                                    props.client.runCommand(command, (err, resp) => {
-                                        if (resp) {
-                                            if (resp.getType() === ResponseType.MARKDOWN) {
-                                                const rawCommands = resp.getResp().split('\n')
-                                                resolve(runCommands(rawCommands, currentDir))
-                                            } else {
-                                                receiveResponse(resp);
-                                                resolve(resp.getCurrentdir())
-                                            }
+                            return currentDir
+                        }
+                        case CommandType.exec: {
+                            if (args.length === 1) {
+                                let command = new Command(
+                                    {
+                                        args: args,
+                                        command: CommandType.cat,
+                                        currentDir: currentDir
+                                    }
+                                );
+                                return props.client.runCommand(command).then(resp => {
+                                    if (resp) {
+                                        if (resp.type === ResponseType.markdown) {
+                                            const rawCommands = resp.resp.split('\n')
+                                            return runCommands(rawCommands, currentDir)
                                         } else {
-                                            console.error(err)
-                                            resolve(currentDir)
+                                            receiveResponse(resp);
+                                            return resp.currentDir
                                         }
-                                    })
-                                    break;
-                                } else {
-                                    break;
-                                }
-                            }
-                            default: {
-                                let command = new Command();
-                                command.setCurrentdir(currentDir);
-                                command.setArgsList(args);
-                                command.setCommand(CommandType[cmd]);
-                                props.client.runCommand(command, (err, resp) => {
-                                    if (resp) {
-                                        receiveResponse(resp);
-                                        resolve(resp.getCurrentdir())
                                     } else {
-                                        console.error(err)
-                                        resolve(currentDir)
+                                        console.error("Null Response")
+                                        return currentDir
                                     }
+                                }).catch(err => {
+                                    console.error(err)
+                                    return currentDir
                                 })
+                            } else {
+                                return currentDir
                             }
                         }
-                    } else if (isValidEnum(cmd, SudoCommandType) && jwt !== null) {
-                        switch (SudoCommandType[cmd]) {
-                            case SudoCommandType.SEED: {
-                                if (inputOpenFileRef.current) {
-                                    inputOpenFileRef.current.click()
-                                }
-                                resolve(currentDir)
-                                break;
-                            }
-                            case SudoCommandType.LOGOUT: {
-                                removeCookie(JWT_COOKIE_KEY)
-                                resolve(currentDir)
-                                break;
-
-                            }
-                            case SudoCommandType.ADDUSER:
-                                if (args.length === 0) {
-                                    dispatch({
-                                        type: ActionType.RegisterFlow,
-                                        payload: {
-                                            registering: true
-                                        }
-                                    })
-                                    resolve(currentDir)
-                                    break;
-                                }
-                            // fall through
-                            default: {
-                                let command = new SudoCommand();
-                                command.setCurrentdir(currentDir);
-                                command.setArgsList(args);
-                                command.setCommand(SudoCommandType[cmd]);
-                                command.setJwt(jwt);
-                                props.client.runSudoCommand(command, (err, resp) => {
-                                    if (resp) {
-                                        receiveSudoResponse(resp);
-                                        resolve(resp.getCurrentdir())
-                                    } else {
-                                        console.error(err)
-                                        resolve(currentDir)
-                                    }
-                                })
-                            }
-                        }
-                    } else {
-                        console.error(`Invalid command "${command}"`)
-                        if (interactive) {
-                            dispatch({
-                                type: ActionType.AddSection,
-                                section: <div>Invalid command `&quot;`{command}`&quot;`<br /></div>
+                        default: {
+                            let command = new Command({
+                                currentDir,
+                                args,
+                                command:CommandType[cmd]
                             });
+                            return props.client.runCommand(command).then(resp => {
+                                receiveResponse(resp);
+                                return resp.currentDir
+                            }).catch(err => {
+                                console.error(err)
+                                return currentDir
+                            })
                         }
-                        resolve(currentDir)
                     }
+                } else if (isValidEnum(cmd, SudoCommandType) && jwt !== null) {
+                    switch (SudoCommandType[cmd]) {
+                        case SudoCommandType.seed: {
+                            if (inputOpenFileRef.current) {
+                                inputOpenFileRef.current.click()
+                            }
+                            return currentDir
+                        }
+                        case SudoCommandType.logout: {
+                            removeJwt()
+                            return currentDir
+                        }
+                        case SudoCommandType.adduser:
+                            if (args.length === 0) {
+                                dispatch({
+                                    type: ActionType.RegisterFlow,
+                                    payload: {
+                                        registering: true
+                                    }
+                                })
+                                return currentDir
+                            }
+                        default: {
+                            break
+                        }
+                    }
+                    let command = new SudoCommand({
+                        currentDir,
+                        args,
+                        command: SudoCommandType[cmd],
+                        jwt,
+                    });
+                    return props.client.runSudoCommand(command).then(resp => {
+                        receiveSudoResponse(resp);
+                        return resp.currentDir
+                    }).catch(err => {
+                        console.error(err)
+                        return currentDir
+                    })
+                } else {
+                    console.error(`Invalid command "${command}"`)
+                    if (interactive) {
+                        dispatch({
+                            type: ActionType.AddSection,
+                            section: <div>Invalid command `&quot;`{command}`&quot;`<br /></div>
+                        });
+                    }
+                    return currentDir
                 }
             }
-        })
+        }
+    
     };
 
 
     const receiveSudoResponse = (resp: SudoResponse) => {
-        const currentDir = resp.getCurrentdir();
+        const currentDir = resp.currentDir;
         if (currentDir) {
-            const command = resp.getCommand();
-            if (command && command.getCommand() === SudoCommandType.EDIT && !state.editing && resp.getType() === ResponseType.MARKDOWN) {
+            const command = resp.command;
+            if (command && command.command === SudoCommandType.edit && !state.editing && resp.type === ResponseType.markdown) {
 /*                 console.log({
                     type: ActionType.StartEditing,
                     payload: {
@@ -212,14 +207,14 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                     type: ActionType.StartEditing,
                     payload: {
                         editorFile: {
-                            path: command.getArgsList()[0],
-                            contents: resp.getResp()
+                            path: command.args[0],
+                            contents: resp.resp
                         }
                     }
                 });
                 return
             }
-            let tmp = currentDir.getPath();
+            let tmp = currentDir.path;
             let tl = tmp.split("/");
             if (tl.length > 2) {
                 tmp = "/../" + tl[tl.length - 1]
@@ -233,17 +228,17 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         }
     };
 
-    const parseResponse = (resp: Response) => {
-        switch (resp.getType()) {
-            case ResponseType.TEXT:
-                return <p>{resp.getResp()}</p>;
-            case ResponseType.HTML:
-                return <p dangerouslySetInnerHTML={{ __html: resp.getResp() }} />;
-            case ResponseType.MARKDOWN:
-                return <ReactMarkdown linkTarget={"_blank"} remarkPlugins={[remarkGfm]} >{resp.getResp()}</ReactMarkdown>
-            case ResponseType.JSON:
+    const parseResponse = (resp: Response | SudoResponse) => {
+        switch (resp.type) {
+            case ResponseType.text:
+                return <p>{resp.resp}</p>;
+            case ResponseType.html:
+                return <p dangerouslySetInnerHTML={{ __html: resp.resp }} />;
+            case ResponseType.markdown:
+                return <ReactMarkdown linkTarget={"_blank"} remarkPlugins={[remarkGfm]} >{resp.resp}</ReactMarkdown>
+            case ResponseType.json:
                 var element = document.createElement('a');
-                element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(resp.getResp()));
+                element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(resp.resp));
                 element.setAttribute('download', "dump.json");
                 element.style.display = 'none';
                 document.body.appendChild(element);
@@ -252,18 +247,18 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
     };
 
     const receiveResponse = (resp: Response) => {
-        const command = resp.getCommand();
-        if (command && command.getCommand() === CommandType.LOGIN) {
-            const text = resp.getResp();
+        const command = resp.command;
+        if (command && command.command === CommandType.login) {
+            const text = resp.resp;
             if (text && text.startsWith("JWT:")) {
-                const jwt = text.substr(4);
-                setCookie(JWT_COOKIE_KEY, jwt)
+                const jwt = text.substring(4);
+                setJwt(jwt)
                 return
             }
         }
-        const currentDir = resp.getCurrentdir();
+        const currentDir = resp.currentDir;
         if (currentDir) {
-            let tmp = currentDir.getPath();
+            let tmp = currentDir.path;
             let tl = tmp.split("/");
             if (tl.length > 2) {
                 tmp = "/../" + tl[tl.length - 1]
@@ -287,32 +282,30 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                     split[i] = split[i].replace(/"/g, "");
                 }
                 if (cmdNames.indexOf(split[0]) >= 0 && split[1] !== undefined) {
-                    const command = split[0].toUpperCase();
+                    const command = split[0].toLowerCase();
                     if (isValidEnum(command, CommandType)) {
-                        let c = new Command();
-                        c.setCommand(CommandType[command]);
-                        c.setCurrentdir(state.currentDir);
-                        c.setArgsList(split.slice(1));
-                        props.client.autoComplete(c, (err, resp) => {
-                            if (resp) {
-                                dispatch({ type: ActionType.AutoComplete, payload: { rawAutoComp: resp.getCompletionsList() } });
-                            } else {
-                                console.error(err)
-                            }
+                        let c = new Command({
+                            command: CommandType[command],
+                            currentDir: state.currentDir,
+                            args: split.slice(1)
                         });
+                        props.client.autoComplete(c).then(resp => {
+                            dispatch({ type: ActionType.AutoComplete, payload: { rawAutoComp: resp.completions } });
+                        }).catch(err => {
+                            console.error(err)
+                        })
                     } else if (isValidEnum(command, SudoCommandType) && jwt != null) {
-                        let c = new SudoCommand();
-                        c.setCommand(SudoCommandType[command]);
-                        c.setCurrentdir(state.currentDir);
-                        c.setArgsList(split.slice(1));
-                        c.setJwt(jwt);
-                        props.client.sudoAutoComplete(c, (err, resp) => {
-                            if (resp) {
-                                dispatch({ type: ActionType.AutoComplete, payload: { rawAutoComp: resp.getCompletionsList() } });
-                            } else {
-                                console.error(err)
-                            }
+                        let c = new SudoCommand({
+                            command: SudoCommandType[command],
+                            currentDir:state.currentDir,
+                            args: split.slice(1),
+                            jwt,
                         });
+                        props.client.sudoAutoComplete(c).then(resp => {
+                            dispatch({ type: ActionType.AutoComplete, payload: { rawAutoComp: resp.completions } });
+                        }).catch(err => {
+                            console.error(err)
+                        })
                     }
                 } else {
                     let filteredArr = cmdNames.filter((s) => {
@@ -351,29 +344,26 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
 
         },
         bootstrap: () => {
-            props.client.getRoot(new Empty(), (_, rootFolder) => {
-                if (rootFolder) {
-                    dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: rootFolder } });
-                    sendCommand("exec init", false, rootFolder)
-                }
-            });
+            if(!state.bootstrapped) {
+                console.log("Bootstrap")
+                dispatch({ type: ActionType.Bootstrap })
+                props.client.getRoot(new Empty()).then(resp => {
+                    dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: resp } });
+                    sendCommand("exec init", false, resp)
+                })
+            }
         },
         setCommand: (command: string) => dispatch({ type: ActionType.SetCommand, payload: { command } }),
         clearAutoComplete: () => dispatch({ type: ActionType.ClearAutoComp }),
         nextCommand: () => dispatch({ type: ActionType.NextCommand }),
         prevCommand: () => dispatch({ type: ActionType.PrevCommand }),
         login: (username: string, password: string) => {
-            let command = new Command();
-            command.setCurrentdir(state.currentDir);
-            command.setArgsList([username, password]);
-            command.setCommand(CommandType.LOGIN);
-            props.client.runCommand(command, (err, resp) => {
-                if (resp) {
-                    receiveResponse(resp);
-                } else {
-                    console.error(err)
-                }
+            let command = new Command({
+                currentDir: state.currentDir,
+                args: [username, password],
+                command: CommandType.login
             });
+            props.client.runCommand(command).then(receiveResponse).catch(console.error)
             dispatch({
                 type: ActionType.LoginFlow,
                 payload : { loggingIn : false }
@@ -381,18 +371,13 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         },
         register: (username: string, password: string) => {
             if (jwt) {
-                let command = new SudoCommand();
-                command.setCurrentdir(state.currentDir)
-                command.setArgsList([username, password])
-                command.setCommand(SudoCommandType.ADDUSER)
-                command.setJwt(jwt)
-                props.client.runSudoCommand(command, (err, resp) => {
-                    if (resp) {
-                        receiveSudoResponse(resp);
-                    } else {
-                        console.error(err)
-                    }
+                let command = new SudoCommand({
+                    currentDir: state.currentDir,
+                    args: [username, password],
+                    command: SudoCommandType.adduser,
+                    jwt,
                 });
+                props.client.runSudoCommand(command).then(receiveSudoResponse).catch(console.error)
             }
             dispatch({
                 type: ActionType.RegisterFlow,
@@ -402,18 +387,13 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         updateFile: (newContents: string) => {
             dispatch({ type: ActionType.EndEditing });
             if (jwt != null) {
-                const command = new SudoCommand();
-                command.setJwt(jwt);
-                command.setCurrentdir(state.currentDir);
-                command.setCommand(SudoCommandType.EDIT);
-                command.setArgsList([state.editorFile.path, newContents]);
-                props.client.runSudoCommand(command, (err, resp) => {
-                    if (resp) {
-                        receiveSudoResponse(resp);
-                    } else {
-                        console.error(err)
-                    }
-                })
+                const command = new SudoCommand({
+                    jwt,
+                    currentDir: state.currentDir,
+                    command: SudoCommandType.edit,
+                    args: [state.editorFile.path, newContents],
+                });
+                props.client.runSudoCommand(command).then(receiveSudoResponse).then(console.error)
             }
         },
         seedDb: (filelist: FileList | null) => {
@@ -426,18 +406,13 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                         if (event.target instanceof FileReader && event.target.result && !(event.target.result instanceof ArrayBuffer)) {
                             if (jwt != null) {
                                 const wipeDB = prompt("Wipe db?", "false") === "true"
-                                const command = new SudoCommand();
-                                command.setJwt(jwt);
-                                command.setCurrentdir(state.currentDir);
-                                command.setCommand(SudoCommandType.SEED);
-                                command.setArgsList([event.target.result, wipeDB.toString()]);
-                                props.client.runSudoCommand(command, (err, resp) => {
-                                    if (resp) {
-                                        receiveSudoResponse(resp);
-                                    } else {
-                                        console.error(err)
-                                    }
-                                })
+                                const command = new SudoCommand({
+                                    jwt,
+                                    currentDir: state.currentDir,
+                                    command: SudoCommandType.seed,
+                                    args: [event.target.result, wipeDB.toString()]
+                                });
+                                props.client.runSudoCommand(command).then(receiveSudoResponse).then(console.error)
                             }
                         }
                     })

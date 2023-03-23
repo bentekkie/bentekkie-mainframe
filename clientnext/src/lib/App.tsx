@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react'
 import { Terminal } from "./Terminal";
-import { shellClient } from "@/generated/command_pb_service";
+import { shell } from "@/generated/messages/command_connect"
 import { AppContextProvider } from "./AppContext";
 import { CookiesProvider } from 'react-cookie';
+import { useClient } from './use-client';
 
 
 const App: React.FunctionComponent = () => {
-  const [client, setClient] = useState<shellClient>()
-  useEffect(() => {
-    setClient(new shellClient(`${window.location.protocol}//${window.location.hostname}:${window.location.port}`))
-  }, []);
+  const client = useClient(shell)
   if(!client) {
     return <div></div>
   }
@@ -20,7 +16,6 @@ const App: React.FunctionComponent = () => {
         <Terminal />
       </AppContextProvider>
     </CookiesProvider>
-
   );
 };
 

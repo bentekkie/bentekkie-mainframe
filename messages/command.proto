@@ -2,6 +2,8 @@ syntax = "proto3";
 package mainframe;
 import "google/protobuf/empty.proto";
 
+option go_package = "github.com/bentekkie/bentekkie-mainframe/server/generated/messages";
+
 service shell{
     rpc runCommand(Command) returns (Response);
     rpc runSudoCommand(SudoCommand) returns (SudoResponse);

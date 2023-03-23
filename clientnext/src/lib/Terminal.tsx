@@ -7,7 +7,7 @@ import { EditModal } from "./EditModal";
 
 export const Terminal: React.FunctionComponent = () => {
     const [{ sections }, { bootstrap, loggedIn }] = useAppContext();
-    useEffect(bootstrap, []);
+    useEffect(bootstrap, [bootstrap]);
     return (
         <div className="App_container" style={{ color: (loggedIn() ? "red" : "green") }}>
             <LoginModal />
