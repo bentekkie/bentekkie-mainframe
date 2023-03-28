@@ -1,0 +1,41 @@
+{
+    "go.goroot": "${workspaceFolder}/bazel-${workspaceFolderBasename}/external/go_sdk",
+    "go.toolsEnvVars": {
+      "GOPACKAGESDRIVER": "${workspaceFolder}/tools/gopackagesdriver.sh"
+    },
+    "go.enableCodeLens": {
+      "runtest": false
+    },
+    "gopls": {
+      "build.directoryFilters": [
+        "-bazel-bin",
+        "-bazel-out",
+        "-bazel-testlogs",
+        "-bazel-bentekkie-mainframe",
+      ],
+      "formatting.gofumpt": true,
+      "formatting.local": "github.com/my/mypkg",
+      "ui.completion.usePlaceholders": true,
+      "ui.semanticTokens": true,
+      "ui.codelenses": {
+        "gc_details": false,
+        "regenerate_cgo": false,
+        "generate": false,
+        "test": false,
+        "tidy": false,
+        "upgrade_dependency": false,
+        "vendor": false
+      },
+      "ui.diagnostic.staticcheck": false,
+    },
+    "go.useLanguageServer": true,
+    "go.buildOnSave": "off",
+    "go.lintOnSave": "off",
+    "go.vetOnSave": "off",
+    "bazel.pathsToIgnore": [
+      "bazel-bin",
+      "bazel-out",
+      "bazel-testlogs",
+      "bazel-bentekkie-mainframe",
+    ]
+  }

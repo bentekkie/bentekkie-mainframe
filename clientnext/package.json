@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "start": "next start",
-    "lint": "next lint",
-    "build": "next build && next export"
+    "dev": "bazelisk run //clientnext_dev",
+    "start": "bazelisk run //clientnext_start",
+    "build": "bazelisk build //clientnext"
   },
   "dependencies": {
     "@bufbuild/buf": "^1.15.0-1",
@@ -24,7 +23,7 @@
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "google-protobuf": "^3.21.2",
-    "next": "13.2.4",
+    "next": "13.2.5-canary.20",
     "protoc-gen-ts": "^0.8.5",
     "react": "18.2.0",
     "react-cookie": "^4.1.1",

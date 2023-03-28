@@ -1,7 +1,7 @@
 import { CoreApi, IState, IAction, ActionType, IProps } from './AppContextTypes'
 import { useCookies } from 'react-cookie'
-import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from '@/generated/messages/command_pb';
-import React, { Dispatch, RefObject, useMemo } from 'react';
+import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from '@gen/command_pb';
+import { Dispatch, RefObject, useMemo } from 'react';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { isValidEnum } from './utils';
 import ReactMarkdown from 'react-markdown'

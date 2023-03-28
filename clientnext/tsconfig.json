@@ -1,22 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "declaration": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
+    "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@gen/*": ["./src/gen/*", "../bazel-bin/clientnext/src/gen/*"],
+      "*": [
+        "./*",
+        "../bazel-bin/clientnext/node_modules/*",
+        "../bazel-bin/clientnext/node_modules/@types/*",
+      ],
+    },
+    "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

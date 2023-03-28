@@ -1,6 +1,6 @@
-import { Folder } from "@/generated/messages/command_pb";
+import { Folder } from "@gen/command_pb";
 import { ReactNode } from "react";
-import {shell as shell} from "@/generated/messages/command_connect"
+import { shell } from "@gen/command_connect"
 import { PromiseClient } from "@bufbuild/connect";
 
 

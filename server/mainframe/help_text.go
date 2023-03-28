@@ -3,7 +3,7 @@ package mainframe
 import (
 	"fmt"
 
-	mainframe "github.com/bentekkie/bentekkie-mainframe/server/generated/messages"
+	mainframe "github.com/bentekkie/bentekkie-mainframe/proto/command/v1"
 )
 
 func helpText(cmdName string, description string, usage string) string {

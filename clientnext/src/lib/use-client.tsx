@@ -1,5 +1,5 @@
 // use-client.ts
-import { use, useMemo} from "react";
+import { useMemo} from "react";
 import { ServiceType } from "@bufbuild/protobuf";
 import {
   createPromiseClient,

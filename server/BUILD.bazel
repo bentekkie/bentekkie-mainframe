@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "server",
+    srcs = ["main.go"],
+    importpath = "github.com/bentekkie/bentekkie-mainframe/server",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//proto/command/v1:command_connect_go",
+        "//server/auth",
+        "//server/db",
+        "//server/mainframe",
+        "@com_github_sirupsen_logrus//:logrus",
+    ],
+)
+
+alias(
+    name = "client",
+    actual = "//clientnext:clientnext_export",
+)

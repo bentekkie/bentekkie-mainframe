@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/bentekkie/bentekkie-mainframe/server"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
@@ -10,12 +11,13 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"io/ioutil"
-	"os"
 
 	"github.com/joho/godotenv"
 
 	_ "github.com/lib/pq"
 )
+
+var ftar map[string][]byte
 
 // init is invoked before main()
 func init() {
@@ -70,5 +72,25 @@ func main() {
 		db.DbConnection.SeedDB(byteValue, true)
 	}
 	log.Debug("Starting")
+	files, err := ioutil.ReadDir("/out")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		log.Infof("%v, %v", file.Name(), file.IsDir())
+	}
 	server.Run(port)
+}
+
+// MapKeysToSlice extract keys of map as slice,
+func MapKeysToSlice[K comparable, V any](m map[K]V) []K {
+	keys := make([]K, len(m))
+
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	return keys
 }

@@ -1,0 +1,75 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+
+# gazelle:prefix github.com/bentekkie/bentekkie-mainframe
+gazelle(name = "gazelle")
+
+gazelle(
+    name = "gazelle-update-repos",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=deps.bzl%go_dependencies",
+        "-prune",
+    ],
+    command = "update-repos",
+)
+
+go_library(
+    name = "bentekkie-mainframe_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/bentekkie/bentekkie-mainframe",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//server",
+        "//server/db",
+        "//server/env",
+        "@com_github_joho_godotenv//:godotenv",
+        "@com_github_lib_pq//:pq",
+        "@com_github_sirupsen_logrus//:logrus",
+    ],
+)
+
+go_binary(
+    name = "bentekkie-mainframe",
+    embed = [":bentekkie-mainframe_lib"],
+    visibility = ["//visibility:public"],
+)
+
+# Include it in our base image as a tar.
+container_image(
+    name = "client_image",
+    base = "@go_image_base//image",
+    tars = ["//clientnext:clientnext_export_tar"],
+    user = "nonroot",
+)
+
+go_image(
+    name = "bentekkie-mainframe_image",
+    base = ":client_image",
+    embed = [":bentekkie-mainframe_lib"],
+    pure = "on",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "bentekkie-mainframe_test",
+    srcs = [
+        "bentekkie_mainframe_suite_test.go",
+        "command_test.go",
+        "page_open_test.go",
+    ],
+    deps = [
+        "//server",
+        "//server/db",
+        "//server/env",
+        "@com_github_joho_godotenv//:godotenv",
+        "@com_github_onsi_ginkgo//:ginkgo",
+        "@com_github_onsi_gomega//:gomega",
+        "@com_github_ory_dockertest_v3//:dockertest",
+        "@com_github_sclevine_agouti//:agouti",
+        "@com_github_sclevine_agouti//matchers",
+        "@com_github_sirupsen_logrus//:logrus",
+    ],
+)

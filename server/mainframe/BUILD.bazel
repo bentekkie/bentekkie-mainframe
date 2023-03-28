@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "mainframe",
+    srcs = [
+        "help_text.go",
+        "shell_service.go",
+    ],
+    importpath = "github.com/bentekkie/bentekkie-mainframe/server/mainframe",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//proto/command/v1:command",
+        "//server/auth",
+        "//server/db",
+        "@com_github_bufbuild_connect_go//:connect-go",
+        "@com_github_sirupsen_logrus//:logrus",
+        "@org_golang_google_protobuf//types/known/emptypb",
+    ],
+)

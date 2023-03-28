@@ -1,0 +1,57 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//clientnext:next/package_json.bzl", next_bin = "bin")
+load("@npm//clientnext:@bufbuild/protoc-gen-es/package_json.bzl", protoc_gen_es_bin = "bin")
+load("@npm//clientnext:@bufbuild/protoc-gen-connect-es/package_json.bzl", protoc_gen_connect_es_bin = "bin")
+load("//clientnext:defs.bzl", "next")
+
+npm_link_all_packages(name = "node_modules")
+
+next_bin.next_binary(
+    name = "next_js_binary",
+    visibility = ["//visibility:public"],
+)
+
+protoc_gen_es_bin.protoc_gen_es_binary(
+    name = "protoc_gen_es_binary",
+    visibility = ["//visibility:public"],
+)
+
+protoc_gen_connect_es_bin.protoc_gen_connect_es_binary(
+    name = "protoc_gen_connect_es_binary",
+    visibility = ["//visibility:public"],
+)
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    visibility = ["//visibility:public"],
+)
+
+js_library(
+    name = "eslintrc",
+    srcs = [".eslintrc.json"],
+    visibility = ["//visibility:public"],
+)
+
+next(
+    name = "clientnext",
+    srcs = [
+        "//clientnext/src/lib",
+        "//clientnext/src/pages",
+        "//clientnext/src/styles",
+    ],
+    data = [
+        "next.config.js",
+        "package.json",
+        "//clientnext:node_modules/next",
+        "//clientnext:node_modules/react",
+        "//clientnext:node_modules/react-dom",
+        "//clientnext:node_modules/typescript",
+        "//clientnext/public",
+    ],
+    next_bin = "../../node_modules/.bin/next",
+    next_js_binary = "//clientnext:next_js_binary",
+    visibility = ["//visibility:public"],
+)

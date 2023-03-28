@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useContext } from 'react'
+import { useReducer, useRef, useContext, Reducer, createContext } from 'react'
 import { IState, IAction, ActionType, CoreApi, IProps } from './AppContextTypes'
 import { useApi } from './api'
 import { arrays_equal, deltaReducer } from './utils';
@@ -114,7 +114,7 @@ const reducer: React.Reducer<IState, IAction> = deltaReducer((state, action) : P
 
 
 
-const AppContext = React.createContext<[IState, CoreApi]>(undefined as any);
+const AppContext = createContext<[IState, CoreApi]>(undefined as any);
 
 export const AppContextProvider: React.FunctionComponent<IProps> = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);

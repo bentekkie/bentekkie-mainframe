@@ -1,0 +1,17 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "db",
+    srcs = [
+        "db.go",
+        "seed.go",
+    ],
+    importpath = "github.com/bentekkie/bentekkie-mainframe/server/db",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//server/env",
+        "@com_github_jmoiron_sqlx//:sqlx",
+        "@com_github_sethvargo_go_password//password",
+        "@com_github_sirupsen_logrus//:logrus",
+    ],
+)

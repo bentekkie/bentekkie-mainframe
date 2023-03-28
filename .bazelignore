@@ -1,0 +1,8 @@
+node_modules
+clientnext/node_modules
+clientnext/.next
+bazel-out
+bazel-bin
+bazel-next.js
+bazel-testlogs
+bazel-bentekkie-mainframe

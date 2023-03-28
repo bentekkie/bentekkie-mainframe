@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
+	mainframe "github.com/bentekkie/bentekkie-mainframe/proto/command/v1"
 	"github.com/bentekkie/bentekkie-mainframe/server/auth"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
-	mainframe "github.com/bentekkie/bentekkie-mainframe/server/generated/messages"
 	"github.com/bufbuild/connect-go"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/emptypb"
