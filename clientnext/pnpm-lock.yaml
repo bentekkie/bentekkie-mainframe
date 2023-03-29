@@ -13,7 +13,7 @@ importers:
       '@improbable-eng/grpc-web': ^0.15.0
       '@types/google-protobuf': ^3.15.6
       '@types/node': 18.15.10
-      '@types/react': 18.0.30
+      '@types/react': 18.0.31
       '@types/react-dom': 18.0.11
       '@types/react-modal': ^3.13.1
       eslint: 8.36.0
@@ -39,7 +39,7 @@ importers:
       '@improbable-eng/grpc-web': 0.15.0_google-protobuf@3.21.2
       '@types/google-protobuf': 3.15.6
       '@types/node': 18.15.10
-      '@types/react': 18.0.30
+      '@types/react': 18.0.31
       '@types/react-dom': 18.0.11
       '@types/react-modal': 3.13.1
       eslint: 8.36.0
@@ -50,7 +50,7 @@ importers:
       react: 18.2.0
       react-cookie: 4.1.1_react@18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-markdown: 8.0.6_d4ceb7fcdf70d1067c763b77159ee007
+      react-markdown: 8.0.6_76ac25b175f2b0cb7faf9278258424f0
       react-mde: 11.5.0_react-dom@18.2.0+react@18.2.0
       react-modal: 3.16.1_react-dom@18.2.0+react@18.2.0
       remark-gfm: 3.0.1
@@ -424,7 +424,7 @@ packages:
   /@types/hoist-non-react-statics/3.3.1:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     dependencies:
-      '@types/react': 18.0.30
+      '@types/react': 18.0.31
       hoist-non-react-statics: 3.3.2
     dev: false
 
@@ -453,17 +453,17 @@ packages:
   /@types/react-dom/18.0.11:
     resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
     dependencies:
-      '@types/react': 18.0.30
+      '@types/react': 18.0.31
     dev: false
 
   /@types/react-modal/3.13.1:
     resolution: {integrity: sha512-iY/gPvTDIy6Z+37l+ibmrY+GTV4KQTHcCyR5FIytm182RQS69G5ps4PH2FxtC7bAQ2QRHXMevsBgck7IQruHNg==}
     dependencies:
-      '@types/react': 18.0.30
+      '@types/react': 18.0.31
     dev: false
 
-  /@types/react/18.0.30:
-    resolution: {integrity: sha512-AnME2cHDH11Pxt/yYX6r0w448BfTwQOLEhQEjCdwB7QskEI7EKtxhGUsExTQe/MsY3D9D5rMtu62WRocw9A8FA==}
+  /@types/react/18.0.31:
+    resolution: {integrity: sha512-EEG67of7DsvRDU6BLLI0p+k1GojDLz9+lZsnCpCRTa/lOokvyPBvp8S5x+A24hME3yyQuIipcP70KJ6H7Qupww==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.3
@@ -2522,7 +2522,7 @@ packages:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
     dev: false
 
-  /react-markdown/8.0.6_d4ceb7fcdf70d1067c763b77159ee007:
+  /react-markdown/8.0.6_76ac25b175f2b0cb7faf9278258424f0:
     resolution: {integrity: sha512-KgPWsYgHuftdx510wwIzpwf+5js/iHqBR+fzxefv8Khk3mFbnioF1bmL2idHN3ler0LMQmICKeDrWnZrX9mtbQ==}
     peerDependencies:
       '@types/react': '>=16'
@@ -2530,7 +2530,7 @@ packages:
     dependencies:
       '@types/hast': 2.3.4
       '@types/prop-types': 15.7.5
-      '@types/react': 18.0.30
+      '@types/react': 18.0.31
       '@types/unist': 2.0.6
       comma-separated-tokens: 2.0.3
       hast-util-whitespace: 2.0.1
