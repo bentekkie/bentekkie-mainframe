@@ -1,17 +1,11 @@
-load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("//clientnext:defs.bzl", "next_ts_project")
 
-ts_project(
+next_ts_project(
     name = "pages",
     srcs = glob([
         "*.tsx",
         "*.ts",
     ]),
-    allow_js = False,
-    declaration = True,
-    incremental = True,
-    resolve_json_module = True,
-    tsconfig = "//clientnext:tsconfig",
-    visibility = ["//clientnext:__subpackages__"],
     deps = [
         "//clientnext:node_modules/@types/react",
         "//clientnext:node_modules/@types/react-dom",

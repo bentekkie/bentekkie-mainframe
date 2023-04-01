@@ -5,7 +5,7 @@ const nextConfig = {
   output: 'export',
   productionBrowserSourceMaps: true,
   experimental: {
-    "esmExternals": "loose"
+    //"esmExternals": "loose"
   },
   distDir: 'out',
   webpack: (config, context) => {

@@ -1,6 +1,22 @@
 load("@aspect_rules_js//js:defs.bzl", "js_run_binary", "js_run_devserver")
 load("@rules_pkg//pkg:mappings.bzl", "strip_prefix")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+
+
+def next_ts_project(
+    name,
+    **kwargs):
+    ts_project(
+        name = name,
+        allow_js = False,
+        declaration = True,
+        incremental = True,
+        preserve_jsx = True,
+        tsconfig = "//clientnext:tsconfig",
+        visibility = ["//clientnext:__subpackages__"],
+        **kwargs,
+    )   
 
 def next(
         name,
