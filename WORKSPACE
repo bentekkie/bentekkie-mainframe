@@ -88,9 +88,9 @@ _go_image_repos()
 
 http_archive(
     name = "aspect_rules_ts",
-    sha256 = "8eb25d1fdafc0836f5778d33fb8eaac37c64176481d67872b54b0a05de5be5c0",
-    strip_prefix = "rules_ts-1.3.3",
-    url = "https://github.com/aspect-build/rules_ts/releases/download/v1.3.3/rules_ts-v1.3.3.tar.gz",
+    sha256 = "4c3f34fff9f96ffc9c26635d8235a32a23a6797324486c7d23c1dfa477e8b451",
+    strip_prefix = "rules_ts-1.4.5",
+    url = "https://github.com/aspect-build/rules_ts/releases/download/v1.4.5/rules_ts-v1.4.5.tar.gz",
 )
 
 http_archive(
