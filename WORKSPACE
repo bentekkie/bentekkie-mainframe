@@ -95,9 +95,9 @@ http_archive(
 
 http_archive(
     name = "aspect_rules_js",
-    sha256 = "7c50475662810ce9635fa45d718220285a8adef32b2febd8631aae62e5816353",
-    strip_prefix = "rules_js-1.23.2",
-    url = "https://github.com/aspect-build/rules_js/releases/download/v1.23.2/rules_js-v1.23.2.tar.gz",
+    sha256 = "41129b17c0951b663a30c55710a0842767cd162137b7cd3a200f43e32161ce7a",
+    strip_prefix = "rules_js-1.40.0",
+    url = "https://github.com/aspect-build/rules_js/releases/download/v1.40.0/rules_js-v1.40.0.tar.gz",
 )
 
 load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
