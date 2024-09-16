@@ -1,0 +1,30 @@
+name: Build Image
+run-name: Build Image
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+    build:
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Log in to the Container registry
+              uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+              with:
+                registry: ghcr.io
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Get Bazel
+              uses: bazel-contrib/setup-bazel@e403ad507104847c3539436f64a9e9eecc73eeec # v0.8.5
+              with:
+                # Avoid downloading Bazel every time.
+                bazelisk-cache: true
+                # Store build cache per workflow.
+                disk-cache: ${{ github.workflow }}
+                # Share repository cache between workflows.
+                repository-cache: true
+            - name: Build and Push
+              run: bazelisk run :bentekkie-mainframe_image_tarball

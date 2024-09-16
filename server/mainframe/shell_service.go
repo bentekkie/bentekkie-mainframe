@@ -356,7 +356,6 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			Type:       mainframe.ResponseType_text,
 		}, nil
 	}
-
 }
 
 // NewShellServer creates a new ShellServer
@@ -695,6 +694,7 @@ func (ss ShellServer) SudoAutoComplete(ctx context.Context, req *connect.Request
 	}
 	return connect.NewResponse(resp), nil
 }
+
 func (ss ShellServer) sudoAutoComplete(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.AutoCompResponse, error) {
 	if cmd == nil || cmd.CurrentDir == nil {
 		return nil, errors.New("internal error")
@@ -759,5 +759,4 @@ func (ss ShellServer) sudoAutoComplete(ctx context.Context, cmd *mainframe.SudoC
 			Completions: []string{},
 		}, nil
 	}
-
 }

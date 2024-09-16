@@ -46,7 +46,7 @@ oci_image(
 oci_load(
     name = "bentekkie-mainframe_image_tarball",
     image = ":bentekkie-mainframe_image",
-    repo_tags = ["bazel:bentekkie-mainframe_image"],
+    repo_tags = ["ghcr.io/bentekkie/bentekkie-mainframe:latest"],
 )
 
 pkg_tar(
