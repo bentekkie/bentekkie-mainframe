@@ -1,10 +1,10 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
-load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
-load("@io_bazel_rules_go//proto:compiler.bzl", "go_proto_compiler")
+load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//proto:def.bzl", "go_proto_library")
+load("@rules_go//proto:compiler.bzl", "go_proto_compiler")
 load(
-    "@io_bazel_rules_go//proto/wkt:well_known_types.bzl",
-    # "@io_bazel_rules_go//proto/wkt:well_known_types.bzl",
+    "@rules_go//proto/wkt:well_known_types.bzl",
+    # "@rules_go//proto/wkt:well_known_types.bzl",
     # "GOGO_WELL_KNOWN_TYPE_REMAPS",
     # "PROTO_RUNTIME_DEPS",
     "WELL_KNOWN_TYPES_APIV2",
@@ -13,7 +13,7 @@ load(
 
 go_proto_library(
     name = "commandv1_go_proto",
-    compilers = ["@io_bazel_rules_go//proto:go_grpc"],
+    compilers = ["@rules_go//proto:go_grpc"],
     importpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1",
     proto = ":commandv1_proto",
     visibility = ["//visibility:public"],
@@ -60,7 +60,7 @@ proto_library(
     name = "commandv1_proto",
     srcs = ["command.proto"],
     visibility = ["//visibility:public"],
-    deps = ["@com_google_protobuf//:empty_proto"],
+    deps = ["@protobuf//:empty_proto"],
 )
 
 exports_files(["command.proto"])
