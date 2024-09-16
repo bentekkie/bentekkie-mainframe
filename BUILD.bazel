@@ -53,6 +53,7 @@ oci_push(
     name = "bentekkie-mainframe_image_push",
     image = ":bentekkie-mainframe_image",
     repository = "ghcr.io/bentekkie/bentekkie-mainframe",
+    remote_tags = ["latest"],
 )
 
 pkg_tar(

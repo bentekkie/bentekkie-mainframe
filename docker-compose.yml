@@ -1,7 +1,7 @@
 version: "3"
 services:
   server:
-    image: bazel:bentekkie-mainframe_image
+    image: ghcr.io/bentekkie/bentekkie-mainframe
     ports:
       - 8082:8082
     links:
