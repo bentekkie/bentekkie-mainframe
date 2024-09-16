@@ -27,4 +27,4 @@ jobs:
                 # Share repository cache between workflows.
                 repository-cache: true
             - name: Build and Push
-              run: bazelisk run :bentekkie-mainframe_image_tarball
+              run: bazelisk run :bentekkie-mainframe_image_push

@@ -1,6 +1,6 @@
 load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 load("@gazelle//:def.bzl", "gazelle")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 
@@ -45,6 +45,12 @@ oci_image(
 # Include it in our base image as a tar.
 oci_load(
     name = "bentekkie-mainframe_image_tarball",
+    image = ":bentekkie-mainframe_image",
+    repo_tags = ["bentekkie-mainframe:latest"],
+)
+
+oci_push(
+    name = "bentekkie-mainframe_image_push",
     image = ":bentekkie-mainframe_image",
     repo_tags = ["ghcr.io/bentekkie/bentekkie-mainframe:latest"],
 )
