@@ -1,0 +1,76 @@
+module(
+    name = "bentekkie-mainframe",
+    version = "1.0",
+)
+
+bazel_dep(name = "rules_go", version = "0.50.1")
+bazel_dep(name = "gazelle", version = "0.38.0")
+bazel_dep(name = "rules_oci", version = "2.0.0")
+
+go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
+go_sdk.download(version = "1.23.1")
+
+go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
+go_deps.from_file(go_mod = "//:go.mod")
+use_repo(
+    go_deps,
+    "com_github_bufbuild_connect_go",
+    "com_github_golang_jwt_jwt_v5",
+    "com_github_jmoiron_sqlx",
+    "com_github_joho_godotenv",
+    "com_github_lib_pq",
+    "com_github_onsi_ginkgo",
+    "com_github_onsi_gomega",
+    "com_github_ory_dockertest_v3",
+    "com_github_sclevine_agouti",
+    "com_github_sethvargo_go_password",
+    "com_github_sirupsen_logrus",
+    "org_golang_google_grpc",
+    "org_golang_google_protobuf",
+)
+
+bazel_dep(name = "aspect_rules_ts", version = "3.1.0")
+bazel_dep(name = "aspect_rules_js", version = "2.0.1")
+bazel_dep(name = "protobuf", version = "28.1")
+bazel_dep(name = "rules_proto", version = "6.0.2")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
+npm.npm_translate_lock(
+    name = "npm",
+    bins = {
+        # derived from "bin" attribute in node_modules/next/package.json
+        "next": [
+            "next=./dist/bin/next",
+        ],
+    },
+    npmrc = "//clientnext:.npmrc",
+    pnpm_lock = "//clientnext:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+use_repo(npm, "npm")
+
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm")
+
+rules_ts_ext = use_extension(
+    "@aspect_rules_ts//ts:extensions.bzl",
+    "ext",
+)
+rules_ts_ext.deps(ts_version_from = "//clientnext:package.json")
+use_repo(rules_ts_ext, "npm_typescript")
+
+# Allows developers to use the matching pnpm version, for example:
+# bazel run -- @pnpm --dir /home/runner/work/rules_js/rules_js install
+use_repo(pnpm, "pnpm")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless_base",
+    digest = "sha256:ccaef5ee2f1850270d453fdf700a5392534f8d1a8ca2acda391fbb6a06b81c86",
+    image = "gcr.io/distroless/base",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+use_repo(oci, "distroless_base", "distroless_base_linux_amd64", "distroless_base_linux_arm64")

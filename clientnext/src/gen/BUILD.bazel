@@ -15,15 +15,15 @@ genrule(
     name = "gen_command_pb.ts",
     srcs = [
         "//proto/command/v1:command.proto",
-        "@com_github_protocolbuffers_protobuf//:well_known_type_protos",
+        "@protobuf//:well_known_type_protos",
     ],
     outs = [
         "command_pb.ts",
         "command_connect.ts",
     ],
-    cmd = "export BAZEL_BINDIR=$(BINDIR);wkt=($(locations @com_github_protocolbuffers_protobuf//:well_known_type_protos));   $(location @com_google_protobuf//:protoc)   -I $$(dirname $$wkt)/../../   -I .   --plugin=protoc-gen-es=$(location //clientnext:protoc_gen_es_binary)   --plugin=protoc-gen-connect-es=$(location //clientnext:protoc_gen_connect_es_binary)   --es_out $$(dirname $(location command_pb.ts))   --es_opt target=ts   --es_opt import_extension=none   --connect-es_out $$(dirname $(location command_connect.ts))   --connect-es_opt target=ts   --connect-es_opt import_extension=none   $(location //proto/command/v1:command.proto); cp $$(dirname $(location command_connect.ts))/proto/command/v1/* $$(dirname $(location command_connect.ts))",
-    exec_tools = [
-        "@com_google_protobuf//:protoc",
+    cmd = "export BAZEL_BINDIR=$(BINDIR);wkt=($(locations @protobuf//:well_known_type_protos));   $(location @protobuf//:protoc)   -I $$(dirname $$wkt)/../../   -I .   --plugin=protoc-gen-es=$(location //clientnext:protoc_gen_es_binary)   --plugin=protoc-gen-connect-es=$(location //clientnext:protoc_gen_connect_es_binary)   --es_out $$(dirname $(location command_pb.ts))   --es_opt target=ts   --es_opt import_extension=none   --connect-es_out $$(dirname $(location command_connect.ts))   --connect-es_opt target=ts   --connect-es_opt import_extension=none   $(location //proto/command/v1:command.proto); cp $$(dirname $(location command_connect.ts))/proto/command/v1/* $$(dirname $(location command_connect.ts))",
+    tools = [
+        "@protobuf//:protoc",
         "//clientnext:protoc_gen_es_binary",
         "//clientnext:protoc_gen_connect_es_binary",
     ],

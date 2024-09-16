@@ -1,20 +1,12 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
-load("@bazel_gazelle//:def.bzl", "gazelle")
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
-load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@gazelle//:def.bzl", "gazelle")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+
 
 # gazelle:prefix github.com/bentekkie/bentekkie-mainframe
 gazelle(name = "gazelle")
 
-gazelle(
-    name = "gazelle-update-repos",
-    args = [
-        "-from_file=go.mod",
-        "-to_macro=deps.bzl%go_dependencies",
-        "-prune",
-    ],
-    command = "update-repos",
-)
 
 go_library(
     name = "bentekkie-mainframe_lib",
@@ -33,23 +25,34 @@ go_library(
 
 go_binary(
     name = "bentekkie-mainframe",
+    pure = "on",
     embed = [":bentekkie-mainframe_lib"],
     visibility = ["//visibility:public"],
 )
 
 # Include it in our base image as a tar.
-container_image(
-    name = "client_image",
-    base = "@go_image_base//image",
-    tars = ["//clientnext:clientnext_export_tar"],
+oci_image(
+    name = "bentekkie-mainframe_image",
+    base = "@distroless_base_linux_amd64",
+    tars = [
+        ":bentekkie-mainframe_server_tar",
+        "//clientnext:clientnext_export_tar",
+    ],
+    entrypoint = ["/bentekkie-mainframe"],
     user = "nonroot",
 )
 
-go_image(
-    name = "bentekkie-mainframe_image",
-    base = ":client_image",
-    embed = [":bentekkie-mainframe_lib"],
-    pure = "on",
+# Include it in our base image as a tar.
+oci_load(
+    name = "bentekkie-mainframe_image_tarball",
+    image = ":bentekkie-mainframe_image",
+    repo_tags = ["bazel:bentekkie-mainframe_image"],
+)
+
+pkg_tar(
+    name = "bentekkie-mainframe_server_tar",
+    srcs = [":bentekkie-mainframe"],
+    include_runfiles = True,
     visibility = ["//visibility:public"],
 )
 
