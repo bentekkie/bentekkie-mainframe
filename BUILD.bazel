@@ -1,12 +1,14 @@
-load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 load("@gazelle//:def.bzl", "gazelle")
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
-
 # gazelle:prefix github.com/bentekkie/bentekkie-mainframe
+# gazelle:exclude **/*.pb.go
+# gazelle:exclude **/*.connect.go
+# gazelle:resolve go github.com/bentekkie/bentekkie-mainframe/proto/command/v1 //proto/command/v1:commandv1_go_proto
+# gazelle:resolve go github.com/bentekkie/bentekkie-mainframe/proto/command/v1/commandv1connect //proto/command/v1/commandv1connect:commandv1_connect_go_proto
 gazelle(name = "gazelle")
-
 
 go_library(
     name = "bentekkie-mainframe_lib",
@@ -25,8 +27,8 @@ go_library(
 
 go_binary(
     name = "bentekkie-mainframe",
-    pure = "on",
     embed = [":bentekkie-mainframe_lib"],
+    pure = "on",
     visibility = ["//visibility:public"],
 )
 
@@ -34,11 +36,11 @@ go_binary(
 oci_image(
     name = "bentekkie-mainframe_image",
     base = "@distroless_base_linux_amd64",
+    entrypoint = ["/bentekkie-mainframe"],
     tars = [
         ":bentekkie-mainframe_server_tar",
         "//clientnext:clientnext_export_tar",
     ],
-    entrypoint = ["/bentekkie-mainframe"],
     user = "nonroot",
 )
 
@@ -52,8 +54,8 @@ oci_load(
 oci_push(
     name = "bentekkie-mainframe_image_push",
     image = ":bentekkie-mainframe_image",
-    repository = "ghcr.io/bentekkie/bentekkie-mainframe",
     remote_tags = ["latest"],
+    repository = "ghcr.io/bentekkie/bentekkie-mainframe",
 )
 
 pkg_tar(
