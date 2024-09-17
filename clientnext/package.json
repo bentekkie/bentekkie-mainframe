@@ -11,7 +11,7 @@
     "@bufbuild/buf": "^1.15.0-1",
     "@bufbuild/connect": "^0.13.0",
     "@bufbuild/connect-web": "^0.13.0",
-    "@bufbuild/protobuf": "^1.1.1",
+    "@bufbuild/protobuf": "^2.0.0",
     "@bufbuild/protoc-gen-connect-es": "^0.13.0",
     "@bufbuild/protoc-gen-es": "^1.1.1",
     "@improbable-eng/grpc-web": "^0.15.0",
