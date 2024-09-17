@@ -1,9 +1,14 @@
-name: Build and Publish Image
-run-name: Build and Publish Image
+name: Build Image
+run-name: Build Image
 on:
   push:
     branches:
     - master
+  pull_request:
+    branches:
+    - master
+# This gives read-only access to the token.
+permissions: read-all
 
 jobs:
     build:
@@ -27,4 +32,4 @@ jobs:
                 # Share repository cache between workflows.
                 repository-cache: true
             - name: Build and Push
-              run: bazelisk run :bentekkie-mainframe_image_push
+              run: bazelisk build :bentekkie-mainframe_image_tarball

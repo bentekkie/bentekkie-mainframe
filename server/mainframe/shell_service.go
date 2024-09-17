@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"strings"
 
+	"connectrpc.com/connect"
 	mainframe "github.com/bentekkie/bentekkie-mainframe/proto/command/v1"
 	"github.com/bentekkie/bentekkie-mainframe/server/auth"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
-	"github.com/bufbuild/connect-go"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/emptypb"
 )

@@ -4,4 +4,5 @@
     "config:recommended",
     "group:allNonMajor",
   ],
+  "postUpdateOptions": ["gomodTidy"], // Run go mod tidy after updating.
 }

@@ -28,7 +28,17 @@ export const EditModal: React.FunctionComponent = () => {
                 onChange={setValue}
                 selectedTab={selectedTab}
                 onTabChange={setSelectedTab}
-                generateMarkdownPreview={async (md) => <ReactMarkdown linkTarget={"_blank"} remarkPlugins={[remarkGfm]}>{md}</ReactMarkdown>}
+                generateMarkdownPreview={async (md) => <ReactMarkdown components={{
+                    a({ node, children, ...props }) {
+                        let url = new URL(props.href ?? "", location.href);
+                        if (url.origin !== location.origin) {
+                          props.target = "_blank";
+                          props.rel = "noopener noreferrer";
+                        }
+                  
+                        return <a {...props}>{children}</a>;
+                      },
+                  }} remarkPlugins={[remarkGfm]}>{md}</ReactMarkdown>}
             /><br />
             <button onClick={() => updateFile(value)}>Save</button>
         </ReactModal>

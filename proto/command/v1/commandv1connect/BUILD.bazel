@@ -1,0 +1,27 @@
+load("@rules_go//proto:compiler.bzl", "go_proto_compiler")
+load("@rules_go//proto:def.bzl", "go_proto_library")
+
+## bazel query --output label '@com_connectrpc_connect//...'
+## @com_connectrpc_connect//cmd/protoc-gen-connect-go:protoc-gen-connect-go
+go_proto_compiler(
+    name = "connect_go_proto_compiler",
+    plugin = "@com_connectrpc_connect//cmd/protoc-gen-connect-go:protoc-gen-connect-go",
+    suffix = ".connect.go",
+    visibility = ["//visibility:public"],
+    deps = ["@com_connectrpc_connect//:go_default_library"],
+)
+
+go_proto_library(
+    name = "commandv1_connect_go_proto",
+    compilers = [
+        ":connect_go_proto_compiler",
+    ],
+    importpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1",
+    overrideimportpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1/commandv1connect",
+    proto = "//proto/command/v1:commandv1_proto",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//proto/command/v1:commandv1_go_proto",
+        "@org_golang_google_protobuf//types/known/emptypb",
+    ],
+)

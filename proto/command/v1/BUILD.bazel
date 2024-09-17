@@ -1,58 +1,11 @@
-load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@rules_go//go:def.bzl", "go_library")
 load("@rules_go//proto:def.bzl", "go_proto_library")
-load("@rules_go//proto:compiler.bzl", "go_proto_compiler")
-load(
-    "@rules_go//proto/wkt:well_known_types.bzl",
-    # "@rules_go//proto/wkt:well_known_types.bzl",
-    # "GOGO_WELL_KNOWN_TYPE_REMAPS",
-    # "PROTO_RUNTIME_DEPS",
-    "WELL_KNOWN_TYPES_APIV2",
-    # "WELL_KNOWN_TYPE_RULES",
-)
+load("@rules_proto//proto:defs.bzl", "proto_library")
 
 go_proto_library(
     name = "commandv1_go_proto",
     compilers = ["@rules_go//proto:go_grpc"],
     importpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1",
     proto = ":commandv1_proto",
-    visibility = ["//visibility:public"],
-)
-
-go_library(
-    name = "command",
-    embed = [":commandv1_go_proto"],
-    importpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1",
-    visibility = ["//visibility:public"],
-)
-
-# generate connect-go
-go_proto_compiler(
-    name = "connect-go",
-    plugin = "@com_github_bufbuild_connect_go//cmd/protoc-gen-connect-go",
-    suffix = ".connect.go",
-    visibility = ["//visibility:public"],
-    deps = WELL_KNOWN_TYPES_APIV2 + [
-        "@com_github_bufbuild_connect_go//:go_default_library",
-        ":commandv1_go_proto",
-    ],
-)
-
-go_proto_library(
-    name = "commandv1_connect_go",
-    compilers = [
-        ":connect-go",
-    ],
-    importpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1;commandv1",  # TODO: Needs review `;greetv1` in import path places the files in `v1;greetv1` dir in bazel-out.
-    proto = ":commandv1_proto",
-    visibility = ["//visibility:public"],
-    deps = [":command"],
-)
-
-go_library(
-    name = "command_connect_go",
-    embed = [":commandv1_connect_go"],
-    importpath = "github.com/bentekkie/bentekkie-mainframe/proto/command/v1/commandv1connect",
     visibility = ["//visibility:public"],
 )
 
