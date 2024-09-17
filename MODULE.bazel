@@ -28,6 +28,13 @@ use_repo(
     "org_golang_google_grpc",
     "org_golang_google_protobuf",
 )
+go_deps.module_override(
+    patch_strip = 1,
+    patches = [
+        "//third_party/patches/com_github_docker_cli:schema.patch",
+    ],
+    path = "github.com/docker/cli",
+)
 
 bazel_dep(name = "aspect_rules_ts", version = "3.1.0")
 bazel_dep(name = "aspect_rules_js", version = "2.0.1")

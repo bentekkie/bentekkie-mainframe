@@ -1,8 +1,6 @@
 package main_test
 
 import (
-	"os"
-	"os/exec"
 	"testing"
 	"time"
 
@@ -16,38 +14,41 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var pool, _ = dockertest.NewPool("")
 var (
+	pool, _      = dockertest.NewPool("")
 	agoutiDriver *agouti.WebDriver
 )
-var user, _ = env.GetEnvStr("POSTGRES_USER")
-var password, _ = env.GetEnvStr("POSTGRES_PASSWORD")
-var dbName, _ = env.GetEnvStr("POSTGRES_DB")
-var testDB = db.JSONINode{
-	Name: "",
-	Folders: []db.JSONINode{
-		db.JSONINode{
-			Name: "testFolder",
-			Files: []db.JSONFile{
-				db.JSONFile{
-					Name:     "testFile",
-					Contents: "Hello World!",
+
+var (
+	user, _     = env.GetEnvStr("POSTGRES_USER")
+	password, _ = env.GetEnvStr("POSTGRES_PASSWORD")
+	dbName, _   = env.GetEnvStr("POSTGRES_DB")
+	testDB      = db.JSONINode{
+		Name: "",
+		Folders: []db.JSONINode{
+			{
+				Name: "testFolder",
+				Files: []db.JSONFile{
+					{
+						Name:     "testFile",
+						Contents: "Hello World!",
+					},
+					{
+						Name:     "anotherFile",
+						Contents: "Another File",
+					},
 				},
-				db.JSONFile{
-					Name:     "anotherFile",
-					Contents: "Another File",
-				},
+				Folders: []db.JSONINode{},
 			},
-			Folders: []db.JSONINode{},
 		},
-	},
-	Files: []db.JSONFile{
-		db.JSONFile{
-			Name:     ".init",
-			Contents: "cat testFolder/testFile",
+		Files: []db.JSONFile{
+			{
+				Name:     ".init",
+				Contents: "cat testFolder/testFile",
+			},
 		},
-	},
-}
+	}
+)
 
 func TestBentekkieMainframe(t *testing.T) {
 	if err := godotenv.Load(); err != nil {
@@ -55,9 +56,9 @@ func TestBentekkieMainframe(t *testing.T) {
 	}
 	SetDefaultEventuallyTimeout(time.Second * 5)
 	RegisterFailHandler(Fail)
-	//startWebsite()
+	// startWebsite()
 	RunSpecs(t, "BentekkieMainframe Suite")
-	//websiteSession.Kill()
+	// websiteSession.Kill()
 }
 
 var _ = AfterSuite(func() {
@@ -67,7 +68,6 @@ var _ = AfterSuite(func() {
 })
 
 var _ = SynchronizedBeforeSuite(func() []byte {
-	Expect(buildReact()).To(Succeed())
 	return []byte{}
 }, func(bytes []byte) {
 	str := string(bytes)
@@ -75,11 +75,3 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	agoutiDriver = agouti.ChromeDriver(agouti.ChromeOptions("args", []string{"--headless", "--disable-gpu", "--no-sandbox"}))
 	Expect(agoutiDriver.Start()).To(Succeed())
 })
-
-func buildReact() error {
-	cmd := exec.Command("yarn", "build")
-	cmd.Dir = "client"
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}

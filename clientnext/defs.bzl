@@ -159,9 +159,9 @@ def next(
         tool = next_js_binary,
         args = ["build"],
         srcs = srcs + data,
-        out_dirs = [next_build_out, next_export_out],
+        out_dirs = [next_build_out],
         chdir = native.package_name(),
-        tags = tags,
+        tags = tags + ["manual"],
         visibility = visibility,
         **kwargs
     )
@@ -201,7 +201,7 @@ def next(
         srcs = srcs + data,
         out_dirs = [next_export_out],
         chdir = native.package_name(),
-        tags = tags,
+        tags = tags + ["manual"],
         visibility = visibility,
         **kwargs
     )
