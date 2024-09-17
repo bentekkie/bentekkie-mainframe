@@ -66,12 +66,12 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 		resp := ""
 		for _, fileName := range cmd.Args {
 
-			parent, err := db.DbConnection.FindINodeByPath(cmd.CurrentDir.Path)
+			parent, err := db.DbConnection.FindINodeByPath(ctx, cmd.CurrentDir.Path)
 			if err != nil || !validFilename.MatchString(fileName) {
 				log.WithError(err).Error("Error creating file")
 				resp += "\nError creating " + fileName
 			} else {
-				_, err = db.DbConnection.NewFile(parent, fileName, "")
+				_, err = db.DbConnection.NewFile(ctx, parent, fileName, "")
 				if err != nil {
 					log.WithError(err).Error("Error creating file")
 					resp += "\nError creating " + fileName
@@ -115,7 +115,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 				newPath = p.Join(cmd.CurrentDir.Path, newPath)
 			}
 			newPath = p.Clean(newPath)
-			fileINode, err := db.DbConnection.FindINodeByPath(newPath)
+			fileINode, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 			if err != nil {
 				log.WithError(err).Error("edit error")
 				return &mainframe.SudoResponse{
@@ -133,7 +133,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 					Type:       mainframe.ResponseType_text,
 				}, nil
 			}
-			file, err := db.DbConnection.FindFile(fileINode.ID.Int64)
+			file, err := db.DbConnection.FindFile(ctx, fileINode.ID.Int64)
 			if err != nil {
 				log.WithError(err).Error("edit error")
 				return &mainframe.SudoResponse{
@@ -143,7 +143,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 					Type:       mainframe.ResponseType_text,
 				}, nil
 			}
-			err = db.DbConnection.UpdateFileByPath(file, cmd.Args[1])
+			err = db.DbConnection.UpdateFileByPath(ctx, file, cmd.Args[1])
 			if err != nil {
 				log.WithError(err).Error("edit error")
 				return &mainframe.SudoResponse{
@@ -171,7 +171,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 		}
 		newPath = p.Clean(newPath)
 		parentPath := p.Dir(newPath)
-		parent, err := db.DbConnection.FindINodeByPath(parentPath)
+		parent, err := db.DbConnection.FindINodeByPath(ctx, parentPath)
 		if err != nil || parent.IsFile {
 			return &mainframe.SudoResponse{
 				Command:    cmd,
@@ -189,7 +189,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		_, err = db.DbConnection.NewDir(parent, childName)
+		_, err = db.DbConnection.NewDir(ctx, parent, childName)
 		if err != nil {
 			log.WithError(err).Error("mkdir error: error creating dir")
 			return &mainframe.SudoResponse{
@@ -231,7 +231,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			newPath = p.Join(cmd.CurrentDir.Path, newPath)
 		}
 		newPath = p.Clean(newPath)
-		iNode, err := db.DbConnection.FindINodeByPath(newPath)
+		iNode, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 		if err != nil {
 			return &mainframe.SudoResponse{
 				Command:    cmd,
@@ -241,7 +241,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			}, nil
 		}
 		if !iNode.IsFile {
-			children, err := db.DbConnection.FindDirListings(iNode)
+			children, err := db.DbConnection.FindDirListings(ctx, iNode)
 			if err != nil {
 				log.WithError(err).Error("rm error")
 				return &mainframe.SudoResponse{
@@ -260,7 +260,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 				}, nil
 			}
 		}
-		err = db.DbConnection.DeleteINode(iNode)
+		err = db.DbConnection.DeleteINode(ctx, iNode)
 		if err != nil {
 			log.WithError(err).Error("rm error")
 			return &mainframe.SudoResponse{
@@ -285,7 +285,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		err := db.DbConnection.NewUser(cmd.Args[0], cmd.Args[1])
+		err := db.DbConnection.NewUser(ctx, cmd.Args[0], cmd.Args[1])
 		if err != nil {
 			log.WithError(err).Error("adduser error")
 			return &mainframe.SudoResponse{
@@ -330,7 +330,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			}
 			wipeDB = res
 		}
-		err = db.DbConnection.SeedDB([]byte(cmd.Args[0]), wipeDB)
+		err = db.DbConnection.SeedDB(ctx, []byte(cmd.Args[0]), wipeDB)
 		if err != nil {
 			log.WithError(err).Error("seed error")
 			return &mainframe.SudoResponse{
@@ -365,14 +365,14 @@ func NewShellServer() *ShellServer {
 
 // GetRoot returns the root of the filesystem
 func (ss ShellServer) GetRoot(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[mainframe.Folder], error) {
-	resp, err := ss.getRoot(ctx, req.Msg)
+	resp, err := ss.getRoot()
 	if err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(resp), nil
 }
 
-func (ShellServer) getRoot(ctx context.Context, in *emptypb.Empty) (*mainframe.Folder, error) {
+func (ShellServer) getRoot() (*mainframe.Folder, error) {
 	root := db.DbConnection.Root
 	return &mainframe.Folder{
 		Path: root.Path.String,
@@ -402,7 +402,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 			newPath = p.Join(cmd.CurrentDir.Path, newPath)
 		}
 		newPath = p.Clean(newPath)
-		folder, err := db.DbConnection.FindINodeByPath(newPath)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 		if err != nil || folder.IsFile {
 			return &mainframe.Response{
 				Command:    cmd,
@@ -411,7 +411,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		children, err := db.DbConnection.FindDirListingsByPath(newPath)
+		children, err := db.DbConnection.FindDirListingsByPath(ctx, newPath)
 		if err != nil {
 			log.WithError(err).Error("ls error")
 			return &mainframe.Response{
@@ -451,7 +451,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 			newPath = p.Join(cmd.CurrentDir.Path, newPath)
 		}
 		newPath = p.Clean(newPath)
-		fileINode, err := db.DbConnection.FindINodeByPath(newPath)
+		fileINode, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 		if err != nil {
 			log.WithError(err).Error("cat error")
 			return &mainframe.Response{
@@ -469,7 +469,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		file, err := db.DbConnection.FindFile(fileINode.ID.Int64)
+		file, err := db.DbConnection.FindFile(ctx, fileINode.ID.Int64)
 		if err != nil || !file.Contents.Valid {
 			log.WithError(err).Error("cat error: invalid file")
 			return &mainframe.Response{
@@ -499,7 +499,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 			newPath = p.Join(cmd.CurrentDir.Path, newPath)
 		}
 		newPath = p.Clean(newPath)
-		folder, err := db.DbConnection.FindINodeByPath(newPath)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 		if err != nil || !folder.Path.Valid {
 			return &mainframe.Response{
 				Command:    cmd,
@@ -566,7 +566,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		password, err := db.DbConnection.GetPassword(cmd.Args[0])
+		password, err := db.DbConnection.GetPassword(ctx, cmd.Args[0])
 		if err != nil || password != cmd.Args[1] {
 			return &mainframe.Response{
 				Command:    cmd,
@@ -627,14 +627,14 @@ func (ShellServer) autoComplete(ctx context.Context, cmd *mainframe.Command) (*m
 		fallthrough
 	case mainframe.CommandType_cd:
 		var completions []string
-		folder, err := db.DbConnection.FindINodeByPath(cmd.CurrentDir.Path)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, cmd.CurrentDir.Path)
 		if err != nil || !folder.Path.Valid {
 			log.WithError(err).Error("cd error")
 			return &mainframe.AutoCompResponse{
 				Completions: completions,
 			}, nil
 		}
-		children, err := db.DbConnection.FindDirListings(folder)
+		children, err := db.DbConnection.FindDirListings(ctx, folder)
 		if err != nil {
 			log.WithError(err).Error("cd error")
 			return &mainframe.AutoCompResponse{
@@ -651,14 +651,14 @@ func (ShellServer) autoComplete(ctx context.Context, cmd *mainframe.Command) (*m
 		}, nil
 	case mainframe.CommandType_cat:
 		var completions []string
-		folder, err := db.DbConnection.FindINodeByPath(cmd.CurrentDir.Path)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, cmd.CurrentDir.Path)
 		if err != nil || !folder.Path.Valid {
 			log.WithError(err).Error("cd error")
 			return &mainframe.AutoCompResponse{
 				Completions: completions,
 			}, nil
 		}
-		children, err := db.DbConnection.FindDirListings(folder)
+		children, err := db.DbConnection.FindDirListings(ctx, folder)
 		if err != nil {
 			log.WithError(err).Error("cd error")
 			return &mainframe.AutoCompResponse{
@@ -702,14 +702,14 @@ func (ss ShellServer) sudoAutoComplete(ctx context.Context, cmd *mainframe.SudoC
 	switch cmd.Command {
 	case mainframe.SudoCommandType_edit:
 		var completions []string
-		folder, err := db.DbConnection.FindINodeByPath(cmd.CurrentDir.Path)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, cmd.CurrentDir.Path)
 		if err != nil || !folder.Path.Valid {
 			log.WithError(err).Error("edit error")
 			return &mainframe.AutoCompResponse{
 				Completions: completions,
 			}, nil
 		}
-		children, err := db.DbConnection.FindDirListings(folder)
+		children, err := db.DbConnection.FindDirListings(ctx, folder)
 		if err != nil {
 			log.WithError(err).Error("edit error")
 			return &mainframe.AutoCompResponse{
@@ -729,14 +729,14 @@ func (ss ShellServer) sudoAutoComplete(ctx context.Context, cmd *mainframe.SudoC
 		fallthrough
 	case mainframe.SudoCommandType_touch:
 		var completions []string
-		folder, err := db.DbConnection.FindINodeByPath(cmd.CurrentDir.Path)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, cmd.CurrentDir.Path)
 		if err != nil || !folder.Path.Valid {
 			log.WithError(err).Error("cd error")
 			return &mainframe.AutoCompResponse{
 				Completions: completions,
 			}, nil
 		}
-		children, err := db.DbConnection.FindDirListings(folder)
+		children, err := db.DbConnection.FindDirListings(ctx, folder)
 		if err != nil {
 			log.WithError(err).Error("cd error")
 			return &mainframe.AutoCompResponse{

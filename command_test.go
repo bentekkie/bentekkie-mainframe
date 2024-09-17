@@ -1,17 +1,19 @@
 package main_test
 
 import (
+	"context"
 	"log"
 	"net/http/httptest"
 	"strconv"
 
-	server2 "github.com/bentekkie/bentekkie-mainframe/server"
-	"github.com/bentekkie/bentekkie-mainframe/server/db"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/ory/dockertest/v3"
 	"github.com/sclevine/agouti"
 	. "github.com/sclevine/agouti/matchers"
+
+	server2 "github.com/bentekkie/bentekkie-mainframe/server"
+	"github.com/bentekkie/bentekkie-mainframe/server/db"
 )
 
 var _ = Describe("Commands", func() {
@@ -25,8 +27,8 @@ var _ = Describe("Commands", func() {
 		var err error
 		resource, err = pool.Run("postgres", "latest", []string{"POSTGRES_USER=" + user, "POSTGRES_PASSWORD=" + password, "POSTGRES_DB=" + dbName})
 		port, err := strconv.Atoi(resource.GetPort("5432/tcp"))
-		conn, err := db.Connect("localhost", port, user, password, dbName)
-		conn.SeedDBForTest(testDB, true)
+		conn, err := db.Connect(context.Background(), "localhost", port, user, password, dbName)
+		conn.SeedDBForTest(context.Background(), testDB, true)
 		server = server2.RunTest(conn)
 		page, err = agoutiDriver.NewPage()
 		Expect(err).NotTo(HaveOccurred())
@@ -34,12 +36,12 @@ var _ = Describe("Commands", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
 
-	var openPage = func() {
+	openPage := func() {
 		Expect(page.Navigate(server.URL)).To(Succeed())
 		Eventually(page.FindByClass("Window_contentInner")).Should(BeFound())
 	}
 
-	var typeCommand = func(command string) func() {
+	typeCommand := func(command string) func() {
 		return func() {
 			By("typing '"+command+"' command", func() {
 				n, _ := page.All(".Window_contentInner > div").Count()
