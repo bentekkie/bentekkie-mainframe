@@ -63,8 +63,8 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       react-cookie:
-        specifier: ^4.1.1
-        version: 4.1.1(react@18.3.1)
+        specifier: ^7.0.0
+        version: 7.2.0(react@18.3.1)
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
@@ -292,8 +292,8 @@ packages:
   '@swc/helpers@0.4.14':
     resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
 
-  '@types/cookie@0.3.3':
-    resolution: {integrity: sha512-LKVP3cgXBT9RYj+t+9FDKwS5tdI+rPBXaNSkma7hvqy35lc7mAokC2zsqWJH0LaqIt3B962nuYI77hsJoT1gow==}
+  '@types/cookie@0.6.0':
+    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -304,8 +304,8 @@ packages:
   '@types/hast@2.3.10':
     resolution: {integrity: sha512-McWspRw8xx8J9HurkVBfYj0xKoE25tOFlHGdx4MJ5xORQrMGZNqJhVQWaIbm6Oyla5kYOXtDiopzKRJzEOkwJw==}
 
-  '@types/hoist-non-react-statics@3.3.1':
-    resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
+  '@types/hoist-non-react-statics@3.3.5':
+    resolution: {integrity: sha512-SbcrWzkKBw2cdwRTwQAswfpB9g9LJWfjtUeW/jvNwbhC8cpmmNYVePa+ncbUe0rGTQ7G3Ff6mYUN2VMfLVr+Sg==}
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
@@ -534,8 +534,8 @@ packages:
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
-  cookie@0.4.2:
-    resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
+  cookie@0.6.0:
+    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
   cross-spawn@7.0.3:
@@ -1538,8 +1538,8 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  react-cookie@4.1.1:
-    resolution: {integrity: sha512-ffn7Y7G4bXiFbnE+dKhHhbP+b8I34mH9jqnm8Llhj89zF4nPxPutxHT1suUqMeCEhLDBI7InYwf1tpaSoK5w8A==}
+  react-cookie@7.2.0:
+    resolution: {integrity: sha512-mqhPERUyfOljq5yJ4woDFI33bjEtigsl8JDJdPPeNhr0eSVZmBc/2Vdf8mFxOUktQxhxTR1T+uF0/FRTZyBEgw==}
     peerDependencies:
       react: '>= 16.3.0'
 
@@ -1872,8 +1872,8 @@ packages:
   unist-util-visit@4.1.2:
     resolution: {integrity: sha512-MSd8OUGISqHdVvfY9TPhyK2VdUrPgxkUtWSuMHF6XAAFuL4LokseigBnZtPnJMu+FbynTkFNnFlyjxpVKujMRg==}
 
-  universal-cookie@4.0.4:
-    resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
+  universal-cookie@7.2.0:
+    resolution: {integrity: sha512-PvcyflJAYACJKr28HABxkGemML5vafHmiL4ICe3e+BEKXRMt0GaFLZhAwgv637kFFnnfiSJ8e6jknrKkMrU+PQ==}
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
@@ -2108,7 +2108,7 @@ snapshots:
     dependencies:
       tslib: 2.5.0
 
-  '@types/cookie@0.3.3': {}
+  '@types/cookie@0.6.0': {}
 
   '@types/debug@4.1.12':
     dependencies:
@@ -2120,7 +2120,7 @@ snapshots:
     dependencies:
       '@types/unist': 2.0.11
 
-  '@types/hoist-non-react-statics@3.3.1':
+  '@types/hoist-non-react-statics@3.3.5':
     dependencies:
       '@types/react': 18.3.6
       hoist-non-react-statics: 3.3.2
@@ -2392,7 +2392,7 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  cookie@0.4.2: {}
+  cookie@0.6.0: {}
 
   cross-spawn@7.0.3:
     dependencies:
@@ -3795,12 +3795,12 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-cookie@4.1.1(react@18.3.1):
+  react-cookie@7.2.0(react@18.3.1):
     dependencies:
-      '@types/hoist-non-react-statics': 3.3.1
+      '@types/hoist-non-react-statics': 3.3.5
       hoist-non-react-statics: 3.3.2
       react: 18.3.1
-      universal-cookie: 4.0.4
+      universal-cookie: 7.2.0
 
   react-dom@18.3.1(react@18.3.1):
     dependencies:
@@ -4225,10 +4225,10 @@ snapshots:
       unist-util-is: 5.2.1
       unist-util-visit-parents: 5.1.3
 
-  universal-cookie@4.0.4:
+  universal-cookie@7.2.0:
     dependencies:
-      '@types/cookie': 0.3.3
-      cookie: 0.4.2
+      '@types/cookie': 0.6.0
+      cookie: 0.6.0
 
   uri-js@4.4.1:
     dependencies:
