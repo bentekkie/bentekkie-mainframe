@@ -235,7 +235,17 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
             case ResponseType.html:
                 return <p dangerouslySetInnerHTML={{ __html: resp.resp }} />;
             case ResponseType.markdown:
-                return <ReactMarkdown linkTarget={"_blank"} remarkPlugins={[remarkGfm]} >{resp.resp}</ReactMarkdown>
+                return <ReactMarkdown components={{
+                    a({ node, children, ...props }) {
+                        let url = new URL(props.href ?? "", location.href);
+                        if (url.origin !== location.origin) {
+                          props.target = "_blank";
+                          props.rel = "noopener noreferrer";
+                        }
+                  
+                        return <a {...props}>{children}</a>;
+                      },
+                  }} remarkPlugins={[remarkGfm]} >{resp.resp}</ReactMarkdown>
             case ResponseType.json:
                 var element = document.createElement('a');
                 element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(resp.resp));

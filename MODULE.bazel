@@ -20,6 +20,7 @@ use_repo(
     "com_github_joho_godotenv",
     "com_github_lib_pq",
     "com_github_onsi_ginkgo",
+    "com_github_onsi_ginkgo_v2",
     "com_github_onsi_gomega",
     "com_github_ory_dockertest_v3",
     "com_github_sclevine_agouti",
