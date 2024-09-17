@@ -63,7 +63,10 @@ rules_ts_ext = use_extension(
     "@aspect_rules_ts//ts:extensions.bzl",
     "ext",
 )
-rules_ts_ext.deps(ts_version_from = "//clientnext:package.json")
+rules_ts_ext.deps(
+    ts_version_from = "//clientnext:package.json",
+    ts_integrity = "sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==",
+)
 use_repo(rules_ts_ext, "npm_typescript")
 
 # Allows developers to use the matching pnpm version, for example:
