@@ -1,16 +1,17 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/bentekkie/bentekkie-mainframe/server"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
 	"github.com/bentekkie/bentekkie-mainframe/server/env"
-	log "github.com/sirupsen/logrus"
-
-	"io/ioutil"
 
 	"github.com/joho/godotenv"
 
@@ -58,7 +59,8 @@ func main() {
 		port = 8082
 	}
 	log.Debug("Starting")
-	db.DbConnection, err = db.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
+	ctx := context.Background()
+	db.DbConnection, err = db.Connect(ctx, dbHost, dbPort, dbUser, dbPassword, dbName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -69,7 +71,7 @@ func main() {
 		}
 		defer jsonFile.Close()
 		byteValue, _ := ioutil.ReadAll(jsonFile)
-		db.DbConnection.SeedDB(byteValue, true)
+		db.DbConnection.SeedDB(ctx, byteValue, true)
 	}
 	log.Debug("Starting")
 	files, err := ioutil.ReadDir("/out")

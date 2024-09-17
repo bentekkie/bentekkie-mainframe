@@ -7,7 +7,7 @@
         "-bazel-bentekkie-mainframe",
       ],
       "formatting.gofumpt": true,
-      "formatting.local": "github.com/my/mypkg",
+      "formatting.local": "github.com/bentekkie/bentekkie-mainframe",
       "ui.completion.usePlaceholders": true,
       "ui.semanticTokens": true,
       "ui.codelenses": {
