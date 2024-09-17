@@ -15,8 +15,8 @@ importers:
         specifier: ^0.8.4
         version: 0.8.4(@bufbuild/protobuf@1.1.1)
       '@bufbuild/connect-web':
-        specifier: ^0.8.4
-        version: 0.8.4(@bufbuild/protobuf@1.1.1)
+        specifier: ^0.13.0
+        version: 0.13.0(@bufbuild/protobuf@1.1.1)
       '@bufbuild/protobuf':
         specifier: ^1.1.1
         version: 1.1.1
@@ -161,12 +161,22 @@ packages:
       '@bufbuild/buf-win32-x64': 1.15.0-1
     dev: false
 
-  /@bufbuild/connect-web@0.8.4(@bufbuild/protobuf@1.1.1):
-    resolution: {integrity: sha512-GlM0wC/htfqBNEqn+s/+bIAD1OCCeoyqddS35Zjl+STKnfGfURbGjpfNyuci2RwmNQmotov0KKYshvowMn15yQ==}
+  /@bufbuild/connect-web@0.13.0(@bufbuild/protobuf@1.1.1):
+    resolution: {integrity: sha512-Ys9VFDWYktD9yFQSLOlkpsD42LonDNMCysLCfjXFuxlupYuf4f7qg0zkT5bESyTfqk4xtRDSSGR3xygaj/ONIQ==}
+    deprecated: Connect has moved to its own org @connectrpc and has a stable v1. Run `npx @connectrpc/connect-migrate@latest` to update. See https://github.com/connectrpc/connect-es/releases/tag/v0.13.1 for details.
     peerDependencies:
-      '@bufbuild/protobuf': ^1.0.0
+      '@bufbuild/protobuf': ^1.2.1
     dependencies:
-      '@bufbuild/connect': 0.8.4(@bufbuild/protobuf@1.1.1)
+      '@bufbuild/connect': 0.13.0(@bufbuild/protobuf@1.1.1)
+      '@bufbuild/protobuf': 1.1.1
+    dev: false
+
+  /@bufbuild/connect@0.13.0(@bufbuild/protobuf@1.1.1):
+    resolution: {integrity: sha512-eZSMbVLyUFtXiZNORgCEvv580xKZeYQdMOWj2i/nxOcpXQcrEzTMTA7SZzWv4k4gveWCOSRoWmYDeOhfWXJv0g==}
+    deprecated: Connect has moved to its own org @connectrpc and has a stable v1. Run `npx @connectrpc/connect-migrate@latest` to update. See https://github.com/connectrpc/connect-es/releases/tag/v0.13.1 for details.
+    peerDependencies:
+      '@bufbuild/protobuf': ^1.2.1
+    dependencies:
       '@bufbuild/protobuf': 1.1.1
     dev: false
 
