@@ -58,7 +58,7 @@ importers:
         version: 13.2.5-canary.22(react-dom@18.2.0)(react@18.2.0)
       protoc-gen-ts:
         specifier: ^0.8.5
-        version: 0.8.5(google-protobuf@3.21.2)(typescript@5.0.3)
+        version: 0.8.7
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -2497,15 +2497,9 @@ packages:
     resolution: {integrity: sha512-kma4U7AFCTwpqq5twzC1YVIDXSqg6qQK6JN0smOw8fgRy1OkMi0CYSzFmsy6dnqSenamAtj0CyXMUJ1Mf6oROg==}
     dev: false
 
-  /protoc-gen-ts@0.8.5(google-protobuf@3.21.2)(typescript@5.0.3):
-    resolution: {integrity: sha512-LHZ+w/+DqmdgnhPtShgqtPtdv+hJ9bAXEIqNU0kkY2bPcCVIEWz5seOv20FCw6gbKorriTGP8xgz2RsIcrRvVw==}
+  /protoc-gen-ts@0.8.7:
+    resolution: {integrity: sha512-jr4VJey2J9LVYCV7EVyVe53g1VMw28cCmYJhBe5e3YX5wiyiDwgxWxeDf9oTqAe4P1bN/YGAkW2jhlH8LohwiQ==}
     hasBin: true
-    peerDependencies:
-      google-protobuf: ^3.13.0
-      typescript: '>=4'
-    dependencies:
-      google-protobuf: 3.21.2
-      typescript: 5.0.3
     dev: false
 
   /punycode@2.3.0:
