@@ -1,6 +1,6 @@
 module github.com/bentekkie/bentekkie-mainframe
 
-go 1.23
+go 1.23.1
 
 require (
 	github.com/bufbuild/connect-go v1.10.0
