@@ -21,7 +21,7 @@ genrule(
         "command_pb.ts",
         "command_connect.ts",
     ],
-    cmd = "export BAZEL_BINDIR=$(BINDIR);wkt=($(locations @protobuf//:well_known_type_protos));   $(location @protobuf//:protoc)   -I $$(dirname $$wkt)/../../   -I .   --plugin=protoc-gen-es=$(location //clientnext:protoc_gen_es_binary)   --plugin=protoc-gen-connect-es=$(location //clientnext:protoc_gen_connect_es_binary)   --es_out $$(dirname $(location command_pb.ts))   --es_opt target=ts   --es_opt import_extension=none   --connect-es_out $$(dirname $(location command_connect.ts))   --connect-es_opt target=ts   --connect-es_opt import_extension=none   $(location //proto/command/v1:command.proto); cp $$(dirname $(location command_connect.ts))/proto/command/v1/* $$(dirname $(location command_connect.ts))",
+    cmd = "export BAZEL_BINDIR=$(BINDIR);wkt=($(locations @protobuf//:well_known_type_protos));   $(location @protobuf//:protoc)   -I $$(dirname $$wkt)/../../   -I .   --plugin=protoc-gen-es=$(location //clientnext:protoc_gen_es_binary)   --plugin=protoc-gen-connect-es=$(location //clientnext:protoc_gen_connect_es_binary)   --es_out $$(dirname $(location command_pb.ts))   --es_opt target=ts    --connect-es_out $$(dirname $(location command_connect.ts))   --connect-es_opt target=ts   $(location //proto/command/v1:command.proto); cp $$(dirname $(location command_connect.ts))/proto/command/v1/* $$(dirname $(location command_connect.ts))",
     tools = [
         "@protobuf//:protoc",
         "//clientnext:protoc_gen_es_binary",

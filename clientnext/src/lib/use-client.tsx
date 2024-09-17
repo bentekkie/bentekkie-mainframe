@@ -4,8 +4,8 @@ import { ServiceType } from "@bufbuild/protobuf";
 import {
   createPromiseClient,
   PromiseClient,
-} from "@bufbuild/connect";
-import { createConnectTransport } from "@bufbuild/connect-web";
+} from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
 
 const transport = createConnectTransport({baseUrl: `/grpc`});
 

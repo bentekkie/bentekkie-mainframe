@@ -1,7 +1,7 @@
 import { Folder } from "@gen/command_pb";
 import { ReactNode } from "react";
 import { shell } from "@gen/command_connect"
-import { PromiseClient } from "@bufbuild/connect";
+import { PromiseClient } from "@connectrpc/connect";
 
 
 

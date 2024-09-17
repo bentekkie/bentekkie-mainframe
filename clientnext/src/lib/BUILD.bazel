@@ -7,8 +7,8 @@ next_ts_project(
         "*.ts",
     ]),
     deps = [
-        "//clientnext:node_modules/@bufbuild/connect",
-        "//clientnext:node_modules/@bufbuild/connect-web",
+        "//clientnext:node_modules/@connectrpc/connect",
+        "//clientnext:node_modules/@connectrpc/connect-web",
         "//clientnext:node_modules/@types/google-protobuf",
         "//clientnext:node_modules/@types/react",
         "//clientnext:node_modules/@types/react-dom",
