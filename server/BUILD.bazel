@@ -6,7 +6,7 @@ go_library(
     importpath = "github.com/bentekkie/bentekkie-mainframe/server",
     visibility = ["//visibility:public"],
     deps = [
-        "//proto/command/v1:command_connect_go",
+        "//proto/command/v1/commandv1connect:commandv1_connect_go_proto",
         "//server/auth",
         "//server/db",
         "//server/mainframe",

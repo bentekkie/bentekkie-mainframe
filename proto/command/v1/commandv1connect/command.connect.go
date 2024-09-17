@@ -5,10 +5,10 @@
 package commandv1connect
 
 import (
+	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
 	v1 "github.com/bentekkie/bentekkie-mainframe/proto/command/v1"
-	connect_go "github.com/bufbuild/connect-go"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
@@ -19,20 +19,50 @@ import (
 // generated with a version of connect newer than the one compiled into your binary. You can fix the
 // problem by either regenerating this code with an older version of connect or updating the connect
 // version compiled into your binary.
-const _ = connect_go.IsAtLeastVersion0_1_0
+const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// shellName is the fully-qualified name of the shell service.
 	shellName = "mainframe.shell"
 )
 
+// These constants are the fully-qualified names of the RPCs defined in this package. They're
+// exposed at runtime as Spec.Procedure and as the final two segments of the HTTP route.
+//
+// Note that these are different from the fully-qualified method names used by
+// google.golang.org/protobuf/reflect/protoreflect. To convert from these constants to
+// reflection-formatted method names, remove the leading slash and convert the remaining slash to a
+// period.
+const (
+	// ShellRunCommandProcedure is the fully-qualified name of the shell's runCommand RPC.
+	ShellRunCommandProcedure = "/mainframe.shell/runCommand"
+	// ShellRunSudoCommandProcedure is the fully-qualified name of the shell's runSudoCommand RPC.
+	ShellRunSudoCommandProcedure = "/mainframe.shell/runSudoCommand"
+	// ShellAutoCompleteProcedure is the fully-qualified name of the shell's autoComplete RPC.
+	ShellAutoCompleteProcedure = "/mainframe.shell/autoComplete"
+	// ShellSudoAutoCompleteProcedure is the fully-qualified name of the shell's sudoAutoComplete RPC.
+	ShellSudoAutoCompleteProcedure = "/mainframe.shell/sudoAutoComplete"
+	// ShellGetRootProcedure is the fully-qualified name of the shell's getRoot RPC.
+	ShellGetRootProcedure = "/mainframe.shell/getRoot"
+)
+
+// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
+var (
+	shellServiceDescriptor                = v1.File_proto_command_v1_command_proto.Services().ByName("shell")
+	shellRunCommandMethodDescriptor       = shellServiceDescriptor.Methods().ByName("runCommand")
+	shellRunSudoCommandMethodDescriptor   = shellServiceDescriptor.Methods().ByName("runSudoCommand")
+	shellAutoCompleteMethodDescriptor     = shellServiceDescriptor.Methods().ByName("autoComplete")
+	shellSudoAutoCompleteMethodDescriptor = shellServiceDescriptor.Methods().ByName("sudoAutoComplete")
+	shellGetRootMethodDescriptor          = shellServiceDescriptor.Methods().ByName("getRoot")
+)
+
 // ShellClient is a client for the mainframe.shell service.
 type ShellClient interface {
-	RunCommand(context.Context, *connect_go.Request[v1.Command]) (*connect_go.Response[v1.Response], error)
-	RunSudoCommand(context.Context, *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.SudoResponse], error)
-	AutoComplete(context.Context, *connect_go.Request[v1.Command]) (*connect_go.Response[v1.AutoCompResponse], error)
-	SudoAutoComplete(context.Context, *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.AutoCompResponse], error)
-	GetRoot(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1.Folder], error)
+	RunCommand(context.Context, *connect.Request[v1.Command]) (*connect.Response[v1.Response], error)
+	RunSudoCommand(context.Context, *connect.Request[v1.SudoCommand]) (*connect.Response[v1.SudoResponse], error)
+	AutoComplete(context.Context, *connect.Request[v1.Command]) (*connect.Response[v1.AutoCompResponse], error)
+	SudoAutoComplete(context.Context, *connect.Request[v1.SudoCommand]) (*connect.Response[v1.AutoCompResponse], error)
+	GetRoot(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Folder], error)
 }
 
 // NewShellClient constructs a client for the mainframe.shell service. By default, it uses the
@@ -42,78 +72,83 @@ type ShellClient interface {
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewShellClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) ShellClient {
+func NewShellClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ShellClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &shellClient{
-		runCommand: connect_go.NewClient[v1.Command, v1.Response](
+		runCommand: connect.NewClient[v1.Command, v1.Response](
 			httpClient,
-			baseURL+"/mainframe.shell/runCommand",
-			opts...,
+			baseURL+ShellRunCommandProcedure,
+			connect.WithSchema(shellRunCommandMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		runSudoCommand: connect_go.NewClient[v1.SudoCommand, v1.SudoResponse](
+		runSudoCommand: connect.NewClient[v1.SudoCommand, v1.SudoResponse](
 			httpClient,
-			baseURL+"/mainframe.shell/runSudoCommand",
-			opts...,
+			baseURL+ShellRunSudoCommandProcedure,
+			connect.WithSchema(shellRunSudoCommandMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		autoComplete: connect_go.NewClient[v1.Command, v1.AutoCompResponse](
+		autoComplete: connect.NewClient[v1.Command, v1.AutoCompResponse](
 			httpClient,
-			baseURL+"/mainframe.shell/autoComplete",
-			opts...,
+			baseURL+ShellAutoCompleteProcedure,
+			connect.WithSchema(shellAutoCompleteMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		sudoAutoComplete: connect_go.NewClient[v1.SudoCommand, v1.AutoCompResponse](
+		sudoAutoComplete: connect.NewClient[v1.SudoCommand, v1.AutoCompResponse](
 			httpClient,
-			baseURL+"/mainframe.shell/sudoAutoComplete",
-			opts...,
+			baseURL+ShellSudoAutoCompleteProcedure,
+			connect.WithSchema(shellSudoAutoCompleteMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getRoot: connect_go.NewClient[emptypb.Empty, v1.Folder](
+		getRoot: connect.NewClient[emptypb.Empty, v1.Folder](
 			httpClient,
-			baseURL+"/mainframe.shell/getRoot",
-			opts...,
+			baseURL+ShellGetRootProcedure,
+			connect.WithSchema(shellGetRootMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
 // shellClient implements ShellClient.
 type shellClient struct {
-	runCommand       *connect_go.Client[v1.Command, v1.Response]
-	runSudoCommand   *connect_go.Client[v1.SudoCommand, v1.SudoResponse]
-	autoComplete     *connect_go.Client[v1.Command, v1.AutoCompResponse]
-	sudoAutoComplete *connect_go.Client[v1.SudoCommand, v1.AutoCompResponse]
-	getRoot          *connect_go.Client[emptypb.Empty, v1.Folder]
+	runCommand       *connect.Client[v1.Command, v1.Response]
+	runSudoCommand   *connect.Client[v1.SudoCommand, v1.SudoResponse]
+	autoComplete     *connect.Client[v1.Command, v1.AutoCompResponse]
+	sudoAutoComplete *connect.Client[v1.SudoCommand, v1.AutoCompResponse]
+	getRoot          *connect.Client[emptypb.Empty, v1.Folder]
 }
 
 // RunCommand calls mainframe.shell.runCommand.
-func (c *shellClient) RunCommand(ctx context.Context, req *connect_go.Request[v1.Command]) (*connect_go.Response[v1.Response], error) {
+func (c *shellClient) RunCommand(ctx context.Context, req *connect.Request[v1.Command]) (*connect.Response[v1.Response], error) {
 	return c.runCommand.CallUnary(ctx, req)
 }
 
 // RunSudoCommand calls mainframe.shell.runSudoCommand.
-func (c *shellClient) RunSudoCommand(ctx context.Context, req *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.SudoResponse], error) {
+func (c *shellClient) RunSudoCommand(ctx context.Context, req *connect.Request[v1.SudoCommand]) (*connect.Response[v1.SudoResponse], error) {
 	return c.runSudoCommand.CallUnary(ctx, req)
 }
 
 // AutoComplete calls mainframe.shell.autoComplete.
-func (c *shellClient) AutoComplete(ctx context.Context, req *connect_go.Request[v1.Command]) (*connect_go.Response[v1.AutoCompResponse], error) {
+func (c *shellClient) AutoComplete(ctx context.Context, req *connect.Request[v1.Command]) (*connect.Response[v1.AutoCompResponse], error) {
 	return c.autoComplete.CallUnary(ctx, req)
 }
 
 // SudoAutoComplete calls mainframe.shell.sudoAutoComplete.
-func (c *shellClient) SudoAutoComplete(ctx context.Context, req *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.AutoCompResponse], error) {
+func (c *shellClient) SudoAutoComplete(ctx context.Context, req *connect.Request[v1.SudoCommand]) (*connect.Response[v1.AutoCompResponse], error) {
 	return c.sudoAutoComplete.CallUnary(ctx, req)
 }
 
 // GetRoot calls mainframe.shell.getRoot.
-func (c *shellClient) GetRoot(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1.Folder], error) {
+func (c *shellClient) GetRoot(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Folder], error) {
 	return c.getRoot.CallUnary(ctx, req)
 }
 
 // ShellHandler is an implementation of the mainframe.shell service.
 type ShellHandler interface {
-	RunCommand(context.Context, *connect_go.Request[v1.Command]) (*connect_go.Response[v1.Response], error)
-	RunSudoCommand(context.Context, *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.SudoResponse], error)
-	AutoComplete(context.Context, *connect_go.Request[v1.Command]) (*connect_go.Response[v1.AutoCompResponse], error)
-	SudoAutoComplete(context.Context, *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.AutoCompResponse], error)
-	GetRoot(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1.Folder], error)
+	RunCommand(context.Context, *connect.Request[v1.Command]) (*connect.Response[v1.Response], error)
+	RunSudoCommand(context.Context, *connect.Request[v1.SudoCommand]) (*connect.Response[v1.SudoResponse], error)
+	AutoComplete(context.Context, *connect.Request[v1.Command]) (*connect.Response[v1.AutoCompResponse], error)
+	SudoAutoComplete(context.Context, *connect.Request[v1.SudoCommand]) (*connect.Response[v1.AutoCompResponse], error)
+	GetRoot(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Folder], error)
 }
 
 // NewShellHandler builds an HTTP handler from the service implementation. It returns the path on
@@ -121,55 +156,74 @@ type ShellHandler interface {
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewShellHandler(svc ShellHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	mux := http.NewServeMux()
-	mux.Handle("/mainframe.shell/runCommand", connect_go.NewUnaryHandler(
-		"/mainframe.shell/runCommand",
+func NewShellHandler(svc ShellHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	shellRunCommandHandler := connect.NewUnaryHandler(
+		ShellRunCommandProcedure,
 		svc.RunCommand,
-		opts...,
-	))
-	mux.Handle("/mainframe.shell/runSudoCommand", connect_go.NewUnaryHandler(
-		"/mainframe.shell/runSudoCommand",
+		connect.WithSchema(shellRunCommandMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	shellRunSudoCommandHandler := connect.NewUnaryHandler(
+		ShellRunSudoCommandProcedure,
 		svc.RunSudoCommand,
-		opts...,
-	))
-	mux.Handle("/mainframe.shell/autoComplete", connect_go.NewUnaryHandler(
-		"/mainframe.shell/autoComplete",
+		connect.WithSchema(shellRunSudoCommandMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	shellAutoCompleteHandler := connect.NewUnaryHandler(
+		ShellAutoCompleteProcedure,
 		svc.AutoComplete,
-		opts...,
-	))
-	mux.Handle("/mainframe.shell/sudoAutoComplete", connect_go.NewUnaryHandler(
-		"/mainframe.shell/sudoAutoComplete",
+		connect.WithSchema(shellAutoCompleteMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	shellSudoAutoCompleteHandler := connect.NewUnaryHandler(
+		ShellSudoAutoCompleteProcedure,
 		svc.SudoAutoComplete,
-		opts...,
-	))
-	mux.Handle("/mainframe.shell/getRoot", connect_go.NewUnaryHandler(
-		"/mainframe.shell/getRoot",
+		connect.WithSchema(shellSudoAutoCompleteMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	shellGetRootHandler := connect.NewUnaryHandler(
+		ShellGetRootProcedure,
 		svc.GetRoot,
-		opts...,
-	))
-	return "/mainframe.shell/", mux
+		connect.WithSchema(shellGetRootMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/mainframe.shell/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case ShellRunCommandProcedure:
+			shellRunCommandHandler.ServeHTTP(w, r)
+		case ShellRunSudoCommandProcedure:
+			shellRunSudoCommandHandler.ServeHTTP(w, r)
+		case ShellAutoCompleteProcedure:
+			shellAutoCompleteHandler.ServeHTTP(w, r)
+		case ShellSudoAutoCompleteProcedure:
+			shellSudoAutoCompleteHandler.ServeHTTP(w, r)
+		case ShellGetRootProcedure:
+			shellGetRootHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
 }
 
 // UnimplementedShellHandler returns CodeUnimplemented from all methods.
 type UnimplementedShellHandler struct{}
 
-func (UnimplementedShellHandler) RunCommand(context.Context, *connect_go.Request[v1.Command]) (*connect_go.Response[v1.Response], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("mainframe.shell.runCommand is not implemented"))
+func (UnimplementedShellHandler) RunCommand(context.Context, *connect.Request[v1.Command]) (*connect.Response[v1.Response], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("mainframe.shell.runCommand is not implemented"))
 }
 
-func (UnimplementedShellHandler) RunSudoCommand(context.Context, *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.SudoResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("mainframe.shell.runSudoCommand is not implemented"))
+func (UnimplementedShellHandler) RunSudoCommand(context.Context, *connect.Request[v1.SudoCommand]) (*connect.Response[v1.SudoResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("mainframe.shell.runSudoCommand is not implemented"))
 }
 
-func (UnimplementedShellHandler) AutoComplete(context.Context, *connect_go.Request[v1.Command]) (*connect_go.Response[v1.AutoCompResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("mainframe.shell.autoComplete is not implemented"))
+func (UnimplementedShellHandler) AutoComplete(context.Context, *connect.Request[v1.Command]) (*connect.Response[v1.AutoCompResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("mainframe.shell.autoComplete is not implemented"))
 }
 
-func (UnimplementedShellHandler) SudoAutoComplete(context.Context, *connect_go.Request[v1.SudoCommand]) (*connect_go.Response[v1.AutoCompResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("mainframe.shell.sudoAutoComplete is not implemented"))
+func (UnimplementedShellHandler) SudoAutoComplete(context.Context, *connect.Request[v1.SudoCommand]) (*connect.Response[v1.AutoCompResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("mainframe.shell.sudoAutoComplete is not implemented"))
 }
 
-func (UnimplementedShellHandler) GetRoot(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[v1.Folder], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("mainframe.shell.getRoot is not implemented"))
+func (UnimplementedShellHandler) GetRoot(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Folder], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("mainframe.shell.getRoot is not implemented"))
 }
