@@ -4,7 +4,7 @@ js_library(
     name = "public",
     srcs = [
         "favicon.ico",
-        "manifest.json",
+        "manifest.webmanifest",
     ],
     visibility = ["//clientnext:__subpackages__"],
 )

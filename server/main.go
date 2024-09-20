@@ -8,9 +8,10 @@ import (
 	"github.com/bentekkie/bentekkie-mainframe/server/auth"
 	"github.com/bentekkie/bentekkie-mainframe/server/db"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/bentekkie/bentekkie-mainframe/proto/command/v1/commandv1connect"
 	"github.com/bentekkie/bentekkie-mainframe/server/mainframe"
-	log "github.com/sirupsen/logrus"
 )
 
 // Run starts server
