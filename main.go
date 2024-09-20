@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -70,11 +70,11 @@ func main() {
 			panic(err)
 		}
 		defer jsonFile.Close()
-		byteValue, _ := ioutil.ReadAll(jsonFile)
+		byteValue, _ := io.ReadAll(jsonFile)
 		db.DbConnection.SeedDB(ctx, byteValue, true)
 	}
 	log.Debug("Starting")
-	files, err := ioutil.ReadDir("/out")
+	files, err := os.ReadDir("/out")
 	if err != nil {
 		log.Fatal(err)
 	}
