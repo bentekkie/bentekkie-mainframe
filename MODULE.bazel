@@ -9,7 +9,7 @@ single_version_override(
     patches = ["//third_party/patches/rules_go:import.patch"],
 )
 
-bazel_dep(name = "gazelle", version = "0.38.0")
+bazel_dep(name = "gazelle", version = "0.39.0")
 bazel_dep(name = "rules_oci", version = "2.0.0")
 
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
