@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"mime"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -81,6 +82,9 @@ func main() {
 
 	for _, file := range files {
 		log.Infof("%v, %v", file.Name(), file.IsDir())
+	}
+	if err := mime.AddExtensionType(".webmanifest", "application/manifest+json"); err != nil {
+		log.Fatal(err)
 	}
 	server.Run(port)
 }
