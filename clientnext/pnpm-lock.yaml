@@ -12,20 +12,20 @@ importers:
         specifier: ^1.15.0-1
         version: 1.45.0
       '@bufbuild/protobuf':
-        specifier: 1.10.0
-        version: 1.10.0
+        specifier: 2.2.0
+        version: 2.2.0
       '@bufbuild/protoc-gen-es':
         specifier: 1.10.0
-        version: 1.10.0(@bufbuild/protobuf@1.10.0)
+        version: 1.10.0(@bufbuild/protobuf@2.2.0)
       '@connectrpc/connect':
         specifier: 1.6.1
-        version: 1.6.1(@bufbuild/protobuf@1.10.0)
+        version: 1.6.1(@bufbuild/protobuf@2.2.0)
       '@connectrpc/connect-web':
         specifier: 1.6.1
-        version: 1.6.1(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.6.1(@bufbuild/protobuf@1.10.0))
+        version: 1.6.1(@bufbuild/protobuf@2.2.0)(@connectrpc/connect@1.6.1(@bufbuild/protobuf@2.2.0))
       '@connectrpc/protoc-gen-connect-es':
         specifier: 1.6.1
-        version: 1.6.1(@bufbuild/protoc-gen-es@1.10.0(@bufbuild/protobuf@1.10.0))(@connectrpc/connect@1.6.1(@bufbuild/protobuf@1.10.0))
+        version: 1.6.1(@bufbuild/protoc-gen-es@1.10.0(@bufbuild/protobuf@2.2.0))(@connectrpc/connect@1.6.1(@bufbuild/protobuf@2.2.0))
       '@improbable-eng/grpc-web':
         specifier: ^0.15.0
         version: 0.15.0(google-protobuf@3.21.4)
@@ -133,6 +133,9 @@ packages:
 
   '@bufbuild/protobuf@1.10.0':
     resolution: {integrity: sha512-QDdVFLoN93Zjg36NoQPZfsVH9tZew7wKDKyV5qRdj8ntT4wQCOradQjRaTdwMhWUYsgKsvCINKKm87FdEk96Ag==}
+
+  '@bufbuild/protobuf@2.2.0':
+    resolution: {integrity: sha512-+imAQkHf7U/Rwvu0wk1XWgsP3WnpCWmK7B48f0XqSNzgk64+grljTKC7pnO/xBiEMUziF7vKRfbBnOQhg126qQ==}
 
   '@bufbuild/protoc-gen-es@1.10.0':
     resolution: {integrity: sha512-zBYBsVT/ul4uZb6F+kD7/k4sWNHVVbEPfJwKi0FDr+9VJo8MKIofI6pkr5ksBLr4fi/74r+e/75Xi/0clL5dXg==}
@@ -1949,11 +1952,13 @@ snapshots:
 
   '@bufbuild/protobuf@1.10.0': {}
 
-  '@bufbuild/protoc-gen-es@1.10.0(@bufbuild/protobuf@1.10.0)':
+  '@bufbuild/protobuf@2.2.0': {}
+
+  '@bufbuild/protoc-gen-es@1.10.0(@bufbuild/protobuf@2.2.0)':
     dependencies:
       '@bufbuild/protoplugin': 1.10.0
     optionalDependencies:
-      '@bufbuild/protobuf': 1.10.0
+      '@bufbuild/protobuf': 2.2.0
     transitivePeerDependencies:
       - supports-color
 
@@ -1965,22 +1970,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@connectrpc/connect-web@1.6.1(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.6.1(@bufbuild/protobuf@1.10.0))':
+  '@connectrpc/connect-web@1.6.1(@bufbuild/protobuf@2.2.0)(@connectrpc/connect@1.6.1(@bufbuild/protobuf@2.2.0))':
     dependencies:
-      '@bufbuild/protobuf': 1.10.0
-      '@connectrpc/connect': 1.6.1(@bufbuild/protobuf@1.10.0)
+      '@bufbuild/protobuf': 2.2.0
+      '@connectrpc/connect': 1.6.1(@bufbuild/protobuf@2.2.0)
 
-  '@connectrpc/connect@1.6.1(@bufbuild/protobuf@1.10.0)':
+  '@connectrpc/connect@1.6.1(@bufbuild/protobuf@2.2.0)':
     dependencies:
-      '@bufbuild/protobuf': 1.10.0
+      '@bufbuild/protobuf': 2.2.0
 
-  '@connectrpc/protoc-gen-connect-es@1.6.1(@bufbuild/protoc-gen-es@1.10.0(@bufbuild/protobuf@1.10.0))(@connectrpc/connect@1.6.1(@bufbuild/protobuf@1.10.0))':
+  '@connectrpc/protoc-gen-connect-es@1.6.1(@bufbuild/protoc-gen-es@1.10.0(@bufbuild/protobuf@2.2.0))(@connectrpc/connect@1.6.1(@bufbuild/protobuf@2.2.0))':
     dependencies:
       '@bufbuild/protobuf': 1.10.0
       '@bufbuild/protoplugin': 1.10.0
     optionalDependencies:
-      '@bufbuild/protoc-gen-es': 1.10.0(@bufbuild/protobuf@1.10.0)
-      '@connectrpc/connect': 1.6.1(@bufbuild/protobuf@1.10.0)
+      '@bufbuild/protoc-gen-es': 1.10.0(@bufbuild/protobuf@2.2.0)
+      '@connectrpc/connect': 1.6.1(@bufbuild/protobuf@2.2.0)
     transitivePeerDependencies:
       - supports-color
 
