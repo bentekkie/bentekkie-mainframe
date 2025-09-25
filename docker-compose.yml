@@ -12,7 +12,7 @@ services:
       - 'prod.env'
     restart: always
   postgresProd:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     env_file: 
       - 'prod.env'
     volumes:
