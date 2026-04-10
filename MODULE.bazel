@@ -80,7 +80,7 @@ use_repo(pnpm, "pnpm")
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "distroless_base",
-    digest = "sha256:ccaef5ee2f1850270d453fdf700a5392534f8d1a8ca2acda391fbb6a06b81c86",
+    digest = "sha256:c83f022002fc917a92501a8c30c605efdad3010157ba2c8998a2cbf213299201",
     image = "gcr.io/distroless/base",
     platforms = [
         "linux/amd64",
