@@ -1,18 +1,18 @@
 // use-client.ts
-import { useMemo} from "react";
-import { ServiceType } from "@bufbuild/protobuf";
+import { useMemo } from "react";
+import type { DescService } from "@bufbuild/protobuf";
 import {
-  createPromiseClient,
-  PromiseClient,
+  createClient,
+  Client,
 } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
 
 const transport = createConnectTransport({baseUrl: `/grpc`});
 
 /**
-* Get a promise client for the given service.
+* Get a client for the given service.
 */
-export function useClient<T extends ServiceType>(service: T): PromiseClient<T> {
+export function useClient<T extends DescService>(service: T): Client<T> {
   // We memoize the client, so that we only create one instance per service.
-  return useMemo(() => createPromiseClient(service, transport), [service]);
+  return useMemo(() => createClient(service, transport), [service]);
 }

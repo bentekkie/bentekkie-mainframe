@@ -15,15 +15,15 @@ jobs:
         runs-on: ubuntu-24.04
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
             - name: Log in to the Container registry
-              uses: docker/login-action@1f36f5b7a2d2f7bfd524795fc966e6d88c37baa9
+              uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
               with:
                 registry: ghcr.io
                 username: ${{ github.actor }}
                 password: ${{ secrets.GITHUB_TOKEN }}
             - name: Get Bazel
-              uses: bazel-contrib/setup-bazel@90b352333885f9fb6bf262d8e659f01b6219cc25 # 0.9.0
+              uses: bazel-contrib/setup-bazel@f34d6a05eae3c24acab7fa54587492daeaeffdab # 0.19.2
               with:
                 # Avoid downloading Bazel every time.
                 bazelisk-cache: true

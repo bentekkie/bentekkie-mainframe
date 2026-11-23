@@ -1,5 +1,5 @@
 import { Terminal } from "./Terminal";
-import { shell } from "@gen/command_connect"
+import { shell } from "@gen/command_pb"
 import { AppContextProvider } from "./AppContext";
 import { CookiesProvider } from 'react-cookie';
 import { useClient } from './use-client';

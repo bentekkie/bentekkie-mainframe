@@ -1,9 +1,9 @@
 load("//clientnext:defs.bzl", "next_ts_project")
+load(":protoc_es.bzl", "protoc_es_gen")
 
 next_ts_project(
     name = "gen",
     srcs = [
-        "command_connect.ts",
         "command_pb.ts",
     ],
     deps = [
@@ -11,20 +11,9 @@ next_ts_project(
     ],
 )
 
-genrule(
+protoc_es_gen(
     name = "gen_command_pb.ts",
-    srcs = [
-        "//proto/command/v1:command.proto",
-        "@protobuf//:well_known_type_protos",
-    ],
-    outs = [
-        "command_pb.ts",
-        "command_connect.ts",
-    ],
-    cmd = "export BAZEL_BINDIR=$(BINDIR);wkt=($(locations @protobuf//:well_known_type_protos));   $(location @protobuf//:protoc)   -I $$(dirname $$wkt)/../../   -I .   --plugin=protoc-gen-es=$(location //clientnext:protoc_gen_es_binary)   --plugin=protoc-gen-connect-es=$(location //clientnext:protoc_gen_connect_es_binary)   --es_out $$(dirname $(location command_pb.ts))   --es_opt target=ts    --connect-es_out $$(dirname $(location command_connect.ts))   --connect-es_opt target=ts   $(location //proto/command/v1:command.proto); cp $$(dirname $(location command_connect.ts))/proto/command/v1/* $$(dirname $(location command_connect.ts))",
-    tools = [
-        "//clientnext:protoc_gen_connect_es_binary",
-        "//clientnext:protoc_gen_es_binary",
-        "@protobuf//:protoc",
-    ],
+    out = "command_pb.ts",
+    plugin = "//clientnext:protoc_gen_es_binary",
+    proto_src = "//proto/command/v1:command.proto",
 )
