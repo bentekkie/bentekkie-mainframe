@@ -11,6 +11,7 @@ require (
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.44.0
 	github.com/ory/dockertest/v3 v3.12.0
+	github.com/ory/dockertest/v4 v4.0.1
 	github.com/sclevine/agouti v3.0.0+incompatible
 	github.com/sethvargo/go-password v0.4.0
 	github.com/sirupsen/logrus v1.10.2
