@@ -157,7 +157,7 @@ def next(
     js_run_binary(
         name = name,
         tool = next_js_binary,
-        args = ["build"],
+        args = ["build", "--webpack"],
         srcs = srcs + data,
         out_dirs = [next_build_out],
         chdir = native.package_name(),
@@ -171,7 +171,7 @@ def next(
     js_run_devserver(
         name = "{}_dev".format(name),
         command = next_bin,
-        args = ["dev"],
+        args = ["dev", "--webpack"],
         data = srcs + data,
         chdir = native.package_name(),
         tags = tags,
@@ -197,7 +197,7 @@ def next(
     js_run_binary(
         name = "{}_export".format(name),
         tool = next_js_binary,
-        args = ["build"],
+        args = ["build", "--webpack"],
         srcs = srcs + data,
         out_dirs = [next_export_out],
         chdir = native.package_name(),

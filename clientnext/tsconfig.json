@@ -7,8 +7,8 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
-    "module": "es6",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {

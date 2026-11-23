@@ -1,8 +1,8 @@
 import { CoreApi, IState, IAction, ActionType, IProps } from './AppContextTypes'
 import { useCookies } from 'react-cookie'
-import { CommandType, SudoCommandType, Command, Folder, ResponseType, SudoCommand, SudoResponse, Response } from '@gen/command_pb';
+import { create } from '@bufbuild/protobuf';
+import { CommandType, SudoCommandType, CommandSchema, Folder, ResponseType, SudoCommandSchema, SudoResponse, Response } from '@gen/command_pb';
 import { Dispatch, RefObject, useMemo } from 'react';
-import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { isValidEnum } from './utils';
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -18,7 +18,7 @@ function useCookie(key : string): [string | null, (v: string) => void, () => voi
     return [cookies[key] || null, (newJwt : string) => setCookie(key, newJwt), () => removeCookie(key)]
 }
 
-export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps, inputOpenFileRef: RefObject<HTMLInputElement>): CoreApi {
+export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps, inputOpenFileRef: RefObject<HTMLInputElement | null>): CoreApi {
     const [jwt, setJwt, removeJwt] = useCookie(JWT_COOKIE_KEY)
     const cmdNames = useCommandNames(jwt);
 
@@ -91,7 +91,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                         }
                         case CommandType.exec: {
                             if (args.length === 1) {
-                                let command = new Command(
+                                let command = create(CommandSchema,
                                     {
                                         args: args,
                                         command: CommandType.cat,
@@ -120,7 +120,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                             }
                         }
                         default: {
-                            let command = new Command({
+                            let command = create(CommandSchema, {
                                 currentDir,
                                 args,
                                 command:CommandType[cmd]
@@ -160,7 +160,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                             break
                         }
                     }
-                    let command = new SudoCommand({
+                    let command = create(SudoCommandSchema, {
                         currentDir,
                         args,
                         command: SudoCommandType[cmd],
@@ -294,7 +294,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                 if (cmdNames.indexOf(split[0]) >= 0 && split[1] !== undefined) {
                     const command = split[0].toLowerCase();
                     if (isValidEnum(command, CommandType)) {
-                        let c = new Command({
+                        let c = create(CommandSchema, {
                             command: CommandType[command],
                             currentDir: state.currentDir,
                             args: split.slice(1)
@@ -305,7 +305,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                             console.error(err)
                         })
                     } else if (isValidEnum(command, SudoCommandType) && jwt != null) {
-                        let c = new SudoCommand({
+                        let c = create(SudoCommandSchema, {
                             command: SudoCommandType[command],
                             currentDir:state.currentDir,
                             args: split.slice(1),
@@ -357,7 +357,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
             if(!state.bootstrapped) {
                 console.log("Bootstrap")
                 dispatch({ type: ActionType.Bootstrap })
-                props.client.getRoot(new Empty()).then(resp => {
+                props.client.getRoot({}).then(resp => {
                     dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: resp } });
                     sendCommand("exec init", false, resp)
                 })
@@ -368,7 +368,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         nextCommand: () => dispatch({ type: ActionType.NextCommand }),
         prevCommand: () => dispatch({ type: ActionType.PrevCommand }),
         login: (username: string, password: string) => {
-            let command = new Command({
+            let command = create(CommandSchema, {
                 currentDir: state.currentDir,
                 args: [username, password],
                 command: CommandType.login
@@ -381,7 +381,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         },
         register: (username: string, password: string) => {
             if (jwt) {
-                let command = new SudoCommand({
+                let command = create(SudoCommandSchema, {
                     currentDir: state.currentDir,
                     args: [username, password],
                     command: SudoCommandType.adduser,
@@ -397,7 +397,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
         updateFile: (newContents: string) => {
             dispatch({ type: ActionType.EndEditing });
             if (jwt != null) {
-                const command = new SudoCommand({
+                const command = create(SudoCommandSchema, {
                     jwt,
                     currentDir: state.currentDir,
                     command: SudoCommandType.edit,
@@ -416,7 +416,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                         if (event.target instanceof FileReader && event.target.result && !(event.target.result instanceof ArrayBuffer)) {
                             if (jwt != null) {
                                 const wipeDB = prompt("Wipe db?", "false") === "true"
-                                const command = new SudoCommand({
+                                const command = create(SudoCommandSchema, {
                                     jwt,
                                     currentDir: state.currentDir,
                                     command: SudoCommandType.seed,

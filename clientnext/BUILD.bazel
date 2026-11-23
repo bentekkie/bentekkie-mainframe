@@ -2,7 +2,6 @@ load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("@npm//clientnext:@bufbuild/protoc-gen-es/package_json.bzl", protoc_gen_es_bin = "bin")
-load("@npm//clientnext:@connectrpc/protoc-gen-connect-es/package_json.bzl", protoc_gen_connect_es_bin = "bin")
 load("@npm//clientnext:next/package_json.bzl", next_bin = "bin")
 load("//clientnext:defs.bzl", "next")
 
@@ -15,11 +14,6 @@ next_bin.next_binary(
 
 protoc_gen_es_bin.protoc_gen_es_binary(
     name = "protoc_gen_es_binary",
-    visibility = ["//visibility:public"],
-)
-
-protoc_gen_connect_es_bin.protoc_gen_connect_es_binary(
-    name = "protoc_gen_connect_es_binary",
     visibility = ["//visibility:public"],
 )
 

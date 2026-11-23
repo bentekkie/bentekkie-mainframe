@@ -6,3 +6,5 @@ common --@aspect_rules_ts//ts:skipLibCheck=honor_tsconfig
 common --@aspect_rules_ts//ts:default_to_tsc_transpiler
 # Enable Bzlmod for every Bazel command
 common --enable_bzlmod
+# Prefer prebuilt protoc binaries instead of compiling protoc from source
+common --@protobuf//bazel/toolchains:prefer_prebuilt_protoc

@@ -1,7 +1,6 @@
-import { Folder } from "@gen/command_pb";
+import { Folder, shell } from "@gen/command_pb";
 import { ReactNode } from "react";
-import { shell } from "@gen/command_connect"
-import { PromiseClient } from "@connectrpc/connect";
+import { Client } from "@connectrpc/connect";
 
 
 
@@ -183,6 +182,6 @@ export type IAction =
     }
 
     export interface IProps {
-        client: PromiseClient<typeof shell>,
+        client: Client<typeof shell>,
         children: any
     }
