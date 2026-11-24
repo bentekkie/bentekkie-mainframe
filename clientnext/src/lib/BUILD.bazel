@@ -10,6 +10,7 @@ next_ts_project(
         "//clientnext:node_modules/@bufbuild/protobuf",
         "//clientnext:node_modules/@connectrpc/connect",
         "//clientnext:node_modules/@connectrpc/connect-web",
+        "//clientnext:node_modules/@types/node",
         "//clientnext:node_modules/@types/react",
         "//clientnext:node_modules/@types/react-dom",
         "//clientnext:node_modules/@types/react-modal",
