@@ -4,6 +4,13 @@ import { create } from '@bufbuild/protobuf';
 import { CommandType, SudoCommandType, CommandSchema, Folder, ResponseType, SudoCommandSchema, SudoResponse, Response } from '@gen/command_pb';
 import { Dispatch, RefObject, useMemo, useRef } from 'react';
 import { isValidEnum } from './utils';
+import {
+    formatPrompt,
+    isAllowedDeepLinkCommand,
+    parseDeepLinkParams,
+    resolveVfsPath,
+    syncBrowserUrl,
+} from './urlRouting';
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -59,12 +66,18 @@ export function useApi(
         return currentDir
     }
 
-    const sendCommand = async (command: string, interactive: boolean, currentDir?: Folder): Promise<Folder | undefined> => {
+    const sendCommand = async (
+        command: string,
+        interactive: boolean,
+        currentDir?: Folder,
+        promptOverride?: string,
+    ): Promise<Folder | undefined> => {
         currentDir = currentDir || state.currentDir
         if (interactive) {
+            const activePrompt = promptOverride ?? state.prompt
             dispatch({
                 type: ActionType.AddSection,
-                section: <div>{state.prompt + command}<br /></div>
+                section: <div>{activePrompt + command}<br /></div>
             });
             dispatch({ type: ActionType.ClearAutoComp });
         }
@@ -80,6 +93,9 @@ export function useApi(
                         case CommandType.clear: {
                             dispatch({ type: ActionType.ClearAutoComp });
                             dispatch({ type: ActionType.ClearSections });
+                            if (interactive) {
+                                syncBrowserUrl(currentDir?.path || '/');
+                            }
                             return currentDir
                         }
                         case CommandType.landing: {
@@ -143,7 +159,7 @@ export function useApi(
                                 command:CommandType[cmd]
                             });
                             return props.client.runCommand(command).then(resp => {
-                                receiveResponse(resp);
+                                receiveResponse(resp, interactive);
                                 return resp.currentDir
                             }).catch(err => {
                                 console.error(err)
@@ -231,16 +247,11 @@ export function useApi(
                 });
                 return
             }
-            let tmp = currentDir.path;
-            let tl = tmp.split("/");
-            if (tl.length > 2) {
-                tmp = "/../" + tl[tl.length - 1]
-            }
             dispatch({
                 type: ActionType.AddSection,
                 section: parseResponse(resp),
                 currentDir,
-                prompt: "B:" + tmp + ">"
+                prompt: formatPrompt(currentDir.path)
             });
         }
     };
@@ -279,7 +290,7 @@ export function useApi(
         }
     };
 
-    const receiveResponse = (resp: Response) => {
+    const receiveResponse = (resp: Response, syncUrl = false) => {
         const command = resp.command;
         if (command && command.command === CommandType.login) {
             const text = resp.resp;
@@ -291,16 +302,23 @@ export function useApi(
         }
         const currentDir = resp.currentDir;
         if (currentDir) {
-            let tmp = currentDir.path;
-            let tl = tmp.split("/");
-            if (tl.length > 2) {
-                tmp = "/../" + tl[tl.length - 1]
+            if (syncUrl && command) {
+                if (command.command === CommandType.cd && resp.resp === "") {
+                    syncBrowserUrl(currentDir.path);
+                } else if (
+                    command.command === CommandType.cat &&
+                    resp.type === ResponseType.markdown &&
+                    command.args.length > 0
+                ) {
+                    const resolved = resolveVfsPath(currentDir.path, command.args[0]);
+                    syncBrowserUrl(currentDir.path, `cat ${resolved}`);
+                }
             }
             dispatch({
                 type: ActionType.AddSection,
                 section: parseResponse(resp),
                 currentDir,
-                prompt: "B:" + tmp + ">"
+                prompt: formatPrompt(currentDir.path)
             });
         }
     };
@@ -393,21 +411,54 @@ export function useApi(
                     .catch(() => {})
                 props.client.getRoot({}).then(async resp => {
                     dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: resp } });
-                    for (const candidate of ["init", ".init"]) {
-                        const catCmd = create(CommandSchema, {
-                            args: [candidate],
-                            command: CommandType.cat,
-                            currentDir: resp,
-                        });
-                        try {
-                            const initResp = await props.client.runCommand(catCmd);
-                            if (initResp && initResp.type === ResponseType.markdown) {
-                                const rawCommands = initResp.resp.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                                await runCommands(rawCommands, resp);
-                                return;
+                    const deepLink = typeof window !== 'undefined'
+                        ? parseDeepLinkParams(window.location.search)
+                        : { path: null, cmd: null, quiet: false };
+
+                    let activeDir: Folder = resp;
+                    if (!deepLink.quiet) {
+                        for (const candidate of ["init", ".init"]) {
+                            const catCmd = create(CommandSchema, {
+                                args: [candidate],
+                                command: CommandType.cat,
+                                currentDir: resp,
+                            });
+                            try {
+                                const initResp = await props.client.runCommand(catCmd);
+                                if (initResp && initResp.type === ResponseType.markdown) {
+                                    const rawCommands = initResp.resp.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                                    activeDir = (await runCommands(rawCommands, resp)) || resp;
+                                    break;
+                                }
+                            } catch (err) {
+                                console.error(err);
                             }
-                        } catch (err) {
-                            console.error(err);
+                        }
+                    }
+
+                    if (deepLink.path && deepLink.path !== activeDir.path) {
+                        const cdArg = deepLink.path.includes(' ') ? `"${deepLink.path}"` : deepLink.path;
+                        activeDir = (await sendCommand(
+                            `cd ${cdArg}`,
+                            true,
+                            activeDir,
+                            formatPrompt(activeDir.path),
+                        )) || activeDir;
+                    }
+
+                    if (deepLink.cmd) {
+                        if (isAllowedDeepLinkCommand(deepLink.cmd)) {
+                            await sendCommand(
+                                deepLink.cmd,
+                                true,
+                                activeDir,
+                                formatPrompt(activeDir.path),
+                            );
+                        } else {
+                            dispatch({
+                                type: ActionType.AddSection,
+                                section: <p>Blocked URL command (only read-only commands are allowed via ?cmd=): {deepLink.cmd}</p>,
+                            });
                         }
                     }
                 }).catch(console.error)
