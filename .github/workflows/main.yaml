@@ -4,6 +4,9 @@ on:
   push:
     branches:
     - master
+permissions:
+  contents: read
+  packages: write
 
 jobs:
     build:
@@ -26,5 +29,7 @@ jobs:
                 disk-cache: ${{ github.workflow }}
                 # Share repository cache between workflows.
                 repository-cache: true
+            - name: Run Server Unit Tests
+              run: bazelisk test //server/...
             - name: Build and Push
-              run: bazelisk run :bentekkie-mainframe_image_push
+              run: bazelisk run :bentekkie-mainframe_image_push -- --tag "sha-${GITHUB_SHA::7}"

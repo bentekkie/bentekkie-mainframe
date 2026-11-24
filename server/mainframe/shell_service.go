@@ -231,6 +231,14 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			newPath = p.Join(cmd.CurrentDir.Path, newPath)
 		}
 		newPath = p.Clean(newPath)
+		if newPath == "/" {
+			return &mainframe.SudoResponse{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Cannot delete root directory",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
 		iNode, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 		if err != nil {
 			return &mainframe.SudoResponse{
@@ -411,7 +419,7 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		children, err := db.DbConnection.FindDirListingsByPath(ctx, newPath)
+		children, err := db.DbConnection.FindDirListings(ctx, folder)
 		if err != nil {
 			log.WithError(err).Error("ls error")
 			return &mainframe.Response{
