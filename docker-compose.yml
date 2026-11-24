@@ -1,31 +1,40 @@
-version: "3"
 services:
   server:
-    image: ghcr.io/bentekkie/bentekkie-mainframe
+    image: ghcr.io/bentekkie/bentekkie-mainframe:${IMAGE_TAG:-latest}
     ports:
       - 8082:8082
-    links:
-      - postgresProd
-    depends_on: 
-      - postgresProd
-    env_file: 
-      - 'prod.env'
+    depends_on:
+      postgresProd:
+        condition: service_healthy
+    env_file:
+      - prod.env
+    healthcheck:
+      test: ["CMD", "/bentekkie-mainframe", "-healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
     restart: always
   postgresProd:
     image: postgres:15-alpine
-    env_file: 
-      - 'prod.env'
+    env_file:
+      - prod.env
     volumes:
       - my_dbdata_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
     restart: always
   adminer:
     image: adminer
     restart: always
-    links:
-      - postgresProd
     depends_on:
-      - postgresProd
+      postgresProd:
+        condition: service_healthy
     ports:
       - 8085:8080
-volumes: 
+volumes:
   my_dbdata_prod:

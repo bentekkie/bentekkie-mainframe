@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"io"
 	"mime"
+	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -29,11 +32,39 @@ func init() {
 	}
 }
 
+func runHealthcheck(port int) error {
+	client := &http.Client{Timeout: 3 * time.Second}
+	resp, err := client.Get("http://127.0.0.1:" + strconv.Itoa(port) + "/readyz")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("readyz returned status %d", resp.StatusCode)
+	}
+	return nil
+}
+
 func main() {
 	seedFlag := flag.String("seed", "", "File to seed database with")
+	migrateOnlyFlag := flag.Bool("migrate-only", false, "Run pending database migrations and exit")
+	healthcheckFlag := flag.Bool("healthcheck", false, "Probe local /readyz endpoint and exit 0 if healthy")
 	flag.Parse()
+
+	port, err := env.GetEnvInt("PORT")
+	if err != nil {
+		port = 8082
+	}
+
+	if *healthcheckFlag {
+		if err := runHealthcheck(port); err != nil {
+			fmt.Fprintf(os.Stderr, "healthcheck failed: %v\n", err)
+			os.Exit(1)
+		}
+		return
+	}
+
 	log.SetReportCaller(true)
-	var err error
 	dbHost, err := env.GetEnvStr("POSTGRES_HOST")
 	if err != nil {
 		panic("POSTGRES_HOST not defined")
@@ -55,29 +86,38 @@ func main() {
 		panic("POSTGRES_PORT not defined")
 	}
 
-	port, err := env.GetEnvInt("PORT")
-	if err != nil {
-		port = 8082
-	}
-	log.Debug("Starting")
+	log.Debug("Connecting to database and running migrations")
 	ctx := context.Background()
 	db.DbConnection, err = db.Connect(ctx, dbHost, dbPort, dbUser, dbPassword, dbName)
 	if err != nil {
-		fmt.Println(err)
+		log.WithError(err).Fatal("Failed to connect and migrate database")
 	}
+	defer db.DbConnection.Close()
+
+	if *migrateOnlyFlag {
+		log.Info("Database migrations complete")
+		return
+	}
+
 	if *seedFlag != "" {
 		jsonFile, err := os.Open(*seedFlag)
 		if err != nil {
-			panic(err)
+			log.WithError(err).Fatalf("Failed to open seed file %q", *seedFlag)
 		}
 		defer jsonFile.Close()
-		byteValue, _ := io.ReadAll(jsonFile)
-		db.DbConnection.SeedDB(ctx, byteValue, true)
+		byteValue, err := io.ReadAll(jsonFile)
+		if err != nil {
+			log.WithError(err).Fatalf("Failed to read seed file %q", *seedFlag)
+		}
+		if err := db.DbConnection.SeedDB(ctx, byteValue, true); err != nil {
+			log.WithError(err).Fatalf("Failed to seed database from %q", *seedFlag)
+		}
 	}
-	log.Debug("Starting")
-	files, err := os.ReadDir("/out")
+
+	staticDir := server.StaticDir()
+	files, err := os.ReadDir(staticDir)
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Fatalf("Failed to read static directory %q", staticDir)
 	}
 
 	for _, file := range files {
@@ -86,7 +126,9 @@ func main() {
 	if err := mime.AddExtensionType(".webmanifest", "application/manifest+json"); err != nil {
 		log.Fatal(err)
 	}
-	server.Run(port)
+	if err := server.Run(port); err != nil {
+		log.WithError(err).Fatal("Server exited with error")
+	}
 }
 
 // MapKeysToSlice extract keys of map as slice,

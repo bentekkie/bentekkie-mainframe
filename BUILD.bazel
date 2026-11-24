@@ -58,6 +58,12 @@ oci_push(
     repository = "ghcr.io/bentekkie/bentekkie-mainframe",
 )
 
+oci_push(
+    name = "bentekkie-mainframe_image_push_tag",
+    image = ":bentekkie-mainframe_image",
+    repository = "ghcr.io/bentekkie/bentekkie-mainframe",
+)
+
 pkg_tar(
     name = "bentekkie-mainframe_server_tar",
     srcs = [":bentekkie-mainframe"],

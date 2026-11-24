@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "server",
@@ -9,8 +9,18 @@ go_library(
         "//proto/command/v1/commandv1connect:commandv1_connect_go_proto",
         "//server/auth",
         "//server/db",
+        "//server/env",
         "//server/mainframe",
         "@com_github_sirupsen_logrus//:logrus",
+    ],
+)
+
+go_test(
+    name = "server_test",
+    srcs = ["main_test.go"],
+    embed = [":server"],
+    deps = [
+        "//server/db",
     ],
 )
 

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	p "path"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
@@ -35,45 +36,87 @@ type File struct {
 	Contents sql.NullString
 }
 
-var schema = `
-CREATE SEQUENCE IF NOT EXISTS inodes_id_seq;
-CREATE TABLE IF NOT EXISTS inodes (
-                                      id integer PRIMARY KEY NOT NULL DEFAULT nextval('inodes_id_seq'),
-                                      parentinode integer REFERENCES inodes (id) ON DELETE CASCADE,
-                                      path text UNIQUE
-);
-CREATE TABLE IF NOT EXISTS files (
-                                     inode integer REFERENCES inodes (id) ON DELETE CASCADE,
-                                     contents text
-);
-CREATE TABLE IF NOT EXISTS users (
-    username text primary key,
-    password text
-);
-CREATE OR REPLACE FUNCTION isfile(id integer) 
-RETURNS boolean AS $$ BEGIN RETURN exists(SELECT 1 from files where inode = id); END; $$LANGUAGE PLPGSQL;
-`
-
 // DbConnection is the current connection to the database
-var DbConnection, _ = Connect(context.Background(), "localhost", 54320, "dbuser", "password", "data")
+var DbConnection *Connection
 
-// Connect creates a Connection object
+const defaultDBConnectTimeout = 30 * time.Second
+
+// Connect creates a Connection object, waits for PostgreSQL readiness, and runs embedded migrations.
 func Connect(ctx context.Context, host string, port int, user string, password string, dbname string) (*Connection, error) {
 	t := "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable"
 	connectionString := fmt.Sprintf(t, host, port, user, password, dbname)
-	var db *sqlx.DB
 	db, err := sqlx.Open("postgres", connectionString)
 	if err != nil {
 		return nil, err
 	}
 	db.MapperFunc(strings.ToLower)
 	c := &Connection{conn: db, Root: nil}
-	err = c.InitSchema(ctx)
-	c.InitAdminUser(ctx)
-	if err != nil {
-		log.WithError(err).Error("Connect error")
+
+	if err := c.waitForDB(ctx); err != nil {
+		_ = db.Close()
+		log.WithError(err).Error("Connect error: database not ready")
+		return nil, err
 	}
-	return c, err
+
+	if err := c.InitSchema(ctx); err != nil {
+		_ = db.Close()
+		log.WithError(err).Error("Connect error: schema initialization failed")
+		return nil, err
+	}
+
+	c.InitAdminUser(ctx)
+	return c, nil
+}
+
+// waitForDB retries PingContext with bounded exponential backoff until Postgres is ready or ctx expires.
+func (c *Connection) waitForDB(ctx context.Context) error {
+	waitCtx := ctx
+	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
+		var cancel context.CancelFunc
+		waitCtx, cancel = context.WithTimeout(ctx, defaultDBConnectTimeout)
+		defer cancel()
+	}
+
+	backoff := 100 * time.Millisecond
+	const maxBackoff = 2 * time.Second
+	var lastErr error
+
+	for {
+		if err := c.conn.PingContext(waitCtx); err == nil {
+			return nil
+		} else {
+			lastErr = err
+		}
+
+		timer := time.NewTimer(backoff)
+		select {
+		case <-waitCtx.Done():
+			timer.Stop()
+			return fmt.Errorf("database ping timed out (%v): %w", waitCtx.Err(), lastErr)
+		case <-timer.C:
+		}
+
+		backoff *= 2
+		if backoff > maxBackoff {
+			backoff = maxBackoff
+		}
+	}
+}
+
+// Ping verifies live connectivity to PostgreSQL.
+func (c *Connection) Ping(ctx context.Context) error {
+	if c == nil || c.conn == nil {
+		return errors.New("database connection not initialized")
+	}
+	return c.conn.PingContext(ctx)
+}
+
+// Close closes the underlying database pool.
+func (c *Connection) Close() error {
+	if c == nil || c.conn == nil {
+		return nil
+	}
+	return c.conn.Close()
 }
 
 // CreateTestConnection for testing
@@ -81,24 +124,21 @@ func CreateTestConnection(db *sql.DB, root *INode) *Connection {
 	return &Connection{sqlx.NewDb(db, "postgres"), root}
 }
 
-// InitSchema initializes the currect connection with the correct schema
+// InitSchema runs all pending embedded SQL migrations and ensures the root "/" inode exists.
 func (c *Connection) InitSchema(ctx context.Context) error {
-	_, err := c.conn.ExecContext(ctx, schema)
-	for err != nil {
-		_, err = c.conn.ExecContext(ctx, schema)
+	if err := c.Migrate(ctx); err != nil {
+		return err
 	}
-	root := &INode{
-		Path:        sql.NullString{String: "/", Valid: true},
-		ID:          sql.NullInt64{},
-		ParentINode: sql.NullInt64{},
+	return c.ensureRoot(ctx)
+}
+
+func (c *Connection) ensureRoot(ctx context.Context) error {
+	if _, err := c.conn.ExecContext(ctx, "INSERT INTO inodes (path, parentinode) VALUES ('/', NULL) ON CONFLICT (path) DO NOTHING"); err != nil {
+		return fmt.Errorf("ensure root inode: %w", err)
 	}
-	// Ensure that the root exists
-	err = root.insert(ctx, c)
+	root, err := c.FindINodeByPath(ctx, "/")
 	if err != nil {
-		root, err = c.FindINodeByPath(ctx, "/")
-		if err != nil {
-			return err
-		}
+		return fmt.Errorf("load root inode: %w", err)
 	}
 	c.Root = root
 	return nil
@@ -131,7 +171,12 @@ func (iNode *INode) insert(ctx context.Context, c *Connection) error {
 		return err
 	}
 	defer rows.Close()
-	rows.Next()
+	if !rows.Next() {
+		if err := rows.Err(); err != nil {
+			return err
+		}
+		return errors.New("no id returned on inode insert")
+	}
 	err = rows.Scan(&id)
 	if err != nil {
 		log.Error(err)
@@ -142,12 +187,15 @@ func (iNode *INode) insert(ctx context.Context, c *Connection) error {
 	return err
 }
 
-// DeleteAll deletes all inodes from the current database
+// DeleteAll deletes all inodes from the current database and re-creates the root inode.
 func (c *Connection) DeleteAll(ctx context.Context) {
-	c.conn.MustExec("DELETE FROM inodes WHERE id=$1", c.Root.ID)
+	if c.Root != nil && c.Root.ID.Valid {
+		c.conn.MustExecContext(ctx, "DELETE FROM inodes WHERE id=$1", c.Root.ID)
+	} else {
+		c.conn.MustExecContext(ctx, "DELETE FROM inodes")
+	}
 	c.Root = nil
-	err := c.InitSchema(ctx)
-	if err != nil {
+	if err := c.ensureRoot(ctx); err != nil {
 		panic(err)
 	}
 }
@@ -203,9 +251,9 @@ func (c *Connection) NewFile(ctx context.Context, parent *INode, name string, co
 		INode:    fileINode,
 		Contents: sql.NullString{String: content, Valid: true},
 	}
-	_, err = c.conn.NamedExec("INSERT INTO files (inode, contents) VALUES (:id,:contents)", file)
+	_, err = c.conn.NamedExecContext(ctx, "INSERT INTO files (inode, contents) VALUES (:id,:contents)", file)
 	if err != nil {
-		c.conn.MustExec("DELETE FROM inodes where id=$1", fileINode.ID)
+		c.conn.MustExecContext(ctx, "DELETE FROM inodes where id=$1", fileINode.ID)
 		return nil, err
 	}
 
@@ -235,35 +283,38 @@ func (c *Connection) UpdateFileByPath(ctx context.Context, file *File, contents 
 	return err
 }
 
-// FindDirListings finds all INodes that are direct decendands of the INode given
+// FindDirListings finds all INodes that are direct descendants of the INode given
 func (c *Connection) FindDirListings(ctx context.Context, parent *INode) ([]*INode, error) {
+	if parent == nil || !parent.ID.Valid {
+		return nil, errors.New("parent invalid")
+	}
 	var listings []*INode
 
 	err := c.conn.SelectContext(ctx, &listings, `
 	SELECT *,isfile(id) FROM inodes
-	WHERE parentinode=$1`, parent.ID)
+	WHERE parentinode=$1
+	ORDER BY path ASC`, parent.ID)
 
 	return listings, err
 }
 
-// FindDirListingsByPath finds all INodes that are direct decendands of the path given
+// FindDirListingsByPath finds all INodes that are direct descendants of the path given
 func (c *Connection) FindDirListingsByPath(ctx context.Context, currentDir string) ([]*INode, error) {
-	var listings []*INode
-
-	err := c.conn.SelectContext(ctx, &listings, `
-SELECT inodes.*,isfile(id) FROM inodes
-WHERE path LIKE $1 AND path NOT LIKE $2`,
-		p.Join(currentDir, "_%"),
-		p.Join(currentDir, "_%", "_%"))
-
-	return listings, err
+	parent, err := c.FindINodeByPath(ctx, p.Clean(currentDir))
+	if err != nil {
+		return nil, err
+	}
+	return c.FindDirListings(ctx, parent)
 }
 
 // IsFile checks if given INode is a file
 func (c *Connection) IsFile(ctx context.Context, iNode *INode) (bool, error) {
+	if iNode == nil || !iNode.ID.Valid {
+		return false, errors.New("invalid inode")
+	}
 	var result bool
 
-	err := c.conn.GetContext(ctx, &result, "SELECT exists(select 1 from files WHERE inode=65)")
+	err := c.conn.GetContext(ctx, &result, "SELECT exists(SELECT 1 FROM files WHERE inode=$1)", iNode.ID.Int64)
 
 	return result, err
 }

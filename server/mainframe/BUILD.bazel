@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "mainframe",
@@ -15,5 +15,15 @@ go_library(
         "@com_connectrpc_connect//:connect",
         "@com_github_sirupsen_logrus//:logrus",
         "@org_golang_google_protobuf//types/known/emptypb",
+    ],
+)
+
+go_test(
+    name = "mainframe_test",
+    srcs = ["shell_service_test.go"],
+    embed = [":mainframe"],
+    deps = [
+        "//proto/command/v1:commandv1_go_proto",
+        "//server/auth",
     ],
 )
