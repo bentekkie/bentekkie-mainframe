@@ -3,7 +3,7 @@ import { Reducer } from "react";
 type KeyType = string | number | symbol
 
 export function isValidEnum<T extends object>(str: KeyType, map: T): str is keyof T {
-    return str in map
+    return Object.prototype.hasOwnProperty.call(map, str)
 }
 
 export const arrays_equal = (a: unknown[], b: unknown[]) =>
