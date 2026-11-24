@@ -44,6 +44,15 @@ func HelpText(cmd *mainframe.CommandType) string {
 	case mainframe.CommandType_exec:
 		description = "Executes script file"
 		usage = "[relative path to file]"
+	case mainframe.CommandType_tree:
+		description = "Displays directory tree structure (use -L <depth> to limit depth, -a to show hidden files)"
+		usage = "[path] [-L depth] [-a]"
+	case mainframe.CommandType_find:
+		description = "Searches file and folder names by substring or glob (*, ?)"
+		usage = "<pattern> [path] [-a]"
+	case mainframe.CommandType_grep:
+		description = "Searches file contents (case-insensitive) and shows matching lines"
+		usage = "<query> [path] [-a]"
 	}
 	return helpText(cmd.String(), description, usage)
 }

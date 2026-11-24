@@ -179,6 +179,20 @@ func TestMigrateFreshAndInPlaceUpgrade(t *testing.T) {
 		t.Fatalf("expected FindDirListingsByPath to handle underscores cleanly, got %+v (err=%v)", listings, err)
 	}
 
+	// Verify tree / find / grep DB queries against live PostgreSQL.
+	subtree, err := freshConn.FindSubtree(ctx, freshConn.Root.ID.Int64, 3, 200)
+	if err != nil || len(subtree) != 2 {
+		t.Fatalf("expected 2 subtree nodes (/dir_one and /dir_one/hello_world.md), got %+v (err=%v)", subtree, err)
+	}
+	foundByGlob, err := freshConn.SearchPaths(ctx, "/", "*.md", 50)
+	if err != nil || len(foundByGlob) != 1 || foundByGlob[0].Path.String != "/dir_one/hello_world.md" {
+		t.Fatalf("expected SearchPaths '*.md' to match hello_world.md, got %+v (err=%v)", foundByGlob, err)
+	}
+	grepHits, err := freshConn.SearchFileContents(ctx, "/", "HI", 50)
+	if err != nil || len(grepHits) != 1 || grepHits[0].Path != "/dir_one/hello_world.md" {
+		t.Fatalf("expected SearchFileContents 'HI' to match hello_world.md, got %+v (err=%v)", grepHits, err)
+	}
+
 	// 2. Simulate an in-place upgrade on a pre-existing v1 legacy volume (no schema_migrations table).
 	if _, err := freshConn.conn.ExecContext(ctx, "CREATE DATABASE legacy_db"); err != nil {
 		t.Fatalf("create legacy_db: %v", err)

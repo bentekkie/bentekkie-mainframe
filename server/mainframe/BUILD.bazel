@@ -4,6 +4,7 @@ go_library(
     name = "mainframe",
     srcs = [
         "help_text.go",
+        "search.go",
         "shell_service.go",
     ],
     importpath = "github.com/bentekkie/bentekkie-mainframe/server/mainframe",
@@ -20,10 +21,14 @@ go_library(
 
 go_test(
     name = "mainframe_test",
-    srcs = ["shell_service_test.go"],
+    srcs = [
+        "search_test.go",
+        "shell_service_test.go",
+    ],
     embed = [":mainframe"],
     deps = [
         "//proto/command/v1:commandv1_go_proto",
         "//server/auth",
+        "//server/db",
     ],
 )

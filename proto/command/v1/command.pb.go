@@ -37,20 +37,26 @@ const (
 	CommandType_download_resume CommandType = 6
 	CommandType_login           CommandType = 7
 	CommandType_exec            CommandType = 8
+	CommandType_tree            CommandType = 9
+	CommandType_find            CommandType = 10
+	CommandType_grep            CommandType = 11
 )
 
 // Enum value maps for CommandType.
 var (
 	CommandType_name = map[int32]string{
-		0: "ls",
-		1: "cat",
-		2: "cd",
-		3: "help",
-		4: "clear",
-		5: "landing",
-		6: "download_resume",
-		7: "login",
-		8: "exec",
+		0:  "ls",
+		1:  "cat",
+		2:  "cd",
+		3:  "help",
+		4:  "clear",
+		5:  "landing",
+		6:  "download_resume",
+		7:  "login",
+		8:  "exec",
+		9:  "tree",
+		10: "find",
+		11: "grep",
 	}
 	CommandType_value = map[string]int32{
 		"ls":              0,
@@ -62,6 +68,9 @@ var (
 		"download_resume": 6,
 		"login":           7,
 		"exec":            8,
+		"tree":            9,
+		"find":            10,
+		"grep":            11,
 	}
 )
 
