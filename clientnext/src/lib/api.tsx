@@ -2,12 +2,14 @@ import { CoreApi, IState, IAction, ActionType, IProps } from './AppContextTypes'
 import { useCookies } from 'react-cookie'
 import { create } from '@bufbuild/protobuf';
 import { CommandType, SudoCommandType, CommandSchema, Folder, ResponseType, SudoCommandSchema, SudoResponse, Response } from '@gen/command_pb';
-import { Dispatch, RefObject, useMemo } from 'react';
+import { Dispatch, RefObject, useMemo, useRef } from 'react';
 import { isValidEnum } from './utils';
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 const JWT_COOKIE_KEY = 'jwt'
+const DEFAULT_LANDING_URL = 'https://www.bentekkie.com'
+const DEFAULT_RESUME_URL = 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf'
 
 export function useCommandNames(jwt : string | null) {
     return useMemo(() => [...Object.keys(CommandType),...(jwt ? Object.keys(SudoCommandType) : [])].map(cmd => cmd.toLowerCase()), [jwt])
@@ -26,9 +28,19 @@ function useCookie(key : string): [string | null, (v: string) => void, () => voi
     return [cookies[key] || null, setSecureCookie, () => removeCookie(key, { path: '/' })]
 }
 
-export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps, inputOpenFileRef: RefObject<HTMLInputElement | null>): CoreApi {
+export function useApi(
+    state: IState,
+    dispatch: Dispatch<IAction>,
+    props: IProps,
+    inputOpenFileRef: RefObject<HTMLInputElement | null>,
+    bootstrappedRef: RefObject<boolean>,
+): CoreApi {
     const [jwt, setJwt, removeJwt] = useCookie(JWT_COOKIE_KEY)
     const cmdNames = useCommandNames(jwt);
+    const runtimeConfigRef = useRef({
+        landingUrl: DEFAULT_LANDING_URL,
+        resumeUrl: DEFAULT_RESUME_URL,
+    });
 
     const parseCommand = (command: string) => {
         const split = command.match(/(?:[^\s"]+|"[^"]*")+/g);
@@ -71,17 +83,14 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                             return currentDir
                         }
                         case CommandType.landing: {
-                            window.location.href = 'http://www.bentekkie.com';
+                            window.location.href = runtimeConfigRef.current.landingUrl;
                             return currentDir
                         }
                         case CommandType.download_resume: {
                             const link = document.createElement('a');
                             link.download = "Benjamin Segall's Resume.pdf";
-                            link.href = 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf';
-                            const clickEvent = document.createEvent("MouseEvent");
-                            clickEvent.initEvent("click", true, true);
-
-                            link.dispatchEvent(clickEvent);
+                            link.href = runtimeConfigRef.current.resumeUrl;
+                            link.click();
                             const element = document.getElementById("content");
                             if (element) {
                                 element.scrollTop = element.scrollHeight;
@@ -186,7 +195,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                     if (interactive) {
                         dispatch({
                             type: ActionType.AddSection,
-                            section: <div>Invalid command `&quot;`{command}`&quot;`<br /></div>
+                            section: <div>Invalid command &quot;{command}&quot;<br /></div>
                         });
                     }
                     return currentDir
@@ -254,13 +263,19 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                         return <a {...props}>{children}</a>;
                       },
                   }} remarkPlugins={[remarkGfm]} >{resp.resp}</ReactMarkdown>
-            case ResponseType.json:
-                var element = document.createElement('a');
-                element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(resp.resp));
+            case ResponseType.json: {
+                const blob = new Blob([resp.resp], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const element = document.createElement('a');
+                element.setAttribute('href', url);
                 element.setAttribute('download', "dump.json");
                 element.style.display = 'none';
                 document.body.appendChild(element);
                 element.click();
+                document.body.removeChild(element);
+                URL.revokeObjectURL(url);
+                return <p>Downloaded dump.json</p>;
+            }
         }
     };
 
@@ -362,13 +377,40 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
 
         },
         bootstrap: () => {
-            if(!state.bootstrapped) {
-                console.log("Bootstrap")
+            if (!bootstrappedRef.current && !state.bootstrapped) {
+                bootstrappedRef.current = true
                 dispatch({ type: ActionType.Bootstrap })
-                props.client.getRoot({}).then(resp => {
+                fetch('/api/config')
+                    .then(res => res.ok ? res.json() : null)
+                    .then(cfg => {
+                        if (cfg && typeof cfg.landingUrl === 'string' && cfg.landingUrl) {
+                            runtimeConfigRef.current.landingUrl = cfg.landingUrl;
+                        }
+                        if (cfg && typeof cfg.resumeUrl === 'string' && cfg.resumeUrl) {
+                            runtimeConfigRef.current.resumeUrl = cfg.resumeUrl;
+                        }
+                    })
+                    .catch(() => {})
+                props.client.getRoot({}).then(async resp => {
                     dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: resp } });
-                    sendCommand("exec init", false, resp)
-                })
+                    for (const candidate of ["init", ".init"]) {
+                        const catCmd = create(CommandSchema, {
+                            args: [candidate],
+                            command: CommandType.cat,
+                            currentDir: resp,
+                        });
+                        try {
+                            const initResp = await props.client.runCommand(catCmd);
+                            if (initResp && initResp.type === ResponseType.markdown) {
+                                const rawCommands = initResp.resp.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                                await runCommands(rawCommands, resp);
+                                return;
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                }).catch(console.error)
             }
         },
         setCommand: (command: string) => dispatch({ type: ActionType.SetCommand, payload: { command } }),
@@ -387,6 +429,10 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                 payload : { loggingIn : false }
             });
         },
+        cancelLogin: () => dispatch({
+            type: ActionType.LoginFlow,
+            payload: { loggingIn: false }
+        }),
         register: (username: string, password: string) => {
             if (jwt) {
                 let command = create(SudoCommandSchema, {
@@ -402,6 +448,10 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                 payload: { registering: false }
             });
         },
+        cancelRegister: () => dispatch({
+            type: ActionType.RegisterFlow,
+            payload: { registering: false }
+        }),
         updateFile: (newContents: string) => {
             dispatch({ type: ActionType.EndEditing });
             if (jwt != null) {
@@ -411,9 +461,10 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                     command: SudoCommandType.edit,
                     args: [state.editorFile.path, newContents],
                 });
-                props.client.runSudoCommand(command).then(receiveSudoResponse).then(console.error)
+                props.client.runSudoCommand(command).then(receiveSudoResponse).catch(console.error)
             }
         },
+        cancelEdit: () => dispatch({ type: ActionType.EndEditing }),
         seedDb: (filelist: FileList | null) => {
             if (filelist && filelist.length === 1) {
                 const item = filelist.item(0)
@@ -430,7 +481,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
                                     command: SudoCommandType.seed,
                                     args: [event.target.result, wipeDB.toString()]
                                 });
-                                props.client.runSudoCommand(command).then(receiveSudoResponse).then(console.error)
+                                props.client.runSudoCommand(command).then(receiveSudoResponse).catch(console.error)
                             }
                         }
                     })

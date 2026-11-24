@@ -2,9 +2,11 @@ package mainframe
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	p "path"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -316,11 +318,21 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			Type:       mainframe.ResponseType_text,
 		}, nil
 	case mainframe.SudoCommandType_dump:
+		dumpJSON, err := db.DbConnection.DumpDB(ctx, "https://raw.githubusercontent.com/bentekkie/bentekkie-mainframe/master/db.schema.json")
+		if err != nil {
+			log.WithError(err).Error("dump error")
+			return &mainframe.SudoResponse{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Internal Server Error",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
 		return &mainframe.SudoResponse{
 			Command:    cmd,
 			CurrentDir: cmd.CurrentDir,
-			Resp:       "Unimplemented",
-			Type:       mainframe.ResponseType_text,
+			Resp:       dumpJSON,
+			Type:       mainframe.ResponseType_json,
 		}, nil
 	case mainframe.SudoCommandType_seed:
 		if len(cmd.Args) < 1 || len(cmd.Args) > 2 {
@@ -469,6 +481,14 @@ func (ss ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*
 		newPath = p.Clean(newPath)
 		fileINode, err := db.DbConnection.FindINodeByPath(ctx, newPath)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return &mainframe.Response{
+					Command:    cmd,
+					CurrentDir: cmd.CurrentDir,
+					Resp:       "File does not exist",
+					Type:       mainframe.ResponseType_text,
+				}, nil
+			}
 			log.WithError(err).Error("cat error")
 			return &mainframe.Response{
 				Command:    cmd,
@@ -550,20 +570,30 @@ func (ss ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*
 			}, nil
 		}
 		if len(cmd.Args) == 1 {
-			if _, found := mainframe.CommandType_value[cmd.Args[0]]; !found {
+			arg := strings.ToLower(cmd.Args[0])
+			if val, found := mainframe.CommandType_value[arg]; found {
+				argCmdType := mainframe.CommandType(val)
 				return &mainframe.Response{
 					Command:    cmd,
 					CurrentDir: cmd.CurrentDir,
-					Resp:       "Command does not exist",
-					Type:       mainframe.ResponseType_text,
+					Resp:       HelpText(&argCmdType),
+					Type:       mainframe.ResponseType_markdown,
 				}, nil
 			}
-			argCmdType := mainframe.CommandType(mainframe.CommandType_value[cmd.Args[0]])
+			if val, found := mainframe.SudoCommandType_value[arg]; found {
+				argSudoType := mainframe.SudoCommandType(val)
+				return &mainframe.Response{
+					Command:    cmd,
+					CurrentDir: cmd.CurrentDir,
+					Resp:       SudoHelpText(&argSudoType),
+					Type:       mainframe.ResponseType_markdown,
+				}, nil
+			}
 			return &mainframe.Response{
 				Command:    cmd,
 				CurrentDir: cmd.CurrentDir,
-				Resp:       HelpText(&argCmdType),
-				Type:       mainframe.ResponseType_markdown,
+				Resp:       "Command does not exist",
+				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
 
@@ -654,6 +684,10 @@ func (ShellServer) autoComplete(ctx context.Context, cmd *mainframe.Command) (*m
 		for _, helpCommand := range mainframe.CommandType_name {
 			completions = append(completions, cmd.Command.String()+" "+helpCommand)
 		}
+		for _, sudoHelpCommand := range mainframe.SudoCommandType_name {
+			completions = append(completions, cmd.Command.String()+" "+sudoHelpCommand)
+		}
+		sort.Strings(completions)
 		return &mainframe.AutoCompResponse{
 			Completions: completions,
 		}, nil

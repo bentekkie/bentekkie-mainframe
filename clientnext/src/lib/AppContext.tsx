@@ -85,7 +85,10 @@ const reducer: React.Reducer<IState, IAction> = deltaReducer((state, action) : P
             return (state.current_command + 1 < state.command_arr.length) ? {
                 command: state.command_arr[state.current_command + 1],
                 current_command: state.current_command + 1
-            } : { command: "" };
+            } : {
+                command: "",
+                current_command: state.command_arr.length
+            };
         case ActionType.StartEditing:
             return {
                 ...action.payload,
@@ -119,7 +122,8 @@ const AppContext = createContext<[IState, CoreApi]>(undefined as any);
 export const AppContextProvider: React.FunctionComponent<IProps> = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const inputOpenFileRef = useRef<HTMLInputElement>(null);
-    const api = useApi(state, dispatch, props, inputOpenFileRef)
+    const bootstrappedRef = useRef<boolean>(false);
+    const api = useApi(state, dispatch, props, inputOpenFileRef, bootstrappedRef)
     return <AppContext.Provider value={[state, api]}>
         {props.children}
         <input ref={inputOpenFileRef} type="file" style={{ display: "none" }} onChange={e => api.seedDb(e.target.files)} />

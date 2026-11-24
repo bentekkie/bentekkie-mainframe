@@ -2,6 +2,7 @@ package mainframe
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -73,5 +74,57 @@ func TestLoginRateLimiting(t *testing.T) {
 	}
 	if resp.Resp != "Too many login attempts. Please try again later." {
 		t.Fatalf("expected rate-limit message, got %q", resp.Resp)
+	}
+}
+
+func TestHelpCoversLandingAndSudoCommands(t *testing.T) {
+	ss := NewShellServer()
+	ctx := context.Background()
+	rootDir := &mainframe.Folder{Path: "/"}
+
+	allResp, err := ss.runCommand(ctx, &mainframe.Command{
+		Command:    mainframe.CommandType_help,
+		CurrentDir: rootDir,
+	})
+	if err != nil {
+		t.Fatalf("help all failed: %v", err)
+	}
+	if strings.Contains(allResp.Resp, "Unimplemented") {
+		t.Fatalf("expected help text not to say Unimplemented, got:\n%s", allResp.Resp)
+	}
+	for _, expected := range []string{"### Help for landing", "### Help for dump", "### Help for edit", "### Help for seed"} {
+		if !strings.Contains(allResp.Resp, expected) {
+			t.Fatalf("expected ALL_COMMANDS_HELP to contain %q", expected)
+		}
+	}
+
+	dumpResp, err := ss.runCommand(ctx, &mainframe.Command{
+		Command:    mainframe.CommandType_help,
+		CurrentDir: rootDir,
+		Args:       []string{"dump"},
+	})
+	if err != nil {
+		t.Fatalf("help dump failed: %v", err)
+	}
+	if dumpResp.Type != mainframe.ResponseType_markdown || !strings.Contains(dumpResp.Resp, "dump.json") {
+		t.Fatalf("expected markdown help for dump, got type=%v resp=%q", dumpResp.Type, dumpResp.Resp)
+	}
+
+	autoResp, err := ss.autoComplete(ctx, &mainframe.Command{
+		Command:    mainframe.CommandType_help,
+		CurrentDir: rootDir,
+	})
+	if err != nil {
+		t.Fatalf("help autoComplete failed: %v", err)
+	}
+	foundDump := false
+	for _, c := range autoResp.Completions {
+		if c == "help dump" {
+			foundDump = true
+			break
+		}
+	}
+	if !foundDump {
+		t.Fatalf("expected 'help dump' in help completions, got %v", autoResp.Completions)
 	}
 }

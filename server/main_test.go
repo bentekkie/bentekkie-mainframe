@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,6 +34,37 @@ func TestHealthAndReadinessEndpoints(t *testing.T) {
 		mux.ServeHTTP(rec, req)
 		if rec.Code != http.StatusServiceUnavailable {
 			t.Fatalf("expected 503 from /readyz without db, got %d", rec.Code)
+		}
+	})
+
+	t.Run("api config returns defaults and env overrides", func(t *testing.T) {
+		t.Setenv("LANDING_URL", "")
+		t.Setenv("RESUME_URL", "")
+
+		req := httptest.NewRequest(http.MethodGet, "/api/config", nil)
+		rec := httptest.NewRecorder()
+		mux.ServeHTTP(rec, req)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("expected 200 from /api/config, got %d", rec.Code)
+		}
+		var cfg runtimeConfig
+		if err := json.NewDecoder(rec.Body).Decode(&cfg); err != nil {
+			t.Fatalf("decode /api/config: %v", err)
+		}
+		if cfg.LandingURL != defaultLandingURL || cfg.ResumeURL != defaultResumeURL {
+			t.Fatalf("unexpected default config: %+v", cfg)
+		}
+
+		t.Setenv("LANDING_URL", "https://example.com")
+		t.Setenv("RESUME_URL", "https://example.com/resume.pdf")
+		rec2 := httptest.NewRecorder()
+		mux.ServeHTTP(rec2, httptest.NewRequest(http.MethodGet, "/api/config", nil))
+		var cfg2 runtimeConfig
+		if err := json.NewDecoder(rec2.Body).Decode(&cfg2); err != nil {
+			t.Fatalf("decode overridden /api/config: %v", err)
+		}
+		if cfg2.LandingURL != "https://example.com" || cfg2.ResumeURL != "https://example.com/resume.pdf" {
+			t.Fatalf("unexpected overridden config: %+v", cfg2)
 		}
 	})
 }

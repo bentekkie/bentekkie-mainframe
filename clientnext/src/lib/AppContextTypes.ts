@@ -171,10 +171,16 @@ export type IAction =
         prevCommand(): void,
     
         login(username: string, password: string): void
+
+        cancelLogin(): void
         
         register(username: string, password: string): void
+
+        cancelRegister(): void
     
         updateFile(newContents: string): void
+
+        cancelEdit(): void
 
         seedDb(filelist : FileList | null):void,
 
