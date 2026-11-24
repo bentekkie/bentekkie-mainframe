@@ -6,8 +6,8 @@ import { Dispatch, RefObject, useMemo, useRef } from 'react';
 import { isValidEnum } from './utils';
 import {
     formatPrompt,
-    isAllowedDeepLinkCommand,
     parseDeepLinkParams,
+    parseReadOnlyDeepLinkCommand,
     resolveVfsPath,
     syncBrowserUrl,
 } from './urlRouting';
@@ -436,23 +436,50 @@ export function useApi(
                         }
                     }
 
+                    const runReadOnlyRpc = async (
+                        commandType: CommandType,
+                        args: string[],
+                        displayCommand: string,
+                        dir: Folder,
+                    ): Promise<Folder> => {
+                        dispatch({
+                            type: ActionType.AddSection,
+                            section: <div>{formatPrompt(dir.path) + displayCommand}<br /></div>,
+                        });
+                        dispatch({ type: ActionType.ClearAutoComp });
+                        const rpcCmd = create(CommandSchema, {
+                            currentDir: dir,
+                            args,
+                            command: commandType,
+                        });
+                        try {
+                            const rpcResp = await props.client.runCommand(rpcCmd);
+                            receiveResponse(rpcResp, true);
+                            return rpcResp.currentDir || dir;
+                        } catch (err) {
+                            console.error(err);
+                            return dir;
+                        }
+                    };
+
                     if (deepLink.path && deepLink.path !== activeDir.path) {
-                        const cdArg = deepLink.path.includes(' ') ? `"${deepLink.path}"` : deepLink.path;
-                        activeDir = (await sendCommand(
-                            `cd ${cdArg}`,
-                            true,
+                        const displayArg = deepLink.path.includes(' ') ? `"${deepLink.path}"` : deepLink.path;
+                        activeDir = await runReadOnlyRpc(
+                            CommandType.cd,
+                            [deepLink.path],
+                            `cd ${displayArg}`,
                             activeDir,
-                            formatPrompt(activeDir.path),
-                        )) || activeDir;
+                        );
                     }
 
                     if (deepLink.cmd) {
-                        if (isAllowedDeepLinkCommand(deepLink.cmd)) {
-                            await sendCommand(
+                        const parsed = parseReadOnlyDeepLinkCommand(deepLink.cmd);
+                        if (parsed) {
+                            await runReadOnlyRpc(
+                                parsed.command,
+                                parsed.args,
                                 deepLink.cmd,
-                                true,
                                 activeDir,
-                                formatPrompt(activeDir.path),
                             );
                         } else {
                             dispatch({

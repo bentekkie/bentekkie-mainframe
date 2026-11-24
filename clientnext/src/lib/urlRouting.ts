@@ -1,17 +1,25 @@
-export const READ_ONLY_URL_COMMANDS = new Set([
-    'ls',
-    'cd',
-    'cat',
-    'help',
-    'tree',
-    'find',
-    'grep',
+import { CommandType } from '@gen/command_pb';
+
+export const READ_ONLY_COMMAND_MAP: ReadonlyMap<string, CommandType> = new Map<string, CommandType>([
+    ['ls', CommandType.ls],
+    ['cd', CommandType.cd],
+    ['cat', CommandType.cat],
+    ['help', CommandType.help],
+    ['tree', CommandType.tree],
+    ['find', CommandType.find],
+    ['grep', CommandType.grep],
 ]);
 
 export interface DeepLinkParams {
     path: string | null;
     cmd: string | null;
     quiet: boolean;
+}
+
+export interface ParsedReadOnlyCommand {
+    command: CommandType;
+    name: string;
+    args: string[];
 }
 
 export function parseDeepLinkParams(search: string): DeepLinkParams {
@@ -21,7 +29,7 @@ export function parseDeepLinkParams(search: string): DeepLinkParams {
     const rawQuiet = params.get('quiet')?.trim().toLowerCase() ?? '';
 
     let normalizedPath: string | null = null;
-    if (rawPath !== '') {
+    if (rawPath !== '' && !/[\r\n\0]/.test(rawPath)) {
         normalizedPath = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;
     }
 
@@ -32,17 +40,24 @@ export function parseDeepLinkParams(search: string): DeepLinkParams {
     };
 }
 
-export function isAllowedDeepLinkCommand(command: string): boolean {
-    const trimmed = command.trim();
-    if (trimmed === '' || /[\r\n]/.test(trimmed)) {
-        return false;
+// Parses a URL ?cmd= string directly into a strictly allowlisted read-only CommandType and args.
+// Returns null for any non-read-only, sudo, client-side, or malformed command.
+export function parseReadOnlyDeepLinkCommand(raw: string): ParsedReadOnlyCommand | null {
+    const trimmed = raw.trim();
+    if (trimmed === '' || /[\r\n\0]/.test(trimmed)) {
+        return null;
     }
     const split = trimmed.match(/(?:[^\s"]+|"[^"]*")+/g);
     if (!split || split.length === 0) {
-        return false;
+        return null;
     }
-    const cmd = split[0].replace(/"/g, '').toLowerCase();
-    return READ_ONLY_URL_COMMANDS.has(cmd);
+    const [rawCmd, ...rawArgs] = split.map(part => part.replace(/"/g, ''));
+    const name = rawCmd.toLowerCase();
+    const command = READ_ONLY_COMMAND_MAP.get(name);
+    if (command === undefined) {
+        return null;
+    }
+    return { command, name, args: rawArgs };
 }
 
 export function formatPrompt(dirPath?: string): string {
