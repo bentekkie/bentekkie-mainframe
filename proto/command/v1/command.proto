@@ -30,6 +30,9 @@ enum CommandType{
     download_resume=6;
     login=7;
     exec=8;
+    tree=9;
+    find=10;
+    grep=11;
 }
 
 enum SudoCommandType{

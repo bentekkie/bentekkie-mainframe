@@ -654,6 +654,147 @@ func (ss ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*
 			Resp:       "JWT:" + jwtToken,
 			Type:       mainframe.ResponseType_text,
 		}, nil
+	case mainframe.CommandType_tree:
+		opts, err := parseTreeArgs(cmd.Args)
+		if err != nil {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       err.Error(),
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		targetPath := cmd.CurrentDir.Path
+		if opts.targetPath != "" {
+			if strings.HasPrefix(opts.targetPath, "/") {
+				targetPath = opts.targetPath
+			} else {
+				targetPath = p.Join(cmd.CurrentDir.Path, opts.targetPath)
+			}
+		}
+		targetPath = p.Clean(targetPath)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, targetPath)
+		if err != nil || folder.IsFile {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Folder does not exist",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		nodes, err := db.DbConnection.FindSubtree(ctx, folder.ID.Int64, opts.maxDepth, maxTreeNodes)
+		if err != nil {
+			log.WithError(err).Error("tree error")
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Internal Server Error",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		return &mainframe.Response{
+			Command:    cmd,
+			CurrentDir: cmd.CurrentDir,
+			Resp:       renderTree(targetPath, folder.ID.Int64, nodes, opts.showHidden),
+			Type:       mainframe.ResponseType_markdown,
+		}, nil
+	case mainframe.CommandType_find:
+		pattern, relPath, showHidden, err := parseSearchArgs(cmd.Args, "Usage: find <pattern> [path] [-a]")
+		if err != nil {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       err.Error(),
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		targetPath := cmd.CurrentDir.Path
+		if relPath != "" {
+			if strings.HasPrefix(relPath, "/") {
+				targetPath = relPath
+			} else {
+				targetPath = p.Join(cmd.CurrentDir.Path, relPath)
+			}
+		}
+		targetPath = p.Clean(targetPath)
+		folder, err := db.DbConnection.FindINodeByPath(ctx, targetPath)
+		if err != nil || folder.IsFile {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Folder does not exist",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		results, err := db.DbConnection.SearchPaths(ctx, targetPath, pattern, maxFindResults)
+		if err != nil {
+			log.WithError(err).Error("find error")
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Internal Server Error",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		formatted := formatFindResults(results, showHidden, pattern)
+		respType := mainframe.ResponseType_markdown
+		if formatted == "No matches found" {
+			respType = mainframe.ResponseType_text
+		}
+		return &mainframe.Response{
+			Command:    cmd,
+			CurrentDir: cmd.CurrentDir,
+			Resp:       formatted,
+			Type:       respType,
+		}, nil
+	case mainframe.CommandType_grep:
+		query, relPath, showHidden, err := parseSearchArgs(cmd.Args, "Usage: grep <query> [path] [-a]")
+		if err != nil {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       err.Error(),
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		targetPath := cmd.CurrentDir.Path
+		if relPath != "" {
+			if strings.HasPrefix(relPath, "/") {
+				targetPath = relPath
+			} else {
+				targetPath = p.Join(cmd.CurrentDir.Path, relPath)
+			}
+		}
+		targetPath = p.Clean(targetPath)
+		if _, err := db.DbConnection.FindINodeByPath(ctx, targetPath); err != nil {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Path does not exist",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		matches, err := db.DbConnection.SearchFileContents(ctx, targetPath, query, maxGrepFiles)
+		if err != nil {
+			log.WithError(err).Error("grep error")
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Internal Server Error",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
+		formatted := formatGrepMatches(matches, query, showHidden)
+		respType := mainframe.ResponseType_markdown
+		if formatted == "No matches found" {
+			respType = mainframe.ResponseType_text
+		}
+		return &mainframe.Response{
+			Command:    cmd,
+			CurrentDir: cmd.CurrentDir,
+			Resp:       formatted,
+			Type:       respType,
+		}, nil
 
 	default:
 		return &mainframe.Response{
@@ -692,6 +833,8 @@ func (ShellServer) autoComplete(ctx context.Context, cmd *mainframe.Command) (*m
 			Completions: completions,
 		}, nil
 	case mainframe.CommandType_ls:
+		fallthrough
+	case mainframe.CommandType_tree:
 		fallthrough
 	case mainframe.CommandType_cd:
 		var completions []string

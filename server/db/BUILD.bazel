@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "db.go",
         "migrate.go",
+        "search.go",
         "seed.go",
     ],
     embedsrcs = glob(["migrations/*.sql"]),
@@ -23,6 +24,7 @@ go_test(
     name = "db_test",
     srcs = [
         "migrate_test.go",
+        "search_test.go",
     ],
     embed = [":db"],
     deps = [
