@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"connectrpc.com/connect"
 	mainframe "github.com/bentekkie/bentekkie-mainframe/proto/command/v1"
@@ -17,7 +18,9 @@ import (
 )
 
 // ShellServer is a ShellServer
-type ShellServer struct{}
+type ShellServer struct {
+	loginLimiter *auth.LoginLimiter
+}
 
 var validFilename, _ = regexp.Compile(`^[0-9a-zA-Z_\-.]+$`)
 
@@ -32,9 +35,12 @@ func (ss ShellServer) RunSudoCommand(ctx context.Context, req *connect.Request[m
 
 // RunSudoCommand runs a sudo command
 func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCommand) (*mainframe.SudoResponse, error) {
-	status, err := auth.ParseJWT(cmd.Jwt)
+	status, username, err := auth.ParseJWT(cmd.Jwt)
 	if err != nil || status == auth.ERROR {
-		log.WithError(err).Error(status, cmd)
+		log.WithError(err).WithFields(log.Fields{
+			"status":  status,
+			"command": cmd.Command.String(),
+		}).Error("JWT parse error")
 		return nil, errors.New("internal error")
 	}
 	if status == auth.EXPIRED {
@@ -45,7 +51,7 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 			Type:       mainframe.ResponseType_text,
 		}, nil
 	}
-	if status != auth.VALID {
+	if status != auth.VALID || username == "" {
 		return &mainframe.SudoResponse{
 			Command:    cmd,
 			CurrentDir: cmd.CurrentDir,
@@ -368,7 +374,9 @@ func (ss ShellServer) runSudoCommand(ctx context.Context, cmd *mainframe.SudoCom
 
 // NewShellServer creates a new ShellServer
 func NewShellServer() *ShellServer {
-	return &ShellServer{}
+	return &ShellServer{
+		loginLimiter: auth.NewLoginLimiter(10, 5*time.Minute),
+	}
 }
 
 // GetRoot returns the root of the filesystem
@@ -396,7 +404,7 @@ func (ss ShellServer) RunCommand(ctx context.Context, req *connect.Request[mainf
 	return connect.NewResponse(resp), nil
 }
 
-func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mainframe.Response, error) {
+func (ss ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mainframe.Response, error) {
 	if cmd == nil || cmd.CurrentDir == nil {
 		return nil, errors.New("internal error")
 	}
@@ -566,7 +574,17 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 			Type:       mainframe.ResponseType_text,
 		}, nil
 	case mainframe.CommandType_login:
+		clientIP := auth.ClientIPFromContext(ctx)
+		if !ss.loginLimiter.Allow(clientIP) {
+			return &mainframe.Response{
+				Command:    cmd,
+				CurrentDir: cmd.CurrentDir,
+				Resp:       "Too many login attempts. Please try again later.",
+				Type:       mainframe.ResponseType_text,
+			}, nil
+		}
 		if len(cmd.Args) != 2 {
+			ss.loginLimiter.RecordFailure(clientIP)
 			return &mainframe.Response{
 				Command:    cmd,
 				CurrentDir: cmd.CurrentDir,
@@ -574,14 +592,22 @@ func (ShellServer) runCommand(ctx context.Context, cmd *mainframe.Command) (*mai
 				Type:       mainframe.ResponseType_text,
 			}, nil
 		}
-		password, err := db.DbConnection.GetPassword(ctx, cmd.Args[0])
-		if err != nil || password != cmd.Args[1] {
+		storedPassword, err := db.DbConnection.GetPassword(ctx, cmd.Args[0])
+		matched, needsRehash := auth.VerifyPassword(storedPassword, cmd.Args[1])
+		if err != nil || !matched {
+			ss.loginLimiter.RecordFailure(clientIP)
 			return &mainframe.Response{
 				Command:    cmd,
 				CurrentDir: cmd.CurrentDir,
 				Resp:       "Login Error",
 				Type:       mainframe.ResponseType_text,
 			}, nil
+		}
+		ss.loginLimiter.Reset(clientIP)
+		if needsRehash {
+			if err := db.DbConnection.UpdateUserPassword(ctx, cmd.Args[0], cmd.Args[1]); err != nil {
+				log.WithError(err).Warnf("Failed to upgrade password hash for user %q", cmd.Args[0])
+			}
 		}
 		jwtToken, err := auth.NewJWT(cmd.Args[0])
 		if err != nil {
