@@ -16,7 +16,7 @@ services:
       start_period: 10s
     restart: always
   postgresProd:
-    image: postgres:15-alpine
+    image: postgres:19-alpine
     env_file:
       - prod.env
     volumes:
