@@ -15,7 +15,15 @@ export function useCommandNames(jwt : string | null) {
 
 function useCookie(key : string): [string | null, (v: string) => void, () => void]{
     const [cookies, setCookie, removeCookie] = useCookies([key])
-    return [cookies[key] || null, (newJwt : string) => setCookie(key, newJwt), () => removeCookie(key)]
+    const setSecureCookie = (newJwt: string) => {
+        setCookie(key, newJwt, {
+            path: '/',
+            sameSite: 'lax',
+            secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
+            maxAge: 60 * 60 * 24,
+        })
+    }
+    return [cookies[key] || null, setSecureCookie, () => removeCookie(key, { path: '/' })]
 }
 
 export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps, inputOpenFileRef: RefObject<HTMLInputElement | null>): CoreApi {
@@ -233,7 +241,7 @@ export function useApi(state: IState, dispatch: Dispatch<IAction>, props: IProps
             case ResponseType.text:
                 return <p>{resp.resp}</p>;
             case ResponseType.html:
-                return <p dangerouslySetInnerHTML={{ __html: resp.resp }} />;
+                return <p>{resp.resp}</p>;
             case ResponseType.markdown:
                 return <ReactMarkdown components={{
                     a({ node, children, ...props }) {

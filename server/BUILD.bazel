@@ -20,6 +20,7 @@ go_test(
     srcs = ["main_test.go"],
     embed = [":server"],
     deps = [
+        "//server/auth",
         "//server/db",
     ],
 )

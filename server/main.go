@@ -2,11 +2,14 @@ package server
 
 import (
 	"context"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/netip"
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -25,6 +28,54 @@ func StaticDir() string {
 		return "/out"
 	}
 	return dir
+}
+
+func parseNormalizedIP(raw string) (string, bool) {
+	s := strings.TrimSpace(raw)
+	if s == "" {
+		return "", false
+	}
+	if addr, err := netip.ParseAddr(s); err == nil {
+		return addr.Unmap().String(), true
+	}
+	if host, _, err := net.SplitHostPort(s); err == nil {
+		if addr, err := netip.ParseAddr(host); err == nil {
+			return addr.Unmap().String(), true
+		}
+	}
+	return "", false
+}
+
+// extractClientIP resolves the caller's IP across Cloudflare -> Caddy -> server.
+// Prefers Cloudflare's CF-Connecting-IP (overwritten at the Cloudflare edge and preserved by Caddy),
+// then True-Client-IP, X-Forwarded-For, X-Real-IP, and finally RemoteAddr.
+func extractClientIP(r *http.Request) string {
+	for _, header := range []string{"CF-Connecting-IP", "True-Client-IP"} {
+		if ip, ok := parseNormalizedIP(r.Header.Get(header)); ok {
+			return ip
+		}
+	}
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		for _, part := range strings.Split(xff, ",") {
+			if ip, ok := parseNormalizedIP(part); ok {
+				return ip
+			}
+		}
+	}
+	if ip, ok := parseNormalizedIP(r.Header.Get("X-Real-IP")); ok {
+		return ip
+	}
+	if ip, ok := parseNormalizedIP(r.RemoteAddr); ok {
+		return ip
+	}
+	return r.RemoteAddr
+}
+
+func withClientIP(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := auth.WithClientIP(r.Context(), extractClientIP(r))
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 // NewMux builds the HTTP handler mounting static assets, Connect-RPC, and health probes.
@@ -54,7 +105,7 @@ func NewMux(staticDir string) *http.ServeMux {
 		_, _ = w.Write([]byte("ready\n"))
 	})
 	mux.Handle("/", http.FileServer(http.Dir(staticDir)))
-	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
+	mux.Handle("/grpc/", withClientIP(http.StripPrefix("/grpc", api)))
 	return mux
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/sethvargo/go-password/password"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/bentekkie/bentekkie-mainframe/server/auth"
 	"github.com/bentekkie/bentekkie-mainframe/server/env"
 )
 
@@ -144,23 +145,63 @@ func (c *Connection) ensureRoot(ctx context.Context) error {
 	return nil
 }
 
-// InitAdminUser adds admin user if it dosnt exits
+// InitAdminUser ensures ADMIN_USER exists with a hashed password.
+// If ADMIN_PASSWORD is set, the admin user's hash is synchronized without logging the secret.
+// Otherwise, an existing admin user is preserved across restarts unless RESET_ADMIN_PASSWORD=true.
 func (c *Connection) InitAdminUser(ctx context.Context) {
 	username, err := env.GetEnvStr("ADMIN_USER")
-	if err == nil {
-		_, _ = c.conn.ExecContext(ctx, "DELETE FROM users where username=$1", username)
-		pswd, err := password.Generate(15, 15, 0, false, true)
-		if err != nil {
-			log.WithError(err).Info("error generating password")
-			return
-		}
-		_, err = c.conn.ExecContext(ctx, "INSERT INTO users (username,password) VALUES ($1,$2)", username, pswd)
-		if err != nil {
-			log.WithError(err).Info("error generating password")
-			return
-		}
-		log.Info("Admin user created username:", username, " password:", pswd)
+	if err != nil || username == "" {
+		return
 	}
+
+	if configuredPw, err := env.GetEnvStr("ADMIN_PASSWORD"); err == nil && configuredPw != "" {
+		hashed, err := auth.HashPassword(configuredPw)
+		if err != nil {
+			log.WithError(err).Error("error hashing ADMIN_PASSWORD")
+			return
+		}
+		if _, err := c.conn.ExecContext(
+			ctx,
+			"INSERT INTO users (username, password) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password",
+			username, hashed,
+		); err != nil {
+			log.WithError(err).Error("error synchronizing admin user")
+			return
+		}
+		log.Infof("Admin user %q synchronized from ADMIN_PASSWORD", username)
+		return
+	}
+
+	resetFlag, _ := env.GetEnvStr("RESET_ADMIN_PASSWORD")
+	exists, err := c.UserExists(ctx, username)
+	if err != nil {
+		log.WithError(err).Error("error checking admin user existence")
+		return
+	}
+	if exists && strings.ToLower(resetFlag) != "true" {
+		log.Infof("Admin user %q already exists; preserving existing credentials", username)
+		return
+	}
+
+	pswd, err := password.Generate(15, 15, 0, false, true)
+	if err != nil {
+		log.WithError(err).Error("error generating admin password")
+		return
+	}
+	hashed, err := auth.HashPassword(pswd)
+	if err != nil {
+		log.WithError(err).Error("error hashing generated admin password")
+		return
+	}
+	if _, err := c.conn.ExecContext(
+		ctx,
+		"INSERT INTO users (username, password) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password",
+		username, hashed,
+	); err != nil {
+		log.WithError(err).Error("error creating admin user")
+		return
+	}
+	log.Infof("Admin user %q initialized with one-time generated password: %s", username, pswd)
 }
 
 func (iNode *INode) insert(ctx context.Context, c *Connection) error {
@@ -319,6 +360,13 @@ func (c *Connection) IsFile(ctx context.Context, iNode *INode) (bool, error) {
 	return result, err
 }
 
+// UserExists reports whether a user row exists for username.
+func (c *Connection) UserExists(ctx context.Context, username string) (bool, error) {
+	var exists bool
+	err := c.conn.GetContext(ctx, &exists, "SELECT exists(SELECT 1 FROM users WHERE username=$1)", username)
+	return exists, err
+}
+
 // GetPassword for given user
 func (c *Connection) GetPassword(ctx context.Context, username string) (string, error) {
 	var password string
@@ -326,8 +374,30 @@ func (c *Connection) GetPassword(ctx context.Context, username string) (string, 
 	return password, err
 }
 
-// NewUser registers a new user
+// UpdateUserPassword hashes password (if not already hashed) and updates the stored hash for username.
+func (c *Connection) UpdateUserPassword(ctx context.Context, username string, password string) error {
+	stored := password
+	if !auth.IsHashedPassword(stored) {
+		var err error
+		stored, err = auth.HashPassword(password)
+		if err != nil {
+			return err
+		}
+	}
+	_, err := c.conn.ExecContext(ctx, "UPDATE users SET password=$1 WHERE username=$2", stored, username)
+	return err
+}
+
+// NewUser registers a new user with a hashed password.
 func (c *Connection) NewUser(ctx context.Context, username string, password string) error {
-	_, err := c.conn.ExecContext(ctx, "INSERT INTO users (username,password) VALUES ($1,$2)", username, password)
+	stored := password
+	if !auth.IsHashedPassword(stored) {
+		var err error
+		stored, err = auth.HashPassword(password)
+		if err != nil {
+			return err
+		}
+	}
+	_, err := c.conn.ExecContext(ctx, "INSERT INTO users (username,password) VALUES ($1,$2)", username, stored)
 	return err
 }
