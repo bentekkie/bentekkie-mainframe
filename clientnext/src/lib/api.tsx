@@ -2,14 +2,14 @@ import { CoreApi, IState, IAction, ActionType, IProps } from './AppContextTypes'
 import { useCookies } from 'react-cookie'
 import { create } from '@bufbuild/protobuf';
 import { CommandType, SudoCommandType, CommandSchema, Folder, ResponseType, SudoCommandSchema, SudoResponse, Response } from '@gen/command_pb';
-import { Dispatch, RefObject, useMemo } from 'react';
+import { Dispatch, RefObject, useMemo, useRef } from 'react';
 import { isValidEnum } from './utils';
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 const JWT_COOKIE_KEY = 'jwt'
-const LANDING_URL = process.env.NEXT_PUBLIC_LANDING_URL || 'https://www.bentekkie.com'
-const RESUME_URL = process.env.NEXT_PUBLIC_RESUME_URL || 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf'
+const DEFAULT_LANDING_URL = 'https://www.bentekkie.com'
+const DEFAULT_RESUME_URL = 'https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf'
 
 export function useCommandNames(jwt : string | null) {
     return useMemo(() => [...Object.keys(CommandType),...(jwt ? Object.keys(SudoCommandType) : [])].map(cmd => cmd.toLowerCase()), [jwt])
@@ -37,6 +37,10 @@ export function useApi(
 ): CoreApi {
     const [jwt, setJwt, removeJwt] = useCookie(JWT_COOKIE_KEY)
     const cmdNames = useCommandNames(jwt);
+    const runtimeConfigRef = useRef({
+        landingUrl: DEFAULT_LANDING_URL,
+        resumeUrl: DEFAULT_RESUME_URL,
+    });
 
     const parseCommand = (command: string) => {
         const split = command.match(/(?:[^\s"]+|"[^"]*")+/g);
@@ -79,13 +83,13 @@ export function useApi(
                             return currentDir
                         }
                         case CommandType.landing: {
-                            window.location.href = LANDING_URL;
+                            window.location.href = runtimeConfigRef.current.landingUrl;
                             return currentDir
                         }
                         case CommandType.download_resume: {
                             const link = document.createElement('a');
                             link.download = "Benjamin Segall's Resume.pdf";
-                            link.href = RESUME_URL;
+                            link.href = runtimeConfigRef.current.resumeUrl;
                             link.click();
                             const element = document.getElementById("content");
                             if (element) {
@@ -376,6 +380,17 @@ export function useApi(
             if (!bootstrappedRef.current && !state.bootstrapped) {
                 bootstrappedRef.current = true
                 dispatch({ type: ActionType.Bootstrap })
+                fetch('/api/config')
+                    .then(res => res.ok ? res.json() : null)
+                    .then(cfg => {
+                        if (cfg && typeof cfg.landingUrl === 'string' && cfg.landingUrl) {
+                            runtimeConfigRef.current.landingUrl = cfg.landingUrl;
+                        }
+                        if (cfg && typeof cfg.resumeUrl === 'string' && cfg.resumeUrl) {
+                            runtimeConfigRef.current.resumeUrl = cfg.resumeUrl;
+                        }
+                    })
+                    .catch(() => {})
                 props.client.getRoot({}).then(async resp => {
                     dispatch({ type: ActionType.SetCurrentDir, payload: { currentDir: resp } });
                     for (const candidate of ["init", ".init"]) {

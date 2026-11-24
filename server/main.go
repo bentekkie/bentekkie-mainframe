@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -20,6 +21,31 @@ import (
 	"github.com/bentekkie/bentekkie-mainframe/server/mainframe"
 	log "github.com/sirupsen/logrus"
 )
+
+const (
+	defaultLandingURL = "https://www.bentekkie.com"
+	defaultResumeURL  = "https://docs.google.com/document/d/1Czpzbfjk5HsOYjFMAOYXI3GqX4QSqU9Knjtdf0Sr8XA/export?format=pdf"
+)
+
+type runtimeConfig struct {
+	LandingURL string `json:"landingUrl"`
+	ResumeURL  string `json:"resumeUrl"`
+}
+
+func getRuntimeConfig() runtimeConfig {
+	landingURL, err := env.GetEnvStr("LANDING_URL")
+	if err != nil || landingURL == "" {
+		landingURL = defaultLandingURL
+	}
+	resumeURL, err := env.GetEnvStr("RESUME_URL")
+	if err != nil || resumeURL == "" {
+		resumeURL = defaultResumeURL
+	}
+	return runtimeConfig{
+		LandingURL: landingURL,
+		ResumeURL:  resumeURL,
+	}
+}
 
 // StaticDir returns the configured static asset directory, defaulting to "/out".
 func StaticDir() string {
@@ -103,6 +129,11 @@ func NewMux(staticDir string) *http.ServeMux {
 		}
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ready\n"))
+	})
+	mux.HandleFunc("/api/config", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Cache-Control", "no-store")
+		_ = json.NewEncoder(w).Encode(getRuntimeConfig())
 	})
 	mux.Handle("/", http.FileServer(http.Dir(staticDir)))
 	mux.Handle("/grpc/", withClientIP(http.StripPrefix("/grpc", api)))
